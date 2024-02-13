@@ -1,0 +1,392 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Karla:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+
+:root {
+  --mainfont: "Karla", sans-serif;
+  --font1: "Inter", sans-serif;
+  --menubar-bg: #d9d9d9;
+  --main-orange: #ec7324;
+  --main-blue: #048895;
+  --main-peach: #fbeae2;
+  --lightblue-bg: #87c1c2;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mainfont);
+}
+
+.main-wrap {
+  display: flex;
+  justify-content: center;
+  width: auto;
+  height: 100vh;
+  overflow: auto;
+  background-color: #ffffff;
+  filter: contrast(100%) brightness(100%);
+  background: linear-gradient(
+      16deg,
+      rgba(111, 154, 159, 0.53),
+      rgba(164, 54, 39, 0.27)
+    ),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 2400 2400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.08' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.cent-box {
+  position: relative;
+  margin: 1rem;
+  width: calc(22rem + 5vw);
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 0.5px solid rgb(0, 0, 0, 0.2);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/** ------------------------------------------- Content page - Main */
+
+/* TODO: Toggle off when in another page */
+#top-sec {
+  position: relative;
+  height: fit-content;
+  width: 100%;
+  /* display: none; */
+}
+
+#header-wrapper {
+  width: 100%;
+  padding: 1.25rem;
+}
+
+/* TODO: Toggle off when search is clicked */
+#active-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  /* display: none; */
+}
+
+#title-bar {
+  padding: 0rem;
+  font-size: calc(70% + 2vw);
+  font-weight: 600;
+  font-style: italic;
+  /* background-color: blue; */
+}
+
+.right-header {
+  display: flex;
+}
+
+.header-icon {
+  height: 100%;
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: antiquewhite; */
+  padding: 0.25rem;
+}
+
+.header-icon svg {
+  height: calc(1rem + 0.65vw);
+  /* background-color: #ec7324; */
+}
+
+#notification-icon svg {
+  fill: var(--main-orange);
+}
+
+/** ----------------------------------------------- MENU BAR SECTION */
+
+#menu-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: calc(2rem + 2.25vw);
+  background-color: var(--menubar-bg);
+  overflow: hidden;
+  z-index: 9999;
+  margin-top: 1rem;
+  /* display: none; */
+}
+
+#menu-bar a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.menu-item {
+  padding: 0.5rem;
+}
+
+#homepage {
+  background-color: var(--main-orange);
+  width: 60%;
+  border-radius: 10px;
+}
+.menu-item svg {
+  width: calc(1rem + 1vw);
+  aspect-ratio: 1/1;
+}
+
+/** ----------------------------------------------- END OF MENU BAR SECTION */
+
+/** ----------------------------------------------- SEARCH BAR SECTION */
+
+/* TODO: Toggle on when search is clicked */
+.search-bar-wrapper {
+  width: 100%;
+  height: calc(10% + 1.25vw);
+  display: flex;
+  justify-content: center;
+  display: none;
+}
+
+.search-bar-wrapper svg {
+  height: 1rem;
+  margin: 0.5rem;
+  border-radius: 100px;
+  background-color: gray;
+  fill: white;
+  cursor: pointer;
+}
+
+#search-bar-box {
+  width: 95%;
+  height: 100%;
+  padding: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  background-color: white;
+  outline: 1px solid black;
+}
+
+.sbar-input-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#searchBar {
+  height: 100%;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border-style: none;
+  background-color: transparent;
+  outline: none;
+  font-size: calc(0.15em + 1vw);
+}
+
+#searchBar::placeholder {
+  color: gray;
+}
+
+.search-icon {
+  height: 100%;
+  padding: 0rem 0.25rem;
+  /* background-color: aqua; */
+}
+
+.search-icon img {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+/** ----------------------------------------------- END OF SEARCH BAR SECTION */
+
+/** ----------------------------------------------- ADD BUTTON SECTION */
+
+#bot-sec {
+  position: absolute;
+  display: block;
+  width: 100%;
+  bottom: 0;
+  /* background-color: black; */
+}
+
+.option-row {
+  display: flex;
+  height: max-content;
+  width: 100%;
+  padding: 0% 8%;
+  box-sizing: border-box;
+  /* background-color: rgb(114, 58, 58); */
+}
+
+.btn-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  width: 100%;
+  /* background-color: rgb(42, 42, 200); */
+}
+
+.option-name {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  font-size: calc(0.85em + 0.1vw);
+  padding-right: 1rem;
+  font-style: italic;
+  color: white;
+  height: calc(80% + 1.5vw);
+  width: 100%;
+  /* background-color: aquamarine; */
+}
+
+.btn-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  z-index: 9999;
+  cursor: pointer;
+  /* background-color: blue; */
+}
+
+.btn-list a {
+  width: fit-content;
+}
+
+.bot-sec-option-btn {
+  width: calc(2.85rem + 1.5vw);
+  aspect-ratio: 1/1;
+  border-radius: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.3rem 0rem;
+  background-color: var(--lightblue-bg);
+  filter: drop-shadow(1px 1.5px 0.85px rgba(46, 45, 47, 0.8));
+}
+
+.bot-sec-option-btn svg {
+  width: calc(12% + 1.5vw);
+  fill: rgb(241, 241, 233);
+}
+
+#add-main-btn {
+  background-color: var(--main-orange);
+}
+
+#content-section {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/** ----------------------------------------------------  PAGE COMMON ELEMENTS **/
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.bck {
+  height: 8%;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.white-wrapper {
+  background-color: rgb(255, 255, 255);
+  border-radius: 35px 35px 0px 0px;
+}
+
+.white-wrap-title {
+  font-size: calc(2.15em + 0.25vw);
+  font-weight: 700;
+  font-style: italic;
+  height: auto;
+  text-align: center;
+  color: var(--main-orange);
+  /* background-color: yellow; */
+  /* padding: 0.25rem; */
+  /* flex-grow: 0; */
+}
+
+.white-wrap-desc {
+  font-size: calc(0.55em + 0.5vw);
+  color: var(--main-blue);
+  width: 60%;
+  text-align: center;
+  /* padding: 0.5rem; */
+  /* background-color: blueviolet; */
+}
+
+/** ----------------------------------------------------  Hide Items (add x-item buttons) */
+
+/* TODO: Toggle on when add button is clicked to dim background */
+.dim-page {
+  display: none;
+  position: absolute;
+  width: 100%;
+  z-index: 9999;
+  height: 100%;
+  background-color: rgb(13, 13, 13, 0.9);
+  border: 0.5px solid rgb(0, 0, 0, 0.2);
+}
+
+/* TODO: Toggle off on pages without add button*/
+#add-circle-hide {
+  /* display: none; */
+  z-index: 999999;
+}
+
+/* TODO: Toggle on when ADD button is clicked to show other options */
+#home-add-op {
+  display: none;
+}
+
+#bag-add-op {
+  display: none;
+}
+
+/* MARQUEE for ITEMS Later */
+/* .marquee {
+  width: 4rem;
+  line-height: 50px;
+  background-color: red;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.marquee p {
+  display: inline-block;
+}
+
+.marquee p:hover {
+  animation: marquee 3s linear 2;
+}
+
+@keyframes marquee {
+  0%   { transform: translate(0%, 0); } 
+  50% { transform: translate(-100%, 0); } 
+
+50.1% { transform: translate(100%, 0); } 
+
+100% { transform: translate(0%, 0); } 
+} */
