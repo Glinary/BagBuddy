@@ -1,0 +1,243 @@
+#bag-view {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  /* background-color: red; */
+  padding-bottom: calc(2.55rem + 2.25vw);
+  /* add calc(xx) size of menu bar at the bottom to see bag boxes/ it does not get covered by menu bar */
+  display: none;
+}
+
+.bag-view-wrapper {
+  display: grid;
+  grid-template-rows: repeat(auto, 20%);
+  grid-template-columns: repeat(3, 30%);
+  gap: 0px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* * INSIDE BAG */
+
+#inside-bag {
+  background-color: #e0e0e0;
+  height: 100%;
+}
+
+.upper {
+  height: 35%;
+  width: 100%;
+  background-color: var(--main-blue);
+  border-bottom-left-radius: 5rem;
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 6fr 40fr 6fr;
+  overflow: hidden;
+}
+
+.back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0rem 0rem 0rem;
+  border-bottom-left-radius: 5rem;
+  /* background-color: #6b6363; */
+}
+
+.back i {
+  fill: white;
+}
+
+i {
+  padding: 0rem;
+  margin: 0rem;
+  width: min-content;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.edit {
+  /* background-color: lightcoral; */
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0rem;
+}
+
+.inside-bag-edit {
+  height: 1rem;
+  width: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #757272;
+  border-radius: 100px;
+}
+
+.inside-bag-edit svg {
+  height: 0.75rem;
+  width: 0.75rem;
+  fill: white;
+}
+
+.upper-space {
+  background-color: transparent;
+  height: 12%;
+}
+
+.lower-space {
+  margin: 0;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  height: 85%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1 100px;
+  grid-template-columns: 8fr 50fr 50fr 5fr;
+  /* background-color: rgb(172, 36, 36); */
+  justify-content: center;
+  justify-items: center;
+  /* align-items: center; */
+}
+
+.bag-info-container {
+  justify-items: end;
+  width: fit-content;
+  display: flex;
+  /* background-color: green; */
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.bag-info {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(1vw, 3rem));
+  grid-template-columns: repeat(1, auto);
+  /* background-color: #ffbd92; */
+}
+
+.inside-bag-name {
+  font-size: 2.5em;
+  color: #ffbd92;
+  width: fit-content;
+  height: fit-content;
+  /* background-color: antiquewhite; */
+}
+
+.bag-info-inner {
+  padding: 0rem 0.5rem;
+  /* background-color: aquamarine; */
+}
+
+.inside-bag-weight,
+.inside-bag-sched1,
+.inside-bag-desc {
+  display: flex;
+  align-items: center;
+  font-size: 0.75em;
+  font-weight: 50;
+  width: fit-content;
+  color: white;
+  /* background-color: #ffbd92; */
+}
+
+.inside-bag-weight svg,
+.inside-bag-sched1 svg {
+  height: 1rem;
+  fill: white;
+  width: fit-content;
+}
+
+.inside-bag-weight p,
+.inside-bag-sched1 p {
+  padding: 0rem 0.25rem;
+}
+
+/* .inside-bag-sched {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min-content;
+} */
+
+.inside-bag-desc {
+  padding: 0.85rem 0rem;
+  font-size: 0.45em;
+  max-width: 90%;
+  word-break: keep-all;
+  /* background-color: #ffbd92; */
+}
+
+.inside-bag-round {
+  background-color: transparent;
+  background-color: #dcd3d3f2;
+  border-radius: 100px;
+  font-size: 0.75em;
+  padding: 1px;
+  width: 1rem;
+  height: 1rem;
+  margin: 0rem 0.25rem 0rem 0rem;
+}
+
+.inside-bag-shared {
+  display: flex;
+}
+
+.inside-bag-shared img {
+  height: 0.65rem;
+  width: 0.65rem;
+}
+
+#shared-more {
+  fill: white;
+  background-color: orange;
+}
+
+#shared-more svg {
+  height: 0.62rem;
+  width: 0.62rem;
+}
+
+.bag-icon-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  width: fit-content;
+  /* background-color: aquamarine; */
+}
+
+.inside-bag-icon {
+  height: 8rem;
+  width: 8rem;
+  /* background-color: antiquewhite; */
+}
+
+.bag-shadow {
+  background-color: rgb(37, 56, 57, 0.5);
+  width: 60%;
+  height: 0.6rem;
+  filter: blur(3px);
+  border-radius: 50%;
+}
+.lower {
+  flex-grow: 3;
+  width: auto;
+  background-color: #e0e0e0;
+}
+
+.scroll-cont {
+  height: 20rem;
+  background-color: blue;
+  overflow: scroll;
+}
+
+.s-cont {
+  height: 50rem;
+  background-color: aqua;
+}

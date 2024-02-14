@@ -1,0 +1,21 @@
+<section id="itemGallery">
+    <div class="bck"><a href="#"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
+
+    <div class="confirm-bar center">
+        <button class="confirm-btn">Save changes</button>
+    </div>
+
+    <div class="itemGallery-wrapper white-wrapper">
+        <div class="gallery-titledesc-wrapper center">
+            <div class="white-wrap-title titledesc-item">Item Gallery</div>
+            <div class="white-wrap-desc titledesc-item">Think of it as a list of items you can add later to your chosen bag</div>
+        </div>
+        <div class="gallery-itemlist-wrapper">
+            <div class="gallery-add-item center">+ add item to gallery</div>
+            {{>item}}
+            {{#each items}}
+                {{>item this}}
+            {{/each}}
+        </div>
+    </div>
+</section>

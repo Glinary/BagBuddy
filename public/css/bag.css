@@ -1,0 +1,62 @@
+:root {
+  --bag-bg: #87c1c2;
+  --info-icon-bg: #1c445b;
+}
+
+.bag-box {
+  /* width: 34%; */
+  aspect-ratio: 1/1.25;
+  /* flex-basis: 35%; */
+  border-radius: 15px;
+  background-color: var(--bag-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0.65rem;
+  padding: 0.5rem;
+}
+
+.bag-icon {
+  height: 55%;
+  width: 70%;
+  /* background-color: aqua; */
+}
+
+.bag-info-list {
+  /* background-color: brown; */
+  height: fit-content;
+  width: 100%;
+}
+
+.bag-name {
+  text-align: center;
+  font-weight: 700;
+  width: 100%;
+  font-size: calc(1.15em + 0.5vw);
+}
+
+.bag-info-list2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: blue; */
+}
+
+.baginfolist-item {
+  width: 15%;
+  aspect-ratio: 1/1;
+  border-radius: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--info-icon-bg);
+  font-size: 0.5em;
+  margin: 0.15rem;
+}
+
+#info-item {
+  height: 65%;
+  width: auto;
+  fill: rgb(226, 224, 224);
+}

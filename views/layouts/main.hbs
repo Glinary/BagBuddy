@@ -1,14 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
-    <script src="{{js1}}" defer> </script>
-    <link rel="stylesheet" href="{{ css1 }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+     <link rel="stylesheet" href={{maincss}}>
+     <link rel="stylesheet" href={{css1}}>
+     <link rel="stylesheet" href={{partialcss}}>
+    <script src="https://kit.fontawesome.com/78bb10c051.js" crossorigin="anonymous"></script>
 
-</head>
-<body>
-    {{{ body }}}
-</body>
+  </head>
+    <body>
+      <div class="main-wrap">
+        <div class="cent-box">
+
+          {{#if showTop}}
+          {{!-- TOP SECTION --}}
+          <section id="top-sec">
+
+            {{!-- App Name --}}
+            <div id="header-wrapper">
+
+              <div id="active-header-wrapper">
+                <div id="title-bar">BagBuddy</div>
+                <div class="right-header">
+                  <div id="search-bar-icon" class="header-icon"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960"><path d="M792-120.667 532.667-380q-30 25.333-69.64 39.666Q423.388-326 378.667-326q-108.441 0-183.554-75.167Q120-476.333 120-583.333T195.167-765.5q75.166-75.167 182.5-75.167 107.333 0 182.166 75.167 74.834 75.167 74.834 182.267 0 43.233-14 82.9-14 39.666-40.667 73l260 258.667-48 47.999ZM378-392.666q79.167 0 134.583-55.834Q568-504.333 568-583.333q0-79.001-55.417-134.834Q457.167-774 378-774q-79.722 0-135.528 55.833t-55.806 134.834q0 79 55.806 134.833Q298.278-392.666 378-392.666Z"/></svg></div>
+                  <a href="/notification"><div id="notification-icon" class="header-icon" ><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160ZM480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80Z"/></svg></div></a>
+                </div>
+              </div>
+
+              {{!-- Search Bar --}}
+              <div class="search-bar-wrapper center">
+                <div id="search-bar-box">
+                  <div class="sbar-input-wrapper">
+                    <form action="GET">
+                      <input type="text" id="searchBar" placeholder="enter your bag's name here">
+                    </form>
+                  </div>
+                  <div class="search-icon center">
+                    <img src="/static/images/searchIcon.svg" alt="search icon">
+                  </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" id="search-close" ><path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"/></svg>
+              </div>  
+            </div>
+
+            
+          </section>
+          {{/if}}
+
+          {{#if showBot}}
+        
+          {{!-- DIM when 'ADD' button is clicked --}}
+          <div class="dim-page"></div>
+
+          {{!-- BOT SECTION: Add button hovered --}}
+          <section id="bot-sec">
+
+            {{#if showAddBtn}}
+            {{!-- Additional options on Add button: HOME view --}}
+              <div class="option-row" id="home-add-op">
+                <div class="btn-name">
+                    <div class="option-name">Add a bag</div>
+                    <div class="option-name">Create a packing group</div>
+                    <div class="option-name">Join a packing group</div>
+                </div>
+                <div class="btn-list">
+                    <div class="bot-sec-option-btn"><a href="/addbag" class="center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M120-80q-33 0-56.5-23.5T40-160v-440h80v440h680v80H120Zm160-160q-33 0-56.5-23.5T200-320v-440h200v-80q0-33 23.5-56.5T480-920h160q33 0 56.5 23.5T720-840v80h200v440q0 33-23.5 56.5T840-240H280Zm200-520h160v-80H480v80Z"/></svg></a></div>
+                    <div class="bot-sec-option-btn"><a href="#" class="center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M440-720h80v-80h-80v80Zm40 240q-76 0-145-31.5T200-582v-58q0-33 23.5-56.5T280-720h80v-120q0-17 11.5-28.5T400-880h160q17 0 28.5 11.5T600-840v120h80q33 0 56.5 23.5T760-640v58q-66 39-135 70.5T480-480ZM280-80v-40q-33 0-56.5-23.5T200-200v-292q56 34 115.5 58T440-402v42h80v-42q65-8 124.5-32T760-492v292q0 33-23.5 56.5T680-120v40h-80v-40H360v40h-80Z"/></svg></a></div>
+                    <div class="bot-sec-option-btn"><a href="#" class="center"></a></div> 
+                </div>
+              </div>
+
+            {{!-- Additional options on Add button: Bag view --}}
+              <div class="option-row" id="bag-add-op">
+                <div class="btn-name">
+                    <div class="option-name">Add Items</div>
+                </div>
+                <div class="btn-list">
+                    <div class="bot-sec-option-btn"><a href="/additem" class="center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M120-80q-33 0-56.5-23.5T40-160v-440h80v440h680v80H120Zm160-160q-33 0-56.5-23.5T200-320v-440h200v-80q0-33 23.5-56.5T480-920h160q33 0 56.5 23.5T720-840v80h200v440q0 33-23.5 56.5T840-240H280Zm200-520h160v-80H480v80Z"/></svg></a></div>
+                </div>
+              </div>
+
+              
+              {{!-- Main ADD button --}}
+              <div class="option-row" id="add-circle-hide">
+                <div class="btn-name"></div>
+                <div class="btn-list">
+                    <div class="bot-sec-option-btn" id="add-main-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></div>
+                </div>
+              </div>
+              {{/if}}
+
+              {{!-- Menu Bar --}}
+              <div id="menu-bar"> 
+                <a href="/calendar"><div class="menu-item center" id="calendar"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" fill="rgb(31, 31, 30)"><path d="M480-400q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240ZM186.666-80q-27 0-46.833-19.833T120-146.666v-600.001q0-27 19.833-46.833 19.833-19.834 46.833-19.834h56.667V-880h70v66.666h333.334V-880h70v66.666h56.667q27 0 46.833 19.834Q840-773.667 840-746.667v600.001q0 27-19.833 46.833T773.334-80H186.666Zm0-66.666h586.668v-420.001H186.666v420.001Z"/></svg></div></a>
+                <a href="/"><div class="menu-item center" id="homepage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="rgb(31, 31, 30)"><path d="M186.666-80q-27 0-46.833-19.833T120-146.666v-513.335q0-26.999 19.833-46.833 19.833-19.833 46.833-19.833h100.001q0-80.333 54.833-136.833T476.667-920q80.333 0 138.5 56.5 58.166 56.5 58.166 136.833h100.001q27 0 46.833 19.833Q840-687 840-660.001v513.335q0 27-19.833 46.833T773.334-80H186.666ZM480-420.001q80.333 0 138.5-58.166 58.167-58.167 58.167-138.5H610q0 53.333-38.333 91.667-38.334 38.333-91.667 38.333T388.333-525Q350-563.334 350-616.667h-66.667q0 80.333 58.167 138.5 58.167 58.166 138.5 58.166ZM353.333-726.667h253.334q0-53.333-36.667-90t-90-36.667q-53.333 0-90 36.667t-36.667 90Z"/></svg></div></a>
+                <a href="/profile"><div class="menu-item center" id="profile"><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" fill="rgb(31, 31, 30)"><path d="M226-262q59-39.666 121-60.833T480-344q71 0 133.333 21.167Q675.667-301.666 734.667-262q41-49.667 59.833-103.667 18.834-54 18.834-114.333 0-141-96.167-237.167T480-813.334q-141 0-237.167 96.167T146.666-480q0 60.333 19.167 114.333T226-262Zm253.876-184.667q-58.209 0-98.043-39.957Q342-526.581 342-584.791q0-58.209 39.957-98.042 39.958-39.834 98.167-39.834t98.043 39.958Q618-642.752 618-584.543q0 58.21-39.957 98.043-39.958 39.833-98.167 39.833ZM479.73-80q-83.097 0-156.183-31.5t-127.15-85.833q-54.064-54.334-85.23-127.227Q80-397.454 80-480.333q0-82.88 31.5-155.773Q143-709 197.333-763q54.334-54 127.227-85.5Q397.454-880 480.333-880q82.88 0 155.773 31.5Q709-817 763-763t85.5 127Q880-563 880-480.177q0 82.822-31.5 155.666T763-197.333Q709-143 635.914-111.5T479.73-80Z"/></svg></div></a>
+              </div>
+              
+          </section>
+          {{/if}}
+          
+          
+          <section id="content-section">
+            {{{body}}}
+          </section>
+
+        </div>
+      </div>
+
+      {{!-- JS --}}
+      <script src={{mainjs}}></script>
+    </body>
 </html>

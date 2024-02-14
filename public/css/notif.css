@@ -1,0 +1,29 @@
+#notif-pings {
+  width: 100%;
+  height: fit-content;
+}
+
+.ping-box {
+  width: 80%;
+  padding: calc(2.5% + 0.15vw);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 8px;
+  background-color: white;
+  margin: 0.5rem 0rem;
+}
+
+.ping-item {
+  height: 100%;
+  font-size: calc(0.55em + 0.5vw);
+  font-weight: 300;
+  text-align: center;
+  /* width: 100%; */
+  /* background-color: blue; */
+}
+
+.ping-item svg {
+  height: calc(1rem + 0.5vw);
+  fill: var(--main-orange);
+}

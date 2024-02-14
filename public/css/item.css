@@ -1,0 +1,47 @@
+#item-wrapper {
+  width: 100%;
+  background: var(--main-peach);
+  height: calc(2rem + 0.85vw);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.55rem 0rem;
+  padding: 0rem 1rem;
+}
+
+.item-left,
+.item-right {
+  width: fit-content;
+  height: 100%;
+  /* background: red; */
+}
+
+.item-move-item {
+  height: fit-content;
+  /* background-color: blue; */
+}
+
+#item-move svg {
+  height: 2rem;
+}
+
+#item-setting svg {
+  height: 1rem;
+}
+
+textarea {
+  resize: none;
+  padding: 0rem 0.5rem;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  font-size: calc(0.65rem + 0.5vw);
+  color: black;
+  font-weight: 200;
+  text-align: right;
+}
+
+#item-name textarea {
+  font-weight: 600;
+  text-align: left;
+}

@@ -1,0 +1,153 @@
+:root {
+  --gray-bg: #d9d9d9;
+}
+
+.bag-form {
+  display: block;
+  height: 100%;
+  background-color: var(--main-blue);
+  box-sizing: border-box;
+  /* overflow: hidden; */
+}
+
+.form-wrapper {
+  width: 100%;
+  height: 92%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-bag-info-list {
+  width: 100%;
+  flex-direction: column;
+  /* background-color: #a43627; */
+}
+
+.info-list {
+  padding: 0.55rem;
+}
+
+#form-add-title {
+  /* background-color: yellow; */
+}
+
+#form-add-desc {
+  /* background-color: blueviolet; */
+}
+
+.form-baglist {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  /* background-color: gray; */
+}
+
+.form-bag-icon {
+  min-width: 3.5rem;
+  min-height: 3.5rem;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  background-color: var(--gray-bg);
+  /* flex-grow: 0; */
+  margin: 0.25rem;
+  /* height: 100%; */
+  /* margin: 1rem; */
+}
+
+.form-bag-icon svg {
+  height: 3rem;
+  aspect-ratio: 1/1;
+}
+
+.form-bag-icon:hover {
+  border: 1px solid var(--main-orange);
+}
+
+#form-bag-bg-def1 {
+  fill: #000000;
+}
+#form-bag-bg-def2 {
+  fill: #a43627;
+}
+#form-bag-bg-def3 {
+  fill: #1f4f24;
+}
+
+.form-user-icon-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 0.5px solid rgba(82, 79, 79, 0.5);
+  font-size: 3em;
+  font-weight: 100;
+}
+
+.form-user-icon-add svg {
+  fill: gray;
+  height: 1.5rem;
+}
+
+.form-add-bag {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background-color: green; */
+  width: 100%;
+  /* height: fit-content; */
+  padding: 1% 0%;
+  /* flex-grow: 0.25; */
+}
+
+#add-bag-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  width: 50%;
+  /* background-color: brown; */
+}
+
+#add-bag-form input {
+  margin: calc(2% + 0.65vw);
+  padding: 0.65rem;
+  width: 100%;
+  border-radius: 10px;
+  border-style: none;
+  border: 0.5px solid rgb(59, 57, 57, 0.5);
+  background-color: transparent;
+}
+
+#add-bag-form button[type="submit"] {
+  margin: 2rem 0rem 1rem 0rem;
+  padding: 0.45rem;
+  border-radius: 8px;
+  border-style: none;
+  width: 70%;
+  background-color: var(--main-blue);
+  color: white;
+  font-weight: 700;
+}
+
+.cancel-btn {
+  padding: 0.4rem;
+  border-radius: 8px;
+  border-style: none;
+  width: 35%;
+  background-color: var(--main-blue);
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
