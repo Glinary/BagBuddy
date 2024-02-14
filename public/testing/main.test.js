@@ -13,13 +13,16 @@ test('if return 0, test passes', () => {
 });
 
 */
-
+const { connect_to_mongodb } = require('../js/main');
 const { generate_session_id } = require('../js/main');
 
 /*
-    TODO: "connect_to_mongodb()"
+    This function tests if a connection to mongodb was successful before
+    user attempts to login or register.
 */
-
+test('successfully connects to mongodb and returns 200', async () => {
+    expect(await connect_to_mongodb()).toBe(200);
+});
 /*
     This function tests if a session id was successfully generated before
     user attempts to login or register.
@@ -32,9 +35,6 @@ test('successfully generates a session id to be stored on mongodb and returns 20
     This function ensures that failing to generate a session id due to 
     an unsuccessful connection to MongoDB does not return 200. 
 */
-
-/*
-TODO: uncomment this once connect_to_mongodb() has been implemented.
 
 test('failed connection to MongoDB does not return 200', () => {
     // Mock the connect_to_mongodb function to return 500
@@ -49,4 +49,3 @@ test('failed connection to MongoDB does not return 200', () => {
     // Assert that the result is not 200
     expect(result).not.toBe(200);
 });
-*/
