@@ -8,8 +8,6 @@
 .itemGallery-wrapper {
   height: 100%;
   padding: 1rem 0rem;
-  /* background-color: aquamarine; */
-  box-sizing: border-box;
 }
 
 .gallery-titledesc-wrapper {
@@ -28,9 +26,11 @@
 }
 
 .gallery-itemlist-wrapper {
-  height: 90%;
+  height: fit-content;
   overflow-y: scroll;
-  padding-bottom: calc(7rem + 1.5vw);
+  height: 100vh;
+  padding-bottom: calc(2rem + 2vw) * 2; 
+  /* background-color: white; */
 }
 
 .gallery-add-item {

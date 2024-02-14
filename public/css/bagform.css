@@ -136,7 +136,6 @@
   background-color: var(--main-blue);
   color: white;
   font-weight: 700;
-  cursor: pointer;
 }
 
 .cancel-btn {
@@ -146,7 +145,6 @@
   width: 35%;
   background-color: var(--main-blue);
   font-weight: 700;
-  cursor: pointer;
 }
 
 a {

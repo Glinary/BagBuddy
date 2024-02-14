@@ -92,6 +92,37 @@ const controller = {
       ],
     });
   },
+
+  getOnboarding: async function (req, res) {
+    res.render("onboarding", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/onboarding.css",
+      showTop: false,
+      showBot: false,
+      showAddBtn: false,
+      mainjs: "/static/js/onboarding.js"
+    });
+  },
+
+  getLogin: async function (req, res) {
+    res.render("login", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/login-signup.css",
+      showTop: false,
+      showBot: false,
+      showAddBtn: false
+    })
+  },
+
+  getSignup: async function (req, res) {
+    res.render("signup", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/login-signup.css",
+      showTop: false,
+      showBot: false,
+      showAddBtn: false
+    })
+  }
 };
 
 export default controller;

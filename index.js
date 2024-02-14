@@ -4,7 +4,8 @@ import exphbs from "express-handlebars";
 import routes from "./routes/routes.js";
 import "dotenv/config";
 
-const port = process.env.PORT;
+// const port = process.env.PORT;
+const port = 3000
 
 const app = express();
 // Set public folder to 'public'

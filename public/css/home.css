@@ -5,7 +5,7 @@
   /* background-color: red; */
   padding-bottom: calc(2.55rem + 2.25vw);
   /* add calc(xx) size of menu bar at the bottom to see bag boxes/ it does not get covered by menu bar */
-  /* display: none; */
+  display: none;
 }
 
 .bag-view-wrapper {
@@ -25,19 +25,14 @@
 }
 
 .upper {
-  height: fit-content;
+  height: 35%;
   width: 100%;
-  padding-bottom: 2rem;
   background-color: var(--main-blue);
   border-bottom-left-radius: 5rem;
   display: grid;
   grid-template-rows: auto;
   grid-template-columns: 6fr 40fr 6fr;
   overflow: hidden;
-}
-
-.upper a {
-  text-decoration: none;
 }
 
 .back {
@@ -62,8 +57,7 @@ i {
 .info {
   display: flex;
   flex-direction: column;
-  z-index: 100;
-  height: fit-content;
+  z-index: 9999;
 }
 
 .edit {
@@ -91,25 +85,28 @@ i {
 
 .upper-space {
   background-color: transparent;
-  height: 3rem;
+  height: 12%;
 }
 
 .lower-space {
   margin: 0;
-  height: 100%;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  height: 85%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1 auto;
+  grid-template-rows: 1 100px;
   grid-template-columns: 8fr 50fr 50fr 5fr;
   /* background-color: rgb(172, 36, 36); */
+  justify-content: center;
   justify-items: center;
-  align-items: start;
+  /* align-items: center; */
 }
 
 .bag-info-container {
   justify-items: end;
   width: fit-content;
-  height: fit-content;
   display: flex;
   /* background-color: green; */
   justify-content: center;
@@ -118,9 +115,9 @@ i {
 
 .bag-info {
   display: grid;
-  grid-template-rows: repeat(2, minmax(1vw, auto));
+  grid-template-rows: repeat(2, minmax(1vw, 3rem));
   grid-template-columns: repeat(1, auto);
-  /* background-color: #c35308; */
+  /* background-color: #ffbd92; */
 }
 
 .inside-bag-name {
@@ -133,7 +130,6 @@ i {
 
 .bag-info-inner {
   padding: 0rem 0.5rem;
-  height: fit-content;
   /* background-color: aquamarine; */
 }
 
@@ -211,7 +207,7 @@ i {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 80%;
   width: fit-content;
   /* background-color: aquamarine; */
 }
@@ -219,7 +215,7 @@ i {
 .inside-bag-icon {
   height: 8rem;
   width: 8rem;
-  /* background-color: antique  white; */
+  /* background-color: antiquewhite; */
 }
 
 .bag-shadow {

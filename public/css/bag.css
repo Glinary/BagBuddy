@@ -17,11 +17,6 @@
   padding: 0.5rem;
 }
 
-.bag-box a {
-  text-decoration: none;
-  color: transparent;
-}
-
 .bag-icon {
   height: 55%;
   width: 70%;
@@ -37,10 +32,8 @@
 .bag-name {
   text-align: center;
   font-weight: 700;
-  font-family: var(--font1);
   width: 100%;
   font-size: calc(1.15em + 0.5vw);
-  color: black;
 }
 
 .bag-info-list2 {
