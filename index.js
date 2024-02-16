@@ -1,16 +1,3 @@
-<<<<<<< Updated upstream
-// import express from "express";
-// import bodyParser from "body-parser";
-// import exphbs from "express-handlebars";
-// import routes from "./routes/routes.js";
-// import "dotenv/config";
-
-const express = require('express');
-const bodyParser = require('body-parser');
-const exphbs = require('express-handlebars');
-const routes = require('./routes/routes.js');
-require('dotenv').config()
-=======
 const express = require("express");
 const routes = require("./routes/routes.js");
 const exphbs = require("express-handlebars");
@@ -22,7 +9,6 @@ const { connect_to_mongodb } = require("./public/js/main.js");
 
 
 
->>>>>>> Stashed changes
 
 const port = process.env.PORT || 3000;
 
