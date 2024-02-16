@@ -1,5 +1,8 @@
-import { Router } from "express";
-import controller from "../controllers/controller.js";
+// import { Router } from "express";
+// import controller from "../controllers/controller.js";
+
+const { Router } = require('express');
+const controller = require('../controllers/controller.js');
 
 const router = Router();
 
@@ -14,4 +17,5 @@ router.get("/additem", controller.getAddItem);
 router.get("/itemgallery", controller.getItemGallery);
 
 
-export default router;
+// export default router;
+module.exports = router;
