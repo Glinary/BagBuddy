@@ -1,5 +1,5 @@
 
-const register  = require('../js/register');
+const { register }  = require('../js/register');
 
 /*
     This function tests to see if a unique set of name, email, and password

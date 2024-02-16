@@ -1,4 +1,4 @@
-const login  = require('../js/login');
+const { login }  = require('../js/login');
 
 /*
     This function tests to see if a registered set of email, and password
