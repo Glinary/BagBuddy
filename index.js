@@ -8,8 +8,6 @@ const path = require("path");
 const { connect_to_mongodb } = require("./public/js/main.js");
 
 
-
-
 const port = process.env.PORT || 3000;
 
 const app = express();
