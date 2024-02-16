@@ -1,8 +1,14 @@
-import express from "express";
-import bodyParser from "body-parser";
-import exphbs from "express-handlebars";
-import routes from "./routes/routes.js";
-import "dotenv/config";
+// import express from "express";
+// import bodyParser from "body-parser";
+// import exphbs from "express-handlebars";
+// import routes from "./routes/routes.js";
+// import "dotenv/config";
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
+const routes = require('./routes/routes.js');
+require('dotenv').config()
 
 const port = process.env.PORT || 3000;
 
