@@ -10,7 +10,7 @@ const connectionString = process.env.LOCAL_MONGODB_URL; // Use this to store loc
 
 async function connect_to_mongodb() {
     try {
-        await mongoose.connect(connectionString);
+        await mongoose.connect(urlDB);
         console.info("Connected to MongoDB");
         return 200; // Return success status code
     } catch (error) {
