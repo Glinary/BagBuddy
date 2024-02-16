@@ -3,15 +3,24 @@ name: Unit Tests
 on: [pull_request]
 
 jobs:
+  
   tests:
     runs-on: ubuntu-latest
+
+    env:
+      MONGODB_URL: ${{ secrets.MONGODB_URL}}
+      LOCAL_MONGODB_URL: ${{ secrets.LOCAL_MONGODB_URL}}
+    
 
     strategy:
       matrix:
         node-version: [20.x]
+        
 
+    
     steps:
       - uses: actions/checkout@v2
+      
       - name: Use Node.js ${{ matrix.node-version}}
         uses: actions/setup-node@v1
         with:
