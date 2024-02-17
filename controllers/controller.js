@@ -109,17 +109,17 @@ const controller = {
   getLogin: async function (req, res) {
     res.render("login", {
       maincss: "/static/css/main.css",
-      css1: "/static/css/login-signup.css",
+      css1: "/static/css/login-register.css",
       showTop: false,
       showBot: false,
       showAddBtn: false
     })
   },
 
-  getSignup: async function (req, res) {
-    res.render("signup", {
+  getRegister: async function (req, res) {
+    res.render("register", {
       maincss: "/static/css/main.css",
-      css1: "/static/css/login-signup.css",
+      css1: "/static/css/login-register.css",
       showTop: false,
       showBot: false,
       showAddBtn: false
