@@ -50,21 +50,14 @@ function saveUser(name, email, password) {
     return true;
 }
 
-function isDuplicateEmail(name, email, password) {
-    // const user = Users.findOne({ email: email }).exec();
-    // if (user) {
-    //     return true;
-    // } else {
-    //     return false;
-    // }
-
-    if(name === "Gleezell" && email === "gleezell_uy@dlsu.edu.ph" && password === "P@ssw0rd") {
-        return true;
-    } else {
-        return false;
-    }
-
-}
+// function isDuplicateEmail(name, email) {
+//     const user = Users.findOne({ email: email }).exec();
+//     if (user) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 
 // return 200 if successful registration of user in the database
@@ -76,26 +69,11 @@ function register(name, email, password) {
     //     return 402;
     // }
 
-    // try {
-    //     const user = await Users.findOne({ email: email }).exec();
-    //     if (user) {
-    //         return 402;
-    //     } else {
-    //         // await Users.create(newUser);
-    //         return 200;
-    //     }
-    // } catch (error) {
-    //     console.error(error);
+    // let isDuplicate = isDuplicateEmail(email);
+
+    // if (!isDuplicate) {
     //     return 402;
     // }
-
-
-    
-    let isDuplicate = isDuplicateEmail(email);
-
-    if (!isDuplicate) {
-        return 402;
-    }
 
     let isSuccessful = saveUser(name, email, password);
 
