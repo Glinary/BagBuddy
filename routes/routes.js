@@ -16,6 +16,8 @@ router.get("/addbag", controller.getAddBag);
 router.get("/additem", controller.getAddItem);
 router.get("/itemgallery", controller.getItemGallery);
 
+// To check name availability
+// router.post("/check-name", controller.postCheckName);
 
 // export default router;
 module.exports = router;

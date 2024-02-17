@@ -87,7 +87,7 @@
 }
 
 
-.form-placeholder input {
+.form-placeholder input, #register-submit-btn, #login-submit-btn {
     font-family: var(--mainfont);
     font-size: 1rem;
     outline: 0;
@@ -101,17 +101,39 @@
 }
 
 .form-placeholder .login-form input {
-    margin: 0.5rem;
+    margin: 0.5rem 0.5rem 0rem 0.5rem;
 }
 
 .form-placeholder .register-form input {
-    margin: 1rem;
+    margin: 1rem 1rem 0rem 1rem;
 }
 
-input[type=submit] {
+.register-error-name, .register-error-email, .register-error-password {
+    color: var(--main-red);
+    font-style: italic;
+    display: none;
+}
+
+
+
+#register-submit-btn {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+#login-submit-btn {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+#register-submit-btn, #login-submit-btn {
     background: var(--main-blue);
     font-weight: bold;
     color: var(--white-bg);
+}
+
+#register-submit-btn:hover, #login-submit-btn:hover {
+    cursor: pointer;
 }
 
 .login-form input[type=submit] {

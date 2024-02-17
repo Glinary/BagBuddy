@@ -2,6 +2,7 @@
 // import bodyParser from "body-parser";
 const express = require('express');
 const bodyParser = require('body-parser');
+const User = require('../schema/Users');
 
 const app = express();
 app.use(bodyParser.json());
@@ -122,9 +123,28 @@ const controller = {
       css1: "/static/css/login-register.css",
       showTop: false,
       showBot: false,
-      showAddBtn: false
+      showAddBtn: false,
+      // mainjs: "/static/js/register.js"
     })
-  }
+  },
+
+  // To check name availability
+  // postCheckName: async function(req, res) {
+  //   const name = req.body.name;
+
+  //   // check if the name exists in the db
+  //   try {
+  //     const result = await User.findOne({ name: name }).exec();
+  //     if (result) {
+  //         res.json({ available: false });
+  //     } else {
+  //         res.json({ available: true });
+  //     }
+  //   } catch (error) {
+  //       console.error(error);
+  //       res.status(500).json({ error: 'An error occurred' });
+  //   }
+  // }  
 };
 
 // export default controller;

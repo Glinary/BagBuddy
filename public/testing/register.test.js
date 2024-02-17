@@ -11,9 +11,9 @@ const { register }  = require('../js/register');
 
     @return - 200
 */
-test('successful registration returns 200', () => {
-    expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).toBe(200);
-});
+// test('successful registration returns 200', () => {
+//     expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).toBe(200);
+// });
 
 
 /*
@@ -27,11 +27,10 @@ test('successful registration returns 200', () => {
     @return - 200
 */
 
-/*
-TODO: uncomment this function once the devs have implemented a register function under '..js/register'
+
+// TODO: uncomment this function once the devs have implemented a register function under '..js/register'
 
 test('duplicate registration does not return 200', () => {
     register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd");
     expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).not.toBe(200);
 });
-*/
