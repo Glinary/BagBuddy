@@ -1,0 +1,44 @@
+<section id="form-page">
+    <div class="register-logo app-logo-placeholder">
+        <h1>BagBuddy</h1>
+    </div>
+
+    <div class="register form-placeholder">
+        <div class="form-header">
+            <h1>Create an account</h1>
+            <h2>Start packing your journey</h2>
+        </div>
+
+        <form method="POST" id="registration-form" class="register-form" >
+            <p>
+                <input type="text" id="register-name" name="register_name" placeholder="name" required>
+            </p>
+            <div class="register-error-name">
+                Invalid name: must be 7 to 36 characters
+            </div>
+
+            <p>
+                <input type="email" id="register-email" name="register_email" placeholder="email" required>
+            </p>
+            <div class="register-error-email">
+                Invalid email format
+            </div>
+
+            <p>
+                <input type="password" id="register-password" name="register_password" class="form-control" placeholder="password" minlength="7" required aria-describedby="register-error-password" required>
+            </p>
+            <div class="register-error-password">
+                Invalid password
+            </div>
+
+            <p class="submit-btn">
+                <button type="submit" id="register-submit-btn">SIGN UP</button>
+            </p>
+        </form>
+
+        {{!-- Create account link --}}
+        <div class="login-link">
+            <a href="/login">I already have an account</a>
+        </div>
+    </div>
+</section>

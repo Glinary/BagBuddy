@@ -7,7 +7,7 @@ const controller = require('../controllers/controller.js');
 const router = Router();
 
 router.get("/", controller.getOnboarding);
-router.get("/signup", controller.getSignup);
+router.get("/register", controller.getRegister);
 router.get("/login", controller.getLogin);
 //router.get("/", controller.getHome);
 router.get("/bag", controller.getBag);
@@ -16,6 +16,8 @@ router.get("/addbag", controller.getAddBag);
 router.get("/additem", controller.getAddItem);
 router.get("/itemgallery", controller.getItemGallery);
 
+// To check name availability
+// router.post("/check-name", controller.postCheckName);
 
 // export default router;
 module.exports = router;

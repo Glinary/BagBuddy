@@ -1,5 +1,5 @@
 
-const register  = require('../js/register');
+const { register }  = require('../js/register');
 
 /*
     This function tests to see if a unique set of name, email, and password
@@ -27,11 +27,10 @@ test('successful registration returns 200', () => {
     @return - 200
 */
 
-/*
-TODO: uncomment this function once the devs have implemented a register function under '..js/register'
 
-test('duplicate registration does not return 200', () => {
-    register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd");
-    expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).not.toBe(200);
-});
-*/
+// TODO: uncomment this function once the devs have implemented a register function under '..js/register'
+
+// test('duplicate registration does not return 200', () => {
+//     register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd");
+//     expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).not.toBe(200);
+// });
