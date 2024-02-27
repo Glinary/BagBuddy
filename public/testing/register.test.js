@@ -1,4 +1,5 @@
-
+const request = require('supertest');
+const app = require('../../index.js');
 const { register }  = require('../js/register');
 
 /*
@@ -14,6 +15,37 @@ const { register }  = require('../js/register');
 test('successful registration returns 200', () => {
     expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).toBe(200);
 });
+
+describe("POST /register", () => {
+    describe("given a name, email that does not exist, and password that does not exist", () => {
+        test("return status code 200", async () => {
+            const res = request(app).post("/register").send({
+                name: "Gleezell",
+                email: "gleezell_uy@dlsu.edu.ph",
+                password: "P@ssw0rd",
+            })
+            expect(res.statusCode).toBe(200);
+        })
+    })
+    describe("given credentials that already exist", () => {
+        test("return status code that is not 200", async () => {
+            //register valid credentials
+            const trash = (await request(app).post("/register")).send({
+                name: "Gleezell",
+                email: "gleezell_uy@dlsu.edu.ph",
+                password: "P@ssw0rd",
+            })
+            expect(trash.statusCode).toBe(200);
+            //register duplicate credentials
+            const res = (await request(app).post("/register")).send({
+                name: "Gleezell",
+                email: "gleezell_uy@dlsu.edu.ph",
+                password: "P@ssw0rd",
+            })
+            expect(res.statusCode).not.toBe(200);
+        })
+    })
+})
 
 
 /*

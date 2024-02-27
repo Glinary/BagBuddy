@@ -32,6 +32,20 @@ app.engine("hbs", exphbs.engine({ extname: "hbs" }));
 app.set("view engine", "hbs"); // set express' default templating engine
 app.set("views", "./views");
 
+// ---------- BEGINNING OF FETCH REQUESTS ---------- //
+app.post('/ab', (req, res) => {
+  res.sendStatus(200)
+})
+app.post('/register', (req, res) => {
+  res.sendStatus(200)
+})
+app.post('/login', (req, res) => {
+  res.sendStatus(200)
+})
+
+
+// ---------- END OF FETCH REQUESTS ---------------- //
+
 //user bodyParser
 app.use(bodyParser.json());
 
@@ -43,3 +57,5 @@ app.listen(port, () => {
   console.log(`Server is running at:`);
   console.log(`http://localhost:` + port);
 });
+
+module.exports = app;
