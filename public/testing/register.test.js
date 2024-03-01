@@ -66,3 +66,63 @@ describe("POST /register", () => {
 //     register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd");
 //     expect(register("Gleezell", "gleezell_uy@dlsu.edu.ph", "P@ssw0rd")).not.toBe(200);
 // });
+
+/**********************************/
+
+//validateName()
+describe("Name Validation", () => {
+    test('returns true given a name with 7 to 36 characters', () => {
+        expect(validateName("Validname")).toBe(true);
+    });
+    
+    test('returns false given an empty name', () => {
+        expect(validateName("")).toBe(false);
+    });
+    
+    test('returns false given a name with less than 7 characters', () => {
+        expect(validateName("Name")).toBe(false);
+    });
+    
+    test('returns false given a name with more than 36 characters', () => {
+        expect(validateName("Namenamenamenamenamenamenamenamenamename")).toBe(false);
+    });
+})
+
+//validateEmail()
+describe("Email Validation", () => {
+    test('returns true given an email in valid email format', () => {
+        expect(validateEmail("gleezell_uy@dlsu.edu.ph")).toBe(true);
+    });
+    
+    test('returns false given an empty email', () => {
+        expect(validateEmail("")).toBe(false);
+    });
+    
+    test('returns false given an email without an "@"', () => {
+        expect(validateEmail("gleezell_uy@dlsu.edu.ph")).toBe(false);
+    });
+    
+    test('returns false given an email without a "." in the domain', () => {
+        expect(validateEmail("gleezell_uy@dlsueduph")).toBe(false);
+    });
+    
+    test('returns false given an email with spaces', () => {
+        expect(validateEmail("gleezell uy@dlsu.edu.ph")).toBe(false);
+    });
+})
+
+
+//validatePassword()
+describe("Email Validation", () => {
+    test('returns true given a password with 7 or more characters', () => {
+        expect(validatePassword("validpassword")).toBe(true);
+    });
+    
+    test('returns false given an empty password', () => {
+        expect(validatePassword("")).toBe(false);
+    });
+    
+    test('returns false given a password with less than 7 characters', () => {
+        expect(validatePassword("less")).toBe(false);
+    });
+})
