@@ -124,27 +124,67 @@ const controller = {
       showTop: false,
       showBot: false,
       showAddBtn: false,
-      // mainjs: "/static/js/register.js"
+      mainjs: "/static/js/register.js"
     })
   },
 
-  // To check name availability
-  // postCheckName: async function(req, res) {
-  //   const name = req.body.name;
+  getProfile: async function (req, res) {
+    res.render("profile", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/profile.css",
+      showTop: false,
+      showBot: true,
+      showAddBtn: false,
+      mainjs: "/static/js/profile.js",
+      js1: "/static/js/home.js",
+      defaultImg: "/static/images/boy.png"
+    })
+  },
 
-  //   // check if the name exists in the db
-  //   try {
-  //     const result = await User.findOne({ name: name }).exec();
-  //     if (result) {
-  //         res.json({ available: false });
-  //     } else {
-  //         res.json({ available: true });
-  //     }
-  //   } catch (error) {
-  //       console.error(error);
-  //       res.status(500).json({ error: 'An error occurred' });
-  //   }
-  // }  
+  getEditProfile: async function (req, res) {
+    res.render("editProfile", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/editProfile.css",
+      showTop: false,
+      showBot: true,
+      showAddBtn: false,
+      mainjs: "/static/js/editProfile.js"
+    })
+  },
+
+  postRegister: async function (req, res) {
+    const { registerName, registerEmail, registerPassword } = req.body;
+
+    try {
+      // check the database for existing name and email
+      const userExists = await User.findOne({ $or: [{ name: registerName }, { email: registerEmail }] });
+
+      if (userExists) {
+        return res.status(400).json({ message: 'Name and email already in use.' });
+      }
+
+      // Create new user
+      const newUser = new User({
+        name: registerName,
+        email: registerEmail,
+        password: registerPassword,
+        avatar: "/static/images/boy.png"
+      });
+
+      await newUser.save()
+        .then(doc => console.log(doc))
+        .catch(err => console.log(err));
+
+      // Handle successfu registration
+      res.status(201).json({ message: 'User registered successfully!' });
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ message: 'Validation failed. ', errors: error.errors });
+      } else {
+        res.status(500).json({ message: 'Server error.' });
+      }
+    }
+  },
 };
 
 // export default controller;
