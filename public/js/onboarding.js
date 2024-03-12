@@ -13,9 +13,9 @@ var currentIndex = 0;
 function updateOnboardingContent() {
     var content = onboardingContent[currentIndex];
 
-    appMessage = document.getElementById('welcome_message');
-    appName = document.getElementById('app_name');
-    appTagline = document.getElementById('app_tagline');
+    var appMessage = document.getElementById('welcome_message');
+    var appName = document.getElementById('app_name');
+    var appTagline = document.getElementById('app_tagline');
 
     // Contents
     appMessage.textContent = content.welcomeMessage;

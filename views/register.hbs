@@ -9,31 +9,39 @@
             <h2>Start packing your journey</h2>
         </div>
 
+        {{!-- method="POST" --}}
         <form method="POST" id="registration-form" class="register-form" >
-            <p>
-                <input type="text" id="register-name" name="register_name" placeholder="name" required>
-            </p>
-            <div class="register-error-name">
-                Invalid name: must be 7 to 36 characters
+            <div>
+                <input type="text" id="register-name" name="registerName" placeholder="name">
             </div>
+            
+            <div id="register-name-feedback"></div>
 
-            <p>
-                <input type="email" id="register-email" name="register_email" placeholder="email" required>
-            </p>
-            <div class="register-error-email">
-                Invalid email format
+            <div>
+                <input type="email" id="register-email" name="registerEmail" placeholder="email">
             </div>
+            
+            <div id="register-email-feedback"></div>
 
-            <p>
-                <input type="password" id="register-password" name="register_password" class="form-control" placeholder="password" minlength="7" required aria-describedby="register-error-password" required>
-            </p>
-            <div class="register-error-password">
-                Invalid password
+            <div>
+                <input type="password" id="register-password" name="registerPassword" class="form-control" placeholder="password" minlength="7">
             </div>
+            
+            <div id="register-password-feedback"></div>
 
-            <p class="submit-btn">
-                <button type="submit" id="register-submit-btn">SIGN UP</button>
-            </p>
+            <div class="submit-btn">
+                {{!-- <a href="/home">
+                    <button type="submit" id="register-submit-btn">
+                        SIGN UP
+                    </button>
+                </a> --}}
+                {{!-- <button type="submit" id="register-submit-btn">
+                    <a href="/home" class="profile-link">SIGN UP</a>
+                </button> --}}
+                <button type="submit" id="register-submit-btn">
+                    SIGN UP
+                </button>
+            </div>
         </form>
 
         {{!-- Create account link --}}

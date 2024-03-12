@@ -1,0 +1,1 @@
+const topBar = document.querySelector("#top-sec");

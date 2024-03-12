@@ -96,7 +96,7 @@
     height: 2.5rem;
     border: 1px solid var(--grey);
     border-radius: 10px;
-    padding: 0rem 1.5rem 0rem 1.5rem;
+    padding: 0rem 1rem 0rem 1rem;
     box-sizing: border-box;
 }
 
@@ -108,13 +108,10 @@
     margin: 1rem 1rem 0rem 1rem;
 }
 
-.register-error-name, .register-error-email, .register-error-password {
-    color: var(--main-red);
+#register-name-feedback, #register-email-feedback, #register-password-feedback {
     font-style: italic;
-    display: none;
+    display: block;
 }
-
-
 
 #register-submit-btn {
     margin-top: 3rem;
@@ -152,5 +149,10 @@
 
 a {
     color: var(--main-blue);
+    text-decoration: none;
+}
+
+.profile-link {
+    color: var(--white-bg);
     text-decoration: none;
 }
