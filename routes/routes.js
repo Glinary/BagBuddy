@@ -22,5 +22,7 @@ router.post("/register/isNameValid", controller.isNameValid);
 router.post("/register/isEmailValid", controller.isEmailValid);
 router.post("/register/newUserRegistration", controller.newUserRegistration);
 
+router.post("/postlogin", controller.postLogin);
+
 // export default router;
 module.exports = router;

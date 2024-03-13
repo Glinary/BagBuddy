@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(bodyParser.json());
 
+let loggedInUser = null; // Placement for local session only
+
 const controller = {
   getHome: async function (req, res) {
     res.render("home", {
@@ -112,6 +114,9 @@ const controller = {
     res.render("login", {
       maincss: "/static/css/main.css",
       css1: "/static/css/login-register.css",
+      partialcss: "",
+      mainjs: "/static/js/login.js",
+      js2: "",
       showTop: false,
       showBot: false,
       showAddBtn: false
@@ -222,6 +227,36 @@ const controller = {
     } catch (error) {
       console.log('Error registering user: ', error);
       res.status(500).json({ message: 'Server error.' });
+    }
+  },
+
+  postLogin: async function (req, res) {
+    const { email, password } = req.body;
+
+    try {
+      const logUser = await User.findOne({ email: email });
+
+      if (logUser != null) {
+        const passStatus = await logUser.comparePW(password);
+        if (passStatus) {
+          // Update global variable with email
+          loggedInUser = email;
+
+          // Redirect to main page
+          res.status(200).redirect('/home');
+        } else {
+          console.log("Incorrect Password"); // Remove before deployment. For testing only
+          res.status(401).send("Incorrect email or password. Please try again.");
+        }
+
+      } else {
+        console.log("Email does not exist"); // Remove before deployment. For testing only
+        res.status(404).send("Incorrect email or password. Please try again.");
+      }
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("An error occurred");
     }
   },
 };
