@@ -18,7 +18,9 @@ router.get("/addbag", controller.getAddBag);
 router.get("/additem", controller.getAddItem);
 router.get("/itemgallery", controller.getItemGallery);
 
-router.post("/register", controller.postRegister);
+router.post("/register/isNameValid", controller.isNameValid);
+router.post("/register/isEmailValid", controller.isEmailValid);
+router.post("/register/newUserRegistration", controller.newUserRegistration);
 
 // export default router;
 module.exports = router;

@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const User = require('../schema/Users');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(bodyParser.json());
@@ -152,37 +153,75 @@ const controller = {
     })
   },
 
-  postRegister: async function (req, res) {
-    const { registerName, registerEmail, registerPassword } = req.body;
-
+  isNameValid: async function (req, res) {
     try {
-      // check the database for existing name and email
-      const userExists = await User.findOne({ $or: [{ name: registerName }, { email: registerEmail }] });
+      const registerName = req.body.registerName;
 
-      if (userExists) {
-        return res.status(400).json({ message: 'Name and email already in use.' });
+      console.log('isValid - Received name: ', registerName);
+
+      // check the database for existing name
+      const nameExists = await User.findOne({ name: registerName });
+      console.log('isValid - Name exists: ', nameExists);
+
+      if (nameExists) {
+        return res.status(400).json({ message: 'Name already in use.' });
+      } else {
+        res.status(200).json({ message: 'Name is valid.' });
       }
+    } catch (error) {
+      console.log('Error checking if name exists: ', error);
+      res.status(500).json({ message: 'Server error.' });
+    }
+  },
 
-      // Create new user
+  isEmailValid: async function (req, res) {
+    try {
+      const registerEmail = req.body.registerEmail;
+
+      console.log('isValid Email - Received email: ', registerEmail);
+
+      // check the database for existing email
+      const emailExists = await User.findOne({ email: registerEmail });
+      console.log('isValid - Email exists: ', emailExists);
+
+      if (emailExists) {
+        return res.status(400).json({ message: 'Email already in use.' });
+      } else {
+        res.status(200).json({ message: 'Email is valid.' });
+      }
+    } catch (error) {
+      console.log('Error checking if email exists: ', error);
+      res.status(500).json({ message: 'Server error.' });
+    }
+  },
+
+  newUserRegistration: async function (req, res) {
+    try {
+      const registerName = req.body.registerName;
+      const registerEmail = req.body.registerEmail;
+      const registerPassword = req.body.registerPassword;
+
+      console.log('Post-Reg Received name: ', registerName);
+      console.log('Post-Reg Received email: ', registerEmail);
+      console.log('Post-Reg Received password: ', registerPassword);
+
+      // Register the user in user schema format
       const newUser = new User({
-        name: registerName,
+        _id: new mongoose.Types.ObjectId(),
         email: registerEmail,
-        password: registerPassword,
-        avatar: "/static/images/boy.png"
+        name: registerName,
+        password: registerPassword
       });
 
-      await newUser.save()
-        .then(doc => console.log(doc))
-        .catch(err => console.log(err));
+      // save the user to the database
+      const savedUser = await newUser.save();
+      console.log('User saved: ', savedUser);
 
-      // Handle successfu registration
-      res.status(201).json({ message: 'User registered successfully!' });
+      // after successful registration, redirect to login validation
+      res.status(200).json({ message: 'User created.' });
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        res.status(400).json({ message: 'Validation failed. ', errors: error.errors });
-      } else {
-        res.status(500).json({ message: 'Server error.' });
-      }
+      console.log('Error registering user: ', error);
+      res.status(500).json({ message: 'Server error.' });
     }
   },
 };
