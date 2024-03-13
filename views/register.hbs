@@ -9,8 +9,7 @@
             <h2>Start packing your journey</h2>
         </div>
 
-        {{!-- method="POST" --}}
-        <form method="POST" id="registration-form" class="register-form" >
+        <form action="/register" method="POST" id="registration-form" class="register-form" >
             <div>
                 <input type="text" id="register-name" name="registerName" placeholder="name">
             </div>
@@ -30,21 +29,12 @@
             <div id="register-password-feedback"></div>
 
             <div class="submit-btn">
-                {{!-- <a href="/home">
-                    <button type="submit" id="register-submit-btn">
-                        SIGN UP
-                    </button>
-                </a> --}}
-                {{!-- <button type="submit" id="register-submit-btn">
-                    <a href="/home" class="profile-link">SIGN UP</a>
-                </button> --}}
                 <button type="submit" id="register-submit-btn">
                     SIGN UP
                 </button>
             </div>
         </form>
 
-        {{!-- Create account link --}}
         <div class="login-link">
             <a href="/login">I already have an account</a>
         </div>
