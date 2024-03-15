@@ -1,9 +1,10 @@
 <section id="addItem-section">
     <div class="addItem-wrapper">
         <div class="addItem-top">
-            <div class="addItem-title">{{bag.name}}</div>
-            <div class="addItem-weight">Max: {{bag.weight}}</div>
+            <div class="addItem-title">{{bag.bagName}}</div>
+            <div class="addItem-weight">Max: {{bag.bagWeight}}</div>
         </div>
+        <input type="hidden" name="userid" id="userid" value={{user}}>
         <div class="addItem-mid" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         <div class="addItem-float-bot">
             <div class="instruct">Click or drag item here to add into the bag</div>
@@ -11,22 +12,12 @@
                 <div class="float-title">Item Gallery</div>
                 <div class="float-items-wrapper">
                     {{#each items}}
-                        <section id="{{this.id}}" class="dItem-section" draggable="true" ondragstart="drag(event)" onclick="DClicked(this)">
-                            <div class="dItem-wrapper center">
-                                <div class="dItem-name center">{{this.name}}</div>
-                                <div class="dItem-weight">{{this.weight}}</div>
-                                <div class="dItem-quantity center">
-                                    <div class="quant-item" id="dItem-quantSub">-</div>
-                                    <div class="quant-item" id="dItem-quantVal">1</div>
-                                    <div class="quant-item" id="dItem-quantAdd">+</div>
-                                </div>
-                            </div>
-                        </section>
+                        {{> addDItem this}}
                     {{/each}}
                 </div>
             
                 <div class="float-btn">
-                    <a href="/bag"><div class="float-btn-btn">Done</div></a>
+                    <div class="float-btn-btn" onclick="add_items()">Done</div></a>
                     <a href="/itemgallery"><div class="float-btn-btn">Edit Items Gallery</div></a>
                 </div>
             </div>

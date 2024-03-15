@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const SALT_WORK_FACTOR = 7;
 
@@ -28,31 +28,34 @@ const usersSchema = new mongoose.Schema({
       ref: "Bags",
     },
   ],
-  itemGallery: {
-    type: mongoose.Types.ObjectId,
-    required: false,
-  }
+  itemGallery: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Items",
+      required: false,
+    },
+  ],
 });
 
-usersSchema.pre('save', async function (next){
+usersSchema.pre("save", async function (next) {
   const user = this;
 
-  if (!user.isModified('password'))
-      // `return next();` will make sure 
-      // the rest of this function doesn't run
-      return next(); 
+  if (!user.isModified("password"))
+    // `return next();` will make sure
+    // the rest of this function doesn't run
+    return next();
 
   try {
-      // generate random salt
-      const salt = await bcrypt.genSalt(SALT_WORK_FACTOR); 
-      // produce the hashed value
-      const hash = await bcrypt.hash(user.password, salt);
-      // replace user's password with the hashed value
-      user.password = hash;
-      next(); // continue to the next middleware function
+    // generate random salt
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+    // produce the hashed value
+    const hash = await bcrypt.hash(user.password, salt);
+    // replace user's password with the hashed value
+    user.password = hash;
+    next(); // continue to the next middleware function
   } catch (err) {
-      console.error(err);
-      return next(err);
+    console.error(err);
+    return next(err);
   }
 });
 

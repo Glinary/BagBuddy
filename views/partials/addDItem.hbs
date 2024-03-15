@@ -1,11 +1,11 @@
-<section id="dItem-section">
-    <div id="{{this.id}}" class="dItem-wrapper center" draggable="true" ondragstart="drag(event)">
-        <div class="dItem-name center">{{this.name}}</div>
-        <div class="dItem-weight">{{this.weight}}</div>
-        <div class="dItem-quantity center">
+<section id="{{this._id}}" class="dItem-section" draggable="true" ondragstart="drag(event)" onclick="DClicked(this)">
+    <div class="dItem-wrapper center">
+        <div class="dItem-name center">{{this.itemName}}</div>
+        <div class="dItem-weight">{{this.itemWeight}} kg</div>
+        {{!-- <div class="dItem-quantity center">
             <div class="quant-item" id="dItem-quantSub">-</div>
             <div class="quant-item" id="dItem-quantVal">1</div>
             <div class="quant-item" id="dItem-quantAdd">+</div>
-        </div>
+        </div> --}}
     </div>
 </section>

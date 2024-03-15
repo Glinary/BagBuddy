@@ -5,6 +5,7 @@
 
 .bag-box {
   /* width: 34%; */
+  max-width: 100%;
   aspect-ratio: 1/1.25;
   /* flex-basis: 35%; */
   border-radius: 15px;
@@ -19,7 +20,7 @@
 
 .bag-icon {
   height: 55%;
-  width: 70%;
+  width: 75%;
   /* background-color: aqua; */
 }
 
@@ -29,11 +30,17 @@
   width: 100%;
 }
 
+.bag-info-list a {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
 .bag-name {
   text-align: center;
   font-weight: 700;
   width: 100%;
-  font-size: calc(1.15em + 0.5vw);
+  font-size: calc(0.55em + 0.55vw);
 }
 
 .bag-info-list2 {
