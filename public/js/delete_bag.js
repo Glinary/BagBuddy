@@ -46,14 +46,17 @@ cancelDeleteBtn.addEventListener("click", function () {
 
 // confirm delete
 confirmDeleteBtn.addEventListener("click", async function () {
+  console.log("------CONFIRM DELETE------");
   console.log("bag from HTML: ", bag);
 
-  console.log("JS HERE");
   let bagToDelete = {
     bag: bag,
   };
 
-  const response = await fetch(`/db`, {
+  const userIDClass = document.querySelector("#userid");
+  const userID = userIDClass.value;
+  console.log("value: ", userID);
+  const response = await fetch(`/db/${userID}`, {
     method: "POST",
     body: JSON.stringify(bagToDelete),
     headers: {
@@ -65,7 +68,7 @@ confirmDeleteBtn.addEventListener("click", async function () {
 
   if (response.status == 200) {
     console.log("redirect to home");
-    window.location.href = `http://localhost:3000/`;
+    window.location.href = `http://localhost:3000/home/${userID}`;
   }
 });
 
@@ -76,7 +79,8 @@ confirmDeleteBtn.addEventListener("click", async function () {
 onload();
 
 async function onload() {
-  const bagSched = await findBag();
+  console.log("-----ONLOAD()------");
+  const bagSched = await findBagDate();
 
   console.log("Bag Date: ", bagSched);
 
@@ -93,7 +97,7 @@ async function onload() {
 }
 
 // Find bag in database
-async function findBag() {
+async function findBagDate() {
   let bagToFind = {
     findbag: parB,
   };
@@ -108,7 +112,6 @@ async function findBag() {
   if (response.status == 200) {
     let resBag = await response.json();
     let bag = resBag.bagDate;
-    console.log("FoundBag: ", bag);
     return bag;
   }
 }

@@ -43,6 +43,9 @@ function addButtonToggle() {
 function addItemLinkRedirect() {
   window.location.href = `http://localhost:3000/addItem/${par}`;
 }
+function addBagRedirect() {
+  window.location.href = `http://localhost:3000/addbag/${par}`;
+}
 
 searchIcon.addEventListener("click", function () {
   topBarAct.style.display = "none";

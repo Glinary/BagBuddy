@@ -15,11 +15,10 @@ let loggedInUser = null; // Placement for local session only
 const controller = {
   getHome: async function (req, res) {
     console.log("-------GET HOME VIEW--------");
-    let userID = req.body.userID;
+    let userID = req.params.id;
     console.log("USER ID: ", userID);
-    let email = "emailuetest1";
 
-    const user = await User.findOne({ email: email }).lean().exec();
+    const user = await User.findOne({ _id: userID }).lean().exec();
     const userBags = await Bags.find({ _id: { $in: user.bags } })
       .lean()
       .exec();
@@ -36,6 +35,7 @@ const controller = {
       showBot: true,
       showAddBtn: true,
       bags: userBags,
+      user: userID,
     });
   },
 
@@ -44,6 +44,9 @@ const controller = {
 
     const bagID = req.params.id;
     console.log("bag ID: ", bagID);
+
+    const userID = req.params.user;
+    console.log("user ID:", req.params.user);
 
     const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
     const itemsToDisplay = bagToDisplay.bagItems;
@@ -80,6 +83,7 @@ const controller = {
       /*Sample list for testing bag view*/
       bag: bagToDisplay,
       items: itemList,
+      user: userID,
     });
   },
 
@@ -104,11 +108,13 @@ const controller = {
       css1: "/static/css/bagform.css",
       mainscript: "/static/js/home.js",
       js1: "/static/js/add_bag.js",
+      user: req.params.id,
     });
   },
 
   getBagFormEdit: async function (req, res) {
-    bagToFind = req.params.id;
+    const bagToFind = req.params.id;
+    const userID = req.params.user;
 
     const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
@@ -118,6 +124,7 @@ const controller = {
       mainscript: "/static/js/home.js",
       js1: "/static/js/edit_bag.js",
       bags: bagFound,
+      user: userID,
     });
   },
 
@@ -185,6 +192,7 @@ const controller = {
       js1: "/static/js/additem.js",
       bag: bagToDisplay,
       items: itemList,
+      user: bagUsersPool._id,
     });
   },
 
@@ -210,7 +218,7 @@ const controller = {
       showTop: false,
       showBot: false,
       showAddBtn: false,
-      mainjs: "/static/js/onboarding.js",
+      mainscript: "/static/js/onboarding.js",
     });
   },
 
@@ -219,8 +227,8 @@ const controller = {
       maincss: "/static/css/main.css",
       css1: "/static/css/login-register.css",
       partialcss: "",
-      mainjs: "/static/js/login.js",
-      js2: "",
+      mainscript: "/static/js/login.js",
+      js1: "",
       showTop: false,
       showBot: false,
       showAddBtn: false,
@@ -245,7 +253,7 @@ const controller = {
       showTop: false,
       showBot: true,
       showAddBtn: false,
-      mainjs: "/static/js/profile.js",
+      mainscript: "/static/js/profile.js",
       js1: "/static/js/home.js",
       defaultImg: "/static/images/boy.png",
     });
@@ -258,7 +266,7 @@ const controller = {
       showTop: false,
       showBot: true,
       showAddBtn: false,
-      mainjs: "/static/js/editProfile.js",
+      mainscript: "/static/js/editProfile.js",
     });
   },
 
@@ -335,19 +343,22 @@ const controller = {
   },
 
   postLogin: async function (req, res) {
+    console.log("------LOGIN------");
     const { email, password } = req.body;
 
     try {
       const logUser = await User.findOne({ email: email });
+      const userID = logUser._id;
+      console.log("user ID: ", userID);
 
       if (logUser != null) {
         const passStatus = await logUser.comparePW(password);
         if (passStatus) {
+          console.log("user exists in database...");
           // Update global variable with email
           loggedInUser = email;
-
           // Redirect to main page
-          res.status(200).redirect("/home");
+          res.status(200).json({ uID: userID });
         } else {
           console.log("Incorrect Password"); // Remove before deployment. For testing only
           res
@@ -366,8 +377,8 @@ const controller = {
 
   /** DB controls - BAGS AND ITEMS */
   addTheBag: async function (req, res) {
-    let email = "emailuetest1";
-    const user = await User.findOne({ email: email }).lean().exec();
+    let userID = req.params.id;
+    const user = await User.findOne({ _id: userID }).lean().exec();
     console.log(req.body.bagname);
 
     let dateUsage = req.body.bagdate;
@@ -611,17 +622,19 @@ const controller = {
   },
 
   deleteBag: async function (req, res) {
-    console.log("HERE IN THIS");
+    console.log("------DELETE BAG------");
+
     const bagToDelete = req.body.bag;
-    console.log("STring", bagToDelete);
+    console.log("bag ID to delete: ", bagToDelete);
+
+    const userID = req.params.id;
 
     try {
-      let email = "emailuetest1";
-      const user = await User.findOne({ email: email }).lean().exec();
+      // const user = await User.findOne({ _id: userID }).lean().exec();
       console.log("HEY");
 
       await User.findOneAndUpdate(
-        { _id: user._id },
+        { _id: userID },
         { $pull: { bags: bagToDelete } }
       ).then(async (deletedBag) => {
         console.log("bag deleted successfully in User");
@@ -629,7 +642,7 @@ const controller = {
           await Bags.deleteOne({ _id: bagToDelete }).then((deletedBagBag) => {
             if (deletedBagBag) {
               console.log("bag deleted successfully in Bags");
-              res.redirect(`http://localhost:3000/`);
+              res.redirect(`http://localhost:3000/home/${userID}`);
             }
           });
         } else {
@@ -722,9 +735,6 @@ const controller = {
 
   addItem: async function (req, res) {
     console.log("-------ADD ITEM--------");
-    let email = "emailuetest1";
-    const user = await User.findOne({ email: email }).lean().exec();
-
     const itemList = req.body;
 
     const bagID = itemList.shift();

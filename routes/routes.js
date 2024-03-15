@@ -6,17 +6,17 @@ const controller = require("../controllers/controller.js");
 
 const router = Router();
 
-router.get("home/:id", controller.getHome);
-router.get("/bag/:id", controller.getBag);
+router.get("/home/:id", controller.getHome);
+router.get("/bag/:user/:id", controller.getBag);
 router.get("/notification", controller.getNotif);
-router.get("/addbag", controller.getAddBag);
+router.get("/addbag/:id", controller.getAddBag);
 router.get("/additem/:id", controller.getAddItem);
 router.get("/itemgallery", controller.getItemGallery);
-router.get("/editbag/:id", controller.getBagFormEdit);
+router.get("/editbag/:user/:id", controller.getBagFormEdit);
 
-router.post("/ab", controller.addTheBag);
+router.post("/ab/:id", controller.addTheBag);
 router.post("/fb", controller.findBag);
-router.post("/db", controller.deleteBag);
+router.post("/db/:id", controller.deleteBag);
 router.post("/eb", controller.editBag);
 router.post("/ai", controller.addItem);
 router.post("/fi", controller.findItem);
