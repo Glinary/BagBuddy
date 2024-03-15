@@ -2,9 +2,86 @@ const dropZone = document.querySelector(".addItem-mid");
 const itemPool = document.querySelector(".float-items-wrapper");
 const itemBox = document.querySelector(".float-item-box");
 const instruct = document.querySelector(".instruct");
+const itemList = document.querySelectorAll(".dItem-section");
+
+var currentURL = window.location.href;
+
+const parBag = currentURL.split("/");
+
+// Get the last segment, which should be 'bdn23232' - bag ID
+const parB = parSegments[parBag.length - 1];
+console.log("PARB ", parB);
+
+let itemsList = [];
 
 let flag = 0;
 let repeat = 10;
+
+itemsList.push(parB);
+
+onload();
+
+async function onload() {
+  console.log("DROPZONE: ", dropZone.childElementCount);
+  const bagItems = await findItems();
+  console.log("bagItems: ", bagItems);
+  itemList.forEach((element) => {
+    itemID = element.getAttribute("id");
+
+    console.log("current item ID: ", itemID);
+
+    bagItems.forEach((bagItemID) => {
+      console.log("current bagItemID: ", bagItemID);
+      if (bagItemID == itemID) {
+        dropZone.appendChild(element);
+        itemsList.push(itemID);
+      }
+    });
+  });
+  checkDropZone();
+}
+
+// Find bag in database
+async function findItems() {
+  let bagToFind = {
+    tofindbag: parB,
+  };
+
+  console.log("BD", bagToFind);
+  const response = await fetch(`/fi`, {
+    method: "POST",
+    body: JSON.stringify(bagToFind),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status == 200) {
+    let resBag = await response.json();
+    let items = resBag.itemGallery;
+    return items;
+  }
+}
+
+async function add_items() {
+  const response = await fetch("/ai", {
+    method: "POST",
+    body: JSON.stringify(itemsList),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status == 200) {
+    console.log("HERE");
+    let redirect = await response.json();
+    let redirectData = redirect.redLink;
+    console.log("redirect", redirectData);
+    window.location.href = `http://localhost:3000/bag/${redirectData}`;
+  } else {
+    console.log("server error occurred");
+  }
+}
 
 function allowDrop(ev) {
   ev.preventDefault();
@@ -21,6 +98,10 @@ function drop(ev) {
   // if not fellow item, drop item to the div
   if (!ev.target.closest(".dItem-section")) {
     ev.target.appendChild(document.getElementById(data));
+    console.log("THE ITEM: ", data);
+    itemsList.push(data);
+    console.log(itemsList);
+
     checkDropZone();
   } else {
     // Prevent the drop on fellow item
@@ -36,10 +117,23 @@ function DClicked(item) {
   // if not yet in dropzone, add.
   if (itemParent != dropZone) {
     dropZone.appendChild(item);
+    console.log("THE ITEM: ", item.id);
+    itemsList.push(item.id);
+    console.log(itemsList);
     checkDropZone();
   } else {
     // else, allow item to go back to item pool
     itemPool.appendChild(item);
+
+    let indexOfItem = itemsList.indexOf(item.id);
+
+    if (indexOfItem !== -1) {
+      itemsList.splice(indexOfItem, 1);
+      console.log("Item removed");
+      console.log("THE ITEM: ", item.id);
+    } else {
+      console.log("Item not found in the array");
+    }
     checkDropZone();
   }
 }

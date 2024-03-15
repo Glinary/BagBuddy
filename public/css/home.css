@@ -5,7 +5,6 @@
   /* background-color: red; */
   padding-bottom: calc(2.55rem + 2.25vw);
   /* add calc(xx) size of menu bar at the bottom to see bag boxes/ it does not get covered by menu bar */
-  display: none;
 }
 
 .bag-view-wrapper {
@@ -22,6 +21,38 @@
 #inside-bag {
   background-color: #e0e0e0;
   height: 100%;
+  overflow-y: hidden;
+}
+
+.confirm-delete {
+  height: 100%;
+  width: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(13, 13, 13, 0.9);
+  z-index: 145;
+}
+
+.confirm-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  background-color: white;
+  height: 6rem;
+  padding: 0.5rem 2rem;
+  border-radius: 5px;
+}
+
+.confirm-btn {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.confirm-btn-opt:hover {
+  cursor: pointer;
+  color: var(--main-orange);
 }
 
 .upper {
@@ -31,16 +62,22 @@
   border-bottom-left-radius: 5rem;
   display: grid;
   grid-template-rows: auto;
-  grid-template-columns: 6fr 40fr 6fr;
+  grid-template-columns: 10% 80% 10%;
   overflow: hidden;
+}
+
+.upper a {
+  text-decoration: none;
+  color: transparent;
 }
 
 .back {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 0rem 0rem 0rem;
-  border-bottom-left-radius: 5rem;
+  height: 100%;
+  padding: 2rem 1rem 0rem 1rem;
+  border-bottom-left-radius: 0rem;
   /* background-color: #6b6363; */
 }
 
@@ -57,14 +94,44 @@ i {
 .info {
   display: flex;
   flex-direction: column;
-  z-index: 9999;
+  z-index: 100;
+  /* background-color: #10296d; */
 }
 
 .edit {
   /* background-color: lightcoral; */
   display: flex;
   justify-content: center;
-  padding: 1rem 0rem;
+  padding: 1rem 0.5rem;
+  z-index: 500;
+}
+
+.edit-option-box {
+  display: none;
+  position: absolute;
+  height: fit-content;
+  width: 4.5rem;
+  padding: 0.65rem;
+  margin-right: 3.5rem;
+  border-radius: 10px;
+  background-color: rgb(233, 228, 228);
+  font-size: calc(0.45em + 0.5vw);
+}
+
+.edit-option-box a {
+  color: black;
+  text-decoration: none;
+}
+
+.edit-set-btn {
+  color: rgb(1, 1, 1);
+  padding: 2px 0px;
+  z-index: 101;
+  cursor: pointer;
+}
+
+.edit-set-btn:hover {
+  color: var(--main-orange);
 }
 
 .inside-bag-edit {
@@ -75,6 +142,7 @@ i {
   align-items: center;
   background-color: #757272;
   border-radius: 100px;
+  z-index: 101;
 }
 
 .inside-bag-edit svg {
@@ -85,7 +153,7 @@ i {
 
 .upper-space {
   background-color: transparent;
-  height: 12%;
+  height: 18%;
 }
 
 .lower-space {
@@ -97,7 +165,7 @@ i {
   width: 100%;
   display: grid;
   grid-template-rows: 1 100px;
-  grid-template-columns: 8fr 50fr 50fr 5fr;
+  grid-template-columns: 5% 55% 40% 5%;
   /* background-color: rgb(172, 36, 36); */
   justify-content: center;
   justify-items: center;
@@ -117,11 +185,11 @@ i {
   display: grid;
   grid-template-rows: repeat(2, minmax(1vw, 3rem));
   grid-template-columns: repeat(1, auto);
-  /* background-color: #ffbd92; */
+  /* background-color: #7a370b; */
 }
 
 .inside-bag-name {
-  font-size: 2.5em;
+  font-size: calc(1.45em + 1vw);
   color: #ffbd92;
   width: fit-content;
   height: fit-content;
@@ -138,7 +206,7 @@ i {
 .inside-bag-desc {
   display: flex;
   align-items: center;
-  font-size: 0.75em;
+  font-size: calc(0.45em + 0.45vw);
   font-weight: 50;
   width: fit-content;
   color: white;
@@ -226,9 +294,20 @@ i {
   border-radius: 50%;
 }
 .lower {
-  flex-grow: 3;
-  width: auto;
+  /* flex-grow: 3; */
+  position: relative;
+  display: grid;
+  grid-template-rows: repeat(auto, auto);
+  grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+  align-items: center;
+  overflow-y: scroll;
+  /* box-sizing: border-box; */
+  width: 100%;
+  height: 70%;
   background-color: #e0e0e0;
+  padding: 1rem 1rem 6rem 1rem;
 }
 
 .scroll-cont {
