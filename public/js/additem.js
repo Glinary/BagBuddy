@@ -80,7 +80,7 @@ async function add_items() {
 
     const userIDClass = document.querySelector("#userid");
     const userID = userIDClass.value;
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectData}`;
+    window.location.href = `/bag/${userID}/${redirectData}`;
   } else {
     console.log("server error occurred");
   }

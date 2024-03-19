@@ -137,7 +137,7 @@ async function edit_bag(json) {
   if (response.status === 200) {
     let redirectedData = await response.json();
     let redirectLink = redirectedData.bagid;
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectLink}`;
+    window.location.href = `/bag/${userID}/${redirectLink}`;
   }
 }
 

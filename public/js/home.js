@@ -41,10 +41,10 @@ function addButtonToggle() {
 }
 
 function addItemLinkRedirect() {
-  window.location.href = `http://localhost:3000/addItem/${par}`;
+  window.location.href = `/addItem/${par}`;
 }
 function addBagRedirect() {
-  window.location.href = `http://localhost:3000/addbag/${par}`;
+  window.location.href = `/addbag/${par}`;
 }
 
 searchIcon.addEventListener("click", function () {
