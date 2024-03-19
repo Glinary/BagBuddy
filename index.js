@@ -15,15 +15,27 @@ const app = express();
 async function connect() {
   const status = await connect_to_mongodb();
   if (status === 200) {
-    //Connect Schemas
-    const Items = require(path.join(__dirname, "./schema/Items"));
-    const Users = require(path.join(__dirname, "./schema/Users"));
-    const Bags = require(path.join(__dirname, "./schema/Bags"));
+    console.log("Connection Success");
   } else {
     console.log("Connection failed.");
   }
 }
 connect();
+
+//Connect Schemas
+const Items = require(path.join(__dirname, "./schema/Items"));
+const Users = require(path.join(__dirname, "./schema/Users"));
+const Bags = require(path.join(__dirname, "./schema/Bags"));
+
+async function addUsers() {
+  const user1 = await Users.create({
+    _id: new mongoose.Types.ObjectId(),
+    email: "endicoco@gmail.com",
+    name: "Peter Hopkins",
+    password: "test123"
+  });
+}
+// addUsers(); //uncomment to add test users
 
 // Set public folder to 'public'
 app.use("/static", express.static("public"));
