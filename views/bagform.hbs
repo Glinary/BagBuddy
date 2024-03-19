@@ -31,8 +31,12 @@
                 </div>
                 <div class="second-page">
                     <div class="input">
-                        <label for="bagdate">Bag Date</label><br>
+                        <label for="bagdate">When will you use the bag?</label><br>
                         <input type="date" name="bagdate" id="date" value="today">
+                    </div>
+                    <div class="input">
+                        <label for="bagdate">Bag Description</label><br>
+                        <textarea id="bagdesc" name="bagdesc" maxlength="25" placeholder="add bag description">{{bags.bagDesc}}</textarea>
                     </div>
                     <button id="submit-btn" type="submit">Create</button>
                 </div>

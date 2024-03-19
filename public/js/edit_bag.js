@@ -7,6 +7,14 @@ const firstPage = document.querySelector(".first-page");
 const secondPage = document.querySelector(".second-page");
 const cancelBtn = document.querySelector("#form-cancel");
 
+var currentURL = window.location.href;
+
+const parBag = currentURL.split("/");
+
+// Get the last segment, which should be 'bdn23232' - bag ID
+const parB = parSegments[parBag.length - 1];
+const parU = parSegments[parBag.length - 2];
+
 let savedColor = selectedColor.value;
 let prev = "";
 let cancel = 0;
@@ -80,10 +88,13 @@ function form_cancel() {
   firstPage.style.display = "block";
   secondPage.style.display = "none";
   nextBtn.style.display = "block";
+  console.log("HERE");
 
   if (cancel == 1) {
     cancelBtn.textContent = "cancel";
     cancel = 0;
+  } else {
+    window.location.href = `/bag/${parU}/${parB}`;
   }
 }
 

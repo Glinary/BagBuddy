@@ -1,8 +1,10 @@
 <section id="itemGallery">
-    <div class="bck"><a href="#"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
+    <div class="bck"><a href="/additem/{{bag}}"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
 
     <div class="confirm-bar center">
-        <button class="confirm-btn">Save changes</button>
+         <input type="hidden" name="userid" id="userid" value={{user}}>
+         <input type="hidden" name="userbag" id="userbag" value={{bag}}>
+        <button class="confirm-btn" onclick="save_items()">Save changes</button>
     </div>
 
     <div class="itemGallery-wrapper white-wrapper">
@@ -11,8 +13,8 @@
             <div class="white-wrap-desc titledesc-item">Think of it as a list of items you can add later to your chosen bag</div>
         </div>
         <div class="gallery-itemlist-wrapper">
-            <div class="gallery-add-item center">+ add item to gallery</div>
-            {{>item}}
+            <div class="gallery-add-item center" onclick="add_item()">+ add item to gallery</div>
+            <div class="newNode"></div>
             {{#each items}}
                 {{>item this}}
             {{/each}}

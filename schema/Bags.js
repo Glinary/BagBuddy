@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const bagsSchema = new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
-  bagCategory: {
-    type: mongoose.Types.ObjectId,
+  bagDesc: {
+    type: String,
     required: false,
   },
   bagName: {

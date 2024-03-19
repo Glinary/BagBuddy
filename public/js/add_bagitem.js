@@ -48,7 +48,7 @@ async function findItems() {
   };
 
   console.log("BD", bagToFind);
-  const response = await fetch(`/fi`, {
+  const response = await fetch(`/fbi`, {
     method: "POST",
     body: JSON.stringify(bagToFind),
     headers: {

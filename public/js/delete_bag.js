@@ -68,7 +68,7 @@ confirmDeleteBtn.addEventListener("click", async function () {
 
   if (response.status == 200) {
     console.log("redirect to home");
-    window.location.href = `http://localhost:3000/home/${userID}`;
+    window.location.href = `/home/${userID}`;
   }
 });
 

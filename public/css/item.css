@@ -7,11 +7,13 @@
   align-items: center;
   margin: 0.55rem 0rem;
   padding: 0rem 1rem;
+  font-size: 0.75em;
 }
 
 .item-left,
 .item-right {
   width: fit-content;
+  gap: 0.2rem;
   height: 100%;
   /* background: red; */
 }
@@ -44,4 +46,28 @@ textarea {
 #item-name textarea {
   font-weight: 600;
   text-align: left;
+}
+
+input {
+  outline: none;
+  border: none;
+  width: 18%;
+  text-align: right;
+  float: right;
+  background-color: transparent;
+}
+
+.gallery-add {
+  width: 100%;
+  background: var(--main-peach);
+  height: calc(2rem + 0.85vw);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.55rem 0rem;
+  padding: 0rem 1rem;
+}
+
+#item-wrapper1 {
+  background-color: rgb(250, 192, 142);
 }

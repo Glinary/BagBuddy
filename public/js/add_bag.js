@@ -6,6 +6,13 @@ const cancelBtn = document.querySelector("#form-cancel");
 let prev = "";
 let cancel = 0;
 
+var currentURL = window.location.href;
+
+const parBag = currentURL.split("/");
+
+// Get the last segment, which should be 'bdn23232' - bag ID
+const parB = parSegments[parBag.length - 1];
+
 function selectColor(color, item) {
   let selectedColor = document.querySelector("#selectedColor");
   console.log("prev color: ", selectedColor.value);
@@ -54,6 +61,8 @@ function form_cancel() {
   if (cancel == 1) {
     cancelBtn.textContent = "cancel";
     cancel = 0;
+  } else {
+    window.location.href = `/home/${parB}`;
   }
 }
 

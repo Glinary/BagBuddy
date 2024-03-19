@@ -189,7 +189,7 @@ const controller = {
       css1: "/static/css/addItem.css",
       partialcss: "/static/css/dItem.css",
       mainscript: "/static/js/home.js",
-      js1: "/static/js/additem.js",
+      js1: "/static/js/add_bagitem.js",
       bag: bagToDisplay,
       items: itemList,
       user: bagUsersPool._id,
@@ -197,17 +197,45 @@ const controller = {
   },
 
   getItemGallery: async function (req, res) {
+    console.log("----GET ITEM GALLERY PAGE----");
+    const userID = req.params.user;
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    console.log("user item gallery look: ", user.itemGallery);
+
+    const userItemsPop = await User.findById(userID)
+      .populate("itemGallery")
+      .exec();
+
+    const userItems = userItemsPop.itemGallery;
+    console.log("populated: ", userItems);
+
+    userItemList = [];
+
+    //code when item pool contains only user item gallery
+    try {
+      // Use map instead of forEach
+      await Promise.all(
+        userItems.map(async (element) => {
+          const items = await Items.find({ _id: element._id }).lean().exec();
+          // console.log(items);
+          userItemList.push(...items);
+        })
+      );
+    } catch (error) {
+      console.log("listing users in bags for items failed due to: ", error);
+    }
+
+    console.log("user item gallery: ", userItemList);
+
     res.render("itemGallery", {
       maincss: "/static/css/main.css",
       css1: "/static/css/itemGallery.css",
       partialcss: "/static/css/item.css",
       mainscript: "/static/js/home.js",
-      bag: { name: "ETC", weight: "7kg", color: "red" },
-      items: [
-        { id: "123456", name: "Pencil", weight: "5kg" },
-        { id: "123457", name: "Pencil", weight: "5kg" },
-        { id: "123458", name: "Pencil", weight: "5kg" },
-      ],
+      js1: "/static/js/add_galleryitem.js",
+      items: userItemList,
+      bag: req.params.id,
+      user: req.params.user,
     });
   },
 
@@ -390,179 +418,18 @@ const controller = {
     }
 
     dateUsage = dateBag;
+    console.log("bagdesc: ", req.body.bagdesc);
 
-    let delete_laterID = new mongoose.Types.ObjectId(
-      "65e859dc190b035ad6bc3b2b"
-    );
-
-    let delete_laterGID = new mongoose.Types.ObjectId(
-      "65f2a0a2a092520f8f480869"
-    );
     // create new Bag of Bag Schema format
     const newBag = new Bags({
       _id: new mongoose.Types.ObjectId(),
+      bagDesc: req.body.bagdesc,
       bagName: req.body.bagname,
       bagColor: req.body.selectedColor,
       bagWeight: req.body.weight,
       dateUsage: dateUsage,
       userItemsPool: [user._id],
     });
-
-    const newItem = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Pencil",
-      itemWeight: 1,
-    });
-
-    const newItem1 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Eraser",
-      itemWeight: 1,
-    });
-
-    const newItem2 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Sharpener",
-      itemWeight: 1,
-    });
-
-    const newItem3 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Pentel",
-      itemWeight: 1,
-    });
-    const newItem4 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Phone",
-      itemWeight: 1,
-    });
-
-    const newItem5 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-
-    const newItem6 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Sharpener",
-      itemWeight: 1,
-    });
-
-    const newItem7 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Pentel",
-      itemWeight: 1,
-    });
-    const newItem8 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Phone",
-      itemWeight: 1,
-    });
-
-    const newItem9 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem10 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem11 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem12 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem13 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-
-    const newItem14 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem15 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem16 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem17 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem18 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem19 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem20 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem21 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem22 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem23 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    let items = [
-      newItem,
-      newItem1,
-      newItem2,
-      newItem3,
-      newItem4,
-      newItem5,
-      newItem6,
-      newItem7,
-      newItem8,
-      newItem9,
-      newItem10,
-      newItem11,
-      newItem12,
-      newItem13,
-      newItem14,
-      newItem15,
-      newItem16,
-      newItem17,
-      newItem18,
-      newItem19,
-      newItem20,
-      newItem21,
-      newItem22,
-      newItem23,
-    ];
-    console.log("Items to be put in bag: ", items);
 
     newBag.save().then(async () => {
       User.findOneAndUpdate(
@@ -574,39 +441,12 @@ const controller = {
               _id: newBag._id,
             },
           },
-
-          itemGallery: items,
         },
         { new: true }
       )
         .then((addedBag) => {
           if (addedBag) {
-            console.log("Success add bag", addedBag);
-            newItem.save();
-            newItem1.save();
-            newItem2.save();
-            newItem3.save();
-            newItem4.save();
-            newItem5.save();
-            newItem6.save();
-            newItem7.save();
-            newItem8.save();
-            newItem9.save();
-            newItem10.save();
-            newItem11.save();
-            newItem12.save();
-            newItem13.save();
-            newItem14.save();
-            newItem15.save();
-            newItem16.save();
-            newItem17.save();
-            newItem18.save();
-            newItem19.save();
-            newItem20.save();
-            newItem21.save();
-            newItem22.save();
-            newItem23.save();
-
+            console.log("Success add bag", addedBag.bags);
             res.status(200).json({
               message: "Bag added successfully",
               bag: newBag._id,
@@ -658,6 +498,7 @@ const controller = {
   editBag: async function (req, res) {
     console.log("EDIT BAG CONTROLLER");
     const bagID = req.body.bagID;
+    const bagDesc = req.body.bagdesc;
     const bagName = req.body.bagname;
     const bagWeight = req.body.weight;
     const bagColor = req.body.selectedColor;
@@ -677,6 +518,7 @@ const controller = {
         { _id: bagID },
         {
           $set: {
+            bagDesc: bagDesc,
             bagName: bagName,
             bagWeight: bagWeight,
             bagColor: bagColor,
@@ -716,8 +558,8 @@ const controller = {
     }
   },
 
-  findItem: async function (req, res) {
-    console.log("-------FIND ITEM--------");
+  findBagItem: async function (req, res) {
+    console.log("-------FIND BAG ITEM--------");
     const bagToFind = req.body.tofindbag;
     const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
@@ -730,6 +572,39 @@ const controller = {
       res.status(200).json({
         itemGallery: itemsToSend,
       });
+    }
+  },
+
+  findItem: async function (req, res) {
+    console.log("-------FIND ITEM--------");
+    const itemToFind = req.body;
+
+    console.log("item to find:", itemToFind);
+
+    try {
+      const result = [];
+
+      for (const item of itemToFind) {
+        const existingItem = await Items.findOne({
+          itemName: item.itemname,
+          itemWeight: item.itemweight,
+        })
+          .lean()
+          .exec();
+
+        if (existingItem) {
+          console.log("item exists in the database already");
+          result.push(200);
+        } else {
+          console.log("item does not exist in the database yet");
+          result.push(500);
+        }
+      }
+
+      res.status(200).json(result); // Send the result back to the client
+    } catch (error) {
+      console.error("Error finding items:", error);
+      res.status(500).json({ error: "An error occurred" }); // Handle error
     }
   },
 
@@ -758,6 +633,50 @@ const controller = {
     } catch (err) {
       console.log("Error in adding items loop: ", err);
     }
+  },
+
+  addItemGallery: async function (req, res) {
+    console.log("----ADD ITEM TO GALLERY----");
+    const newItems = req.body;
+    const user = req.params.user;
+
+    console.log("user: ", user);
+    console.log("items to add in the gallery: ", newItems);
+
+    newItems.forEach(async (obj) => {
+      // create new Item of Item Schema format
+      const newItem = new Items({
+        _id: new mongoose.Types.ObjectId(),
+        itemName: obj.itemname,
+        itemWeight: obj.itemweight,
+      });
+
+      newItem.save().then(async () => {
+        console.log("successful adding of item in Items");
+        User.findOneAndUpdate(
+          { _id: user },
+          {
+            $push: {
+              itemGallery: {
+                _id: newItem._id,
+              },
+            },
+          },
+          { new: true }
+        )
+          .then((addedItem) => {
+            if (addedItem) {
+              console.log("successful adding of items in user");
+              res.status(200).send();
+            } else {
+              console.log("unsuccessful adding of items in user");
+            }
+          })
+          .catch((error) => {
+            console.log("ERROR: ", error);
+          });
+      });
+    });
   },
 };
 
