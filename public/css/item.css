@@ -51,7 +51,7 @@ textarea {
 input {
   outline: none;
   border: none;
-  width: 18%;
+  width: 25%;
   text-align: right;
   float: right;
   background-color: transparent;
@@ -66,8 +66,14 @@ input {
   align-items: center;
   margin: 0.55rem 0rem;
   padding: 0rem 1rem;
+  font-size: 0.75em;
 }
 
 #item-wrapper1 {
   background-color: rgb(250, 192, 142);
+}
+
+.gallery-add input {
+  width: 70%;
+  text-align: left;
 }
