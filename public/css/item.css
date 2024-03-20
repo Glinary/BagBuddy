@@ -51,7 +51,7 @@ textarea {
 input {
   outline: none;
   border: none;
-  width: 25%;
+  width: 45%;
   text-align: right;
   float: right;
   background-color: transparent;
@@ -75,5 +75,5 @@ input {
 
 .gallery-add input {
   width: 70%;
-  text-align: left;
+  text-align: center;
 }

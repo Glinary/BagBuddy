@@ -143,7 +143,7 @@ const controller = {
 
     // get the user in userItemsPool
     const bagUsersPool = bagUsers.userItemsPool;
-    const bagUsersItemGallery = bagUsersPool.itemGallery;
+    const bagUsersItemGallery = bagUsersPool.itemGallery.sort();
 
     console.log("User item ID:", bagUsersItemGallery);
 
@@ -162,6 +162,20 @@ const controller = {
     } catch (error) {
       console.log("listing users in bags for items failed due to: ", error);
     }
+
+    // sort items so its sorted in item pool
+    itemList.sort((a, b) => {
+      const itemNameA = a.itemName.toUpperCase();
+      const itemNameB = b.itemName.toUpperCase();
+
+      if (itemNameA < itemNameB) {
+        return -1; // Item A comes before Item B
+      }
+      if (itemNameA > itemNameB) {
+        return 1; // Item A comes after Item B
+      }
+      return 0; // Item Names are equal
+    });
 
     console.log("user item gallery: ", itemList);
 
@@ -224,6 +238,20 @@ const controller = {
     } catch (error) {
       console.log("listing users in bags for items failed due to: ", error);
     }
+
+    // sort items so its sorted in item pool
+    userItemList.sort((a, b) => {
+      const itemNameA = a.itemName.toUpperCase();
+      const itemNameB = b.itemName.toUpperCase();
+
+      if (itemNameA < itemNameB) {
+        return -1; // Item A comes before Item B
+      }
+      if (itemNameA > itemNameB) {
+        return 1; // Item A comes after Item B
+      }
+      return 0; // Item Names are equal
+    });
 
     console.log("user item gallery: ", userItemList);
 
@@ -639,21 +667,25 @@ const controller = {
     console.log("----ADD ITEM TO GALLERY----");
     const newItems = req.body;
     const user = req.params.user;
+    const totalItems = newItems.length;
+    let savedItems = 0;
 
     console.log("user: ", user);
     console.log("items to add in the gallery: ", newItems);
 
+    newIDs = [];
+
     newItems.forEach(async (obj) => {
-      // create new Item of Item Schema format
       const newItem = new Items({
         _id: new mongoose.Types.ObjectId(),
         itemName: obj.itemname,
         itemWeight: obj.itemweight,
       });
 
-      newItem.save().then(async () => {
-        console.log("successful adding of item in Items");
-        User.findOneAndUpdate(
+      try {
+        await newItem.save();
+
+        const addedItem = await User.findOneAndUpdate(
           { _id: user },
           {
             $push: {
@@ -663,19 +695,28 @@ const controller = {
             },
           },
           { new: true }
-        )
-          .then((addedItem) => {
-            if (addedItem) {
-              console.log("successful adding of items in user");
-              res.status(200).send();
-            } else {
-              console.log("unsuccessful adding of items in user");
-            }
-          })
-          .catch((error) => {
-            console.log("ERROR: ", error);
-          });
-      });
+        );
+
+        if (addedItem) {
+          newIDs.push(newItem._id);
+        } else {
+          console.log("Unsuccessful adding of items in user");
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+        // Handle error, optionally send an error response
+        res.status(500).send("Error occurred while adding items");
+        return; // Exit the function early in case of an error
+      }
+
+      // Increment the savedItems counter
+      savedItems++;
+
+      // Check if all items have been processed
+      if (savedItems === totalItems) {
+        // If all items have been processed, send a 200 status code
+        res.status(200).json({ addedItems: newIDs });
+      }
     });
   },
 };
