@@ -30,7 +30,6 @@ router.get("/editprofile", controller.getEditProfile);
 router.post("/register/isNameValid", controller.isNameValid);
 router.post("/register/isEmailValid", controller.isEmailValid);
 router.post("/postRegister", controller.postRegister);
-router.get("/postLogin", controller.postLogin);
 
 router.post("/postlogin", controller.postLogin);
 

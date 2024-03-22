@@ -121,7 +121,7 @@ document.getElementById("register-submit-btn").addEventListener("click", async f
       emailData.message === "Email is valid."
     ) {
       try {
-        register(data);
+        await register(data);
 
       } catch (error) {
         console.error("Error registering user:", error);
@@ -146,48 +146,15 @@ async function register(data) {
       throw new Error(`Request failed with status ${regResponse.status}`);
     }
   
-    // print the response
-    const resData = await regResponse.json();
+    // Parse the JSON response
+    const responseData = await regResponse.json();
+    console.log(responseData);
+    const redLink = responseData.userID;
+    window.location.href = `/home/${redLink}`;
 
-    console.log(resData);
-    
-    // log in the user after registration
-    try {
-      const loginResponse = await fetch("/postLogin", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: resData,
-      });
-
-      if (loginResponse.ok) {
-        console.log("-----Register to Login-----");
-        resData = await response.json();
-        resLink = resData.uID;
-        //   Redirect to home page upon successful login
-        window.location.href = `/home/${resLink}`;
-
-        // Clear input fields
-        nameInput.value = "";
-        emailInput.value = "";
-        passwordInput.value = "";
-      } else {
-        // Unsuccessful login
-        console.error("Login failed: ", response.statusText);
-
-        const errorMessage = await response.text();
-
-        // Display Error Message
-        document.getElementById("error-message").innerText = errorMessage;
-
-        // Clear email and password fields
-        nameInput.value = "";
-        emailInput.value = "";
-        passwordInput.value = "";
-      }
-    } catch (err) {
-      console.error("Register to Login failed:", err);
-    }
+    // // Clear email and password fields
+    // nameInput.value = "";
+    // emailInput.value = "";
+    // passwordInput.value = "";
     
 }
