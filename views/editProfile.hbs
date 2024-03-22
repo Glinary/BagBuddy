@@ -8,30 +8,53 @@
             Customize your avatar and review your personal information
         </div>
 
-        <form id="edit-profile">
+        <form id="edit-profile-form">
             <div class="profile-photos-container">
                 <ul>
                     <li>
-                        first
+                        <img class="default-pfp" src="/static/images/boy.png" alt="defaultProfile1">
                     </li>
                     <li>
-                        first
+                        <img class="default-pfp" src="/static/images/boy.png" alt="defaultProfile2">
                     </li>
                     <li>
-                        first
+                        <img class="default-pfp" src="/static/images/boy.png" alt="defaultProfile3">
                     </li>
                     <li>
-                        last
+                        {{!-- Import photos from the server --}}
+                        {{!-- {{#each photos}}
+                            <li>
+                                <img class="default-pfp" src="{{this}}" alt="defaultProfile1">
+                            </li>
+                        {{/each}} --}}
+
+                        {{!-- Import photos from the user's local storage --}}
+                        {{!-- <form id="upload-photo" enctype="multipart/form-data">
+                            <input type="file" name="upload_photo" id="upload-photo" accept="image/*">
+                            <button type="submit">UPLOAD PHOTO</button>
+                        </form> --}}
+
+
+                        <input type="file" name="uploadPhoto" id="upload-photo" accept="image/*" style="display: none;">
+
+                        <svg id="upload-btn" width="5rem" height="5rem" viewBox="0 0 51 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50.9 24.5C50.9 37.972 39.5318 48.9 25.5 48.9C11.4682 48.9 0.1 37.972 0.1 24.5C0.1 11.028 11.4682 0.1 25.5 0.1C39.5318 0.1 50.9 11.028 50.9 24.5Z" stroke="#858585" stroke-width="0.2"/>
+                            <line x1="26.25" y1="16" x2="26.25" y2="32" stroke="#07767D" stroke-width="0.5"/>
+                            <line x1="18" y1="23.75" x2="34" y2="23.75" stroke="#07767D" stroke-width="0.5"/>
+                        </svg>
+
                     </li>
                 </ul>
             </div>
 
             <div class="profile-name-container">
-                name
+                <input type="text" id="edit-name" name="editName" placeholder="name">
             </div>
 
-            <div class="btn save-profile">
-                <button type="submit">SAVE PROFILE</button>
+            <div class="save-profile-btn">
+                <button type="submit" id="edit-profile-btn">
+                    SAVE PROFILE
+                </button>
             </div>
         </form>
     </div>

@@ -312,7 +312,7 @@ const controller = {
     }
   },
 
-  newUserRegistration: async function (req, res) {
+  postRegister: async function (req, res) {
     try {
       const registerName = req.body.registerName;
       const registerEmail = req.body.registerEmail;
@@ -334,8 +334,10 @@ const controller = {
       const savedUser = await newUser.save();
       console.log("User saved: ", savedUser);
 
-      // after successful registration, redirect to login validation
-      res.status(200).json({ message: "User created.", userID: newUser._id });
+      // after successful registration, send the email and password
+      // to login the client
+      res.status(200).json({ email: registerEmail, password: registerPassword });
+      
     } catch (error) {
       console.log("Error registering user: ", error);
       res.status(500).json({ message: "Server error." });
