@@ -275,7 +275,7 @@ const controller = {
       js1: "/static/js/home.js",
       name: user.name,
       email: user.email,
-      defaultImg: "/static/images/boy.png",
+      avatar: user.avatar,
     });
   },
 
@@ -359,6 +359,7 @@ const controller = {
         email: registerEmail,
         name: registerName,
         password: registerPassword,
+        avatar: "/static/images/boy.png",
       });
 
       // save the user to the database
