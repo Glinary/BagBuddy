@@ -259,6 +259,12 @@ const controller = {
   },
 
   getProfile: async function (req, res) {
+    // get the user's profile using the session ID
+    const userID = req.session.user.uID;
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    console.log("User: ", user);
+
+
     res.render("profile", {
       maincss: "/static/css/main.css",
       css1: "/static/css/profile.css",
@@ -267,7 +273,20 @@ const controller = {
       showAddBtn: false,
       mainscript: "/static/js/profile.js",
       js1: "/static/js/home.js",
+      name: user.name,
+      email: user.email,
       defaultImg: "/static/images/boy.png",
+    });
+  },
+
+  postSignout: async function (req, res) {
+    console.log("------SIGN OUT------");
+    req.session.destroy((err) => {
+      if (err) {
+        return console.log(err);
+      } else {
+        res.redirect("/login");
+      }
     });
   },
 
