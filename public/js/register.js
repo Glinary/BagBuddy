@@ -121,49 +121,40 @@ document.getElementById("register-submit-btn").addEventListener("click", async f
       emailData.message === "Email is valid."
     ) {
       try {
-        // Send the form data to the server
-        const response = await fetch("/register/newUserRegistration", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+        await register(data);
 
-        // Check if the response is ok
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        // Parse the JSON response
-        const responseData = await response.json();
-        console.log(responseData);
-        // const redLink = responseData.userID;
-        // window.location.href = `http://localhost:3000/home/${redLink}`;
-
-        // If the response is successful, redirect to the login validation
-        // if (responseData.message === 'User successfully registered.') {
-        //     const loginResponse = await fetch('/login', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify({ email: emailInput.value, password: passwordInput.value }),
-        //     });
-
-        //     // Check if the response is ok
-        //     if (!loginResponse.ok) {
-        //         throw new Error('Network response was not ok');
-        //     }
-
-        //     // Parse the JSON response
-        //     const loginData = await loginResponse.json();
-        //     console.log(loginData);
-        // }
       } catch (error) {
         console.error("Error registering user:", error);
       }
     } else {
       console.log("Form data is invalid");
     }
-  });
+});
+
+async function register(data) {
+    // Send the form data to the server
+    const regResponse = await fetch("/postRegister", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    // Check if the response is ok after registration
+    if (!regResponse.ok) {
+      throw new Error(`Request failed with status ${regResponse.status}`);
+    }
+  
+    // Parse the JSON response
+    const responseData = await regResponse.json();
+    console.log(responseData);
+    const redLink = responseData.userID;
+    window.location.href = `/home/${redLink}`;
+
+    // // Clear email and password fields
+    // nameInput.value = "";
+    // emailInput.value = "";
+    // passwordInput.value = "";
+    
+}

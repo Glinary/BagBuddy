@@ -19,13 +19,4 @@ async function connect_to_mongodb() {
     }
 }
 
-function generate_session_id() { // not yet properly implemented
-    const sessionID = "29109203474908adjgcb233123";
-    if (sessionID != null) {
-        return 200;
-    } else {
-        return 402;
-    }
-}
-
-module.exports = { connect_to_mongodb, generate_session_id };
+module.exports = { connect_to_mongodb };

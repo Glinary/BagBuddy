@@ -29,9 +29,10 @@ router.get("/editprofile", controller.getEditProfile);
 
 router.post("/register/isNameValid", controller.isNameValid);
 router.post("/register/isEmailValid", controller.isEmailValid);
-router.post("/register/newUserRegistration", controller.newUserRegistration);
+router.post("/postRegister", controller.postRegister);
 
 router.post("/postlogin", controller.postLogin);
+router.post("/postSignout", controller.postSignout);
 
 // export default router;
 module.exports = router;

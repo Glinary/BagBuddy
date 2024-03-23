@@ -106,7 +106,7 @@ async function add_bag(json) {
     let redirect = await response.json();
     let redirectData = redirect.bag;
     console.log("redirect", redirectData);
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectData}`;
+    window.location.href = `/bag/${userID}/${redirectData}`;
   } else {
     console.log("server error occurred");
   }

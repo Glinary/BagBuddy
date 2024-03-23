@@ -19,12 +19,12 @@
     height: 100%;
     width: 100%;
     background-color: var(--white-bg);
-    text-align: center;
+    align-items: center;
 }
 
 .profile-title {
     padding: 2rem 0rem 1rem 0rem;
-    /* background-color: #000000; */
+    text-align: center;
 }
 
 .profile-title h1 {
@@ -36,7 +36,7 @@
 
 .profile-photo {
     margin: 0rem 0rem 2rem 0rem;
-    /* background-color: #048895; */
+    text-align: center;
 }
 
 .profile-photo img {
@@ -53,6 +53,8 @@
     height: 10rem;
     width: 100%;
     padding: 1rem 2.5rem 0rem 2.5rem;
+    margin: 0rem 0rem 0.5rem 0rem;
+    text-align: center;
 }
 
 .profile-details .info {
@@ -72,12 +74,15 @@
     /* background-color: #A43627; */
     height: 9.5rem;
     width: 100%;
-    /* text-align: center; */
+    text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 1.5rem 0rem 0rem 0rem;
-    padding: 2rem 5.5rem 0rem 5.5rem;
+    /* margin: 1.5rem 0rem 0rem 0rem;
+    padding: 2rem 5.5rem 0rem 5.5rem; */
+
+    /* align items to the center */
+    align-items: center;
 }
 
 .btn {
@@ -99,6 +104,11 @@
 
 .btn-signout {
     color: var(--grey);
+    text-align: center;
+}
+
+.btn-signout:hover {
+    cursor: pointer;
 }
 
 a {

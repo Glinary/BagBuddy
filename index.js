@@ -5,12 +5,20 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const path = require("path");
+
+// Session
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
+
 const { connect_to_mongodb } = require("./public/js/main.js");
 
-
+dotenv.config();
+const urlDB = process.env.MONGODB_URL;
 const port = process.env.PORT || 3000;
 
 const app = express();
+
 // Connect to MongoDB
 async function connect() {
   const status = await connect_to_mongodb();
@@ -46,6 +54,15 @@ app.set("views", "./views");
 
 //user bodyParser
 app.use(bodyParser.json());
+
+// initialize session
+app.use(session({
+  secret: 'KwekKwek', // this should be in dotenv, will generate secret later on
+  resave: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 1}, // change the last operator depending on the number of days the session will last
+  saveUninitialized: true, // set to true so it will generate sesh id upon opening website
+  store: MongoStore.create({ mongoUrl: urlDB })
+}));
 
 // use router
 app.use(routes);
