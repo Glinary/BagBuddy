@@ -7,15 +7,25 @@ const Bags = require("../schema/Bags");
 const Items = require("../schema/Items");
 const mongoose = require("mongoose");
 
+const session = require('express-session');
+
 const app = express();
 app.use(bodyParser.json());
 
-let loggedInUser = null; // Placement for local session only
+const sessionChecker = (req, res, next) => {
+  // Assuming you're using express-session for managing sessions
+  if (req.session.user) {
+      // User is already logged in, redirect to home page
+      res.redirect(`/home/${req.session.user.uID}`);
+  } else {
+      next();
+  } 
+};
 
 const controller = {
   getHome: async function (req, res) {
     console.log("-------GET HOME VIEW--------");
-    let userID = req.params.id;
+    let userID = req.session.user.uID;
     console.log("USER ID: ", userID);
 
     const user = await User.findOne({ _id: userID }).lean().exec();
@@ -268,13 +278,15 @@ const controller = {
   },
 
   getOnboarding: async function (req, res) {
-    res.render("onboarding", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/onboarding.css",
-      showTop: false,
-      showBot: false,
-      showAddBtn: false,
-      mainscript: "/static/js/onboarding.js",
+    sessionChecker(req, res, () => {
+      res.render("onboarding", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/onboarding.css",
+        showTop: false,
+        showBot: false,
+        showAddBtn: false,
+        mainscript: "/static/js/onboarding.js",
+      });
     });
   },
 
@@ -303,6 +315,12 @@ const controller = {
   },
 
   getProfile: async function (req, res) {
+    // get the user's profile using the session ID
+    const userID = req.session.user.uID;
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    console.log("User: ", user);
+
+
     res.render("profile", {
       maincss: "/static/css/main.css",
       css1: "/static/css/profile.css",
@@ -311,7 +329,20 @@ const controller = {
       showAddBtn: false,
       mainscript: "/static/js/profile.js",
       js1: "/static/js/home.js",
-      defaultImg: "/static/images/boy.png",
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+    });
+  },
+
+  postSignout: async function (req, res) {
+    console.log("------SIGN OUT------");
+    req.session.destroy((err) => {
+      if (err) {
+        return console.log(err);
+      } else {
+        res.redirect("/login");
+      }
     });
   },
 
@@ -368,7 +399,7 @@ const controller = {
     }
   },
 
-  newUserRegistration: async function (req, res) {
+  postRegister: async function (req, res) {
     try {
       const registerName = req.body.registerName;
       const registerEmail = req.body.registerEmail;
@@ -384,14 +415,19 @@ const controller = {
         email: registerEmail,
         name: registerName,
         password: registerPassword,
+        avatar: "/static/images/boy.png",
       });
 
       // save the user to the database
       const savedUser = await newUser.save();
       console.log("User saved: ", savedUser);
+      req.session.authenticated = true;
+      req.session.user = { uID: newUser._id };
 
-      // after successful registration, redirect to login validation
-      res.status(200).json({ message: "User created.", userID: newUser._id });
+      // after successful registration, send the email and password
+      // to login the client
+      res.status(200).json({ userID: newUser._id });
+      
     } catch (error) {
       console.log("Error registering user: ", error);
       res.status(500).json({ message: "Server error." });
@@ -406,15 +442,16 @@ const controller = {
       const logUser = await User.findOne({ email: email });
       const userID = logUser._id;
       console.log("user ID: ", userID);
+      console.log("Session ID: ", req.sessionID);
 
       if (logUser != null) {
         const passStatus = await logUser.comparePW(password);
         if (passStatus) {
           console.log("user exists in database...");
-          // Update global variable with email
-          loggedInUser = email;
+          req.session.authenticated = true;
+          req.session.user = { uID: userID };
           // Redirect to main page
-          res.status(200).json({ uID: userID });
+          res.status(200).json({ uID: req.session.user.uID });
         } else {
           console.log("Incorrect Password"); // Remove before deployment. For testing only
           res
@@ -510,7 +547,7 @@ const controller = {
           await Bags.deleteOne({ _id: bagToDelete }).then((deletedBagBag) => {
             if (deletedBagBag) {
               console.log("bag deleted successfully in Bags");
-              res.redirect(`http://localhost:3000/home/${userID}`);
+              res.redirect(`/home`);
             }
           });
         } else {
