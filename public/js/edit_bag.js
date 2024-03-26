@@ -160,7 +160,18 @@ async function edit_bag(json) {
   if (response.status === 200) {
     let redirectedData = await response.json();
     let redirectLink = redirectedData.bagid;
-    window.location.href = `/bag/${redirectLink}`;
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Bag edited",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    setTimeout(function () {
+      window.location.href = `/bag/${redirectLink}`;
+    }, 1500);
   }
 }
 

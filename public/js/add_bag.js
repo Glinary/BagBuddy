@@ -127,8 +127,6 @@ async function add_bag(json) {
       timer: 1500,
     });
 
-    console.log("redirect", redirectData);
-
     setTimeout(function () {
       window.location.href = `/bag/${redirectData}`;
     }, 1500);
