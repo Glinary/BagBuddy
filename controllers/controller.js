@@ -6,8 +6,10 @@ const User = require("../schema/Users");
 const Bags = require("../schema/Bags");
 const Items = require("../schema/Items");
 const mongoose = require("mongoose");
+require("dotenv").config();
+const crypto = require("crypto");
 
-const session = require('express-session');
+const session = require("express-session");
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,11 +17,11 @@ app.use(bodyParser.json());
 const sessionChecker = (req, res, next) => {
   // Assuming you're using express-session for managing sessions
   if (req.session.user) {
-      // User is already logged in, redirect to home page
-      res.redirect(`/home/${req.session.user.uID}`);
+    // User is already logged in, redirect to home page
+    res.redirect(`/home`);
   } else {
-      next();
-  } 
+    next();
+  }
 };
 
 const controller = {
@@ -45,18 +47,20 @@ const controller = {
       showBot: true,
       showAddBtn: true,
       bags: userBags,
-      user: userID,
     });
   },
 
   getBag: async function (req, res) {
     console.log("-------GET BAG VIEW--------");
 
-    const bagID = req.params.id;
-    console.log("bag ID: ", bagID);
+    const encryptedBagId = req.params.id;
+    console.log("encrypted bag ID: ", encryptedBagId);
 
-    const userID = req.params.user;
-    console.log("user ID:", req.params.user);
+    const userID = req.session.user.uID;
+    console.log("user ID:", userID);
+
+    const bagID = decrypt(encryptedBagId, process.env.KEY);
+    console.log("decrypted bag ID: ", bagID);
 
     const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
     const itemsToDisplay = bagToDisplay.bagItems;
@@ -118,13 +122,12 @@ const controller = {
       css1: "/static/css/bagform.css",
       mainscript: "/static/js/home.js",
       js1: "/static/js/add_bag.js",
-      user: req.params.id,
     });
   },
 
   getBagFormEdit: async function (req, res) {
-    const bagToFind = req.params.id;
-    const userID = req.params.user;
+    const encbagToFind = req.params.id;
+    const bagToFind = decrypt(encbagToFind, process.env.KEY);
 
     const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
@@ -134,7 +137,6 @@ const controller = {
       mainscript: "/static/js/home.js",
       js1: "/static/js/edit_bag.js",
       bags: bagFound,
-      user: userID,
     });
   },
 
@@ -320,7 +322,6 @@ const controller = {
     const user = await User.findOne({ _id: userID }).lean().exec();
     console.log("User: ", user);
 
-
     res.render("profile", {
       maincss: "/static/css/main.css",
       css1: "/static/css/profile.css",
@@ -427,7 +428,6 @@ const controller = {
       // after successful registration, send the email and password
       // to login the client
       res.status(200).json({ userID: newUser._id });
-      
     } catch (error) {
       console.log("Error registering user: ", error);
       res.status(500).json({ message: "Server error." });
@@ -470,7 +470,7 @@ const controller = {
 
   /** DB controls - BAGS AND ITEMS */
   addTheBag: async function (req, res) {
-    let userID = req.params.id;
+    let userID = req.session.user.uID;
     const user = await User.findOne({ _id: userID }).lean().exec();
     console.log(req.body.bagname);
 
@@ -485,9 +485,13 @@ const controller = {
     dateUsage = dateBag;
     console.log("bagdesc: ", req.body.bagdesc);
 
+    const newid = new mongoose.Types.ObjectId();
+    const encryptBag = encrypt(newid, process.env.KEY);
+
     // create new Bag of Bag Schema format
     const newBag = new Bags({
-      _id: new mongoose.Types.ObjectId(),
+      _id: newid,
+      encID: encryptBag,
       bagDesc: req.body.bagdesc,
       bagName: req.body.bagname,
       bagColor: req.body.selectedColor,
@@ -514,7 +518,7 @@ const controller = {
             console.log("Success add bag", addedBag.bags);
             res.status(200).json({
               message: "Bag added successfully",
-              bag: newBag._id,
+              bag: encryptBag,
             });
           } else {
             console.log("unsuccessful add bag");
@@ -529,10 +533,11 @@ const controller = {
   deleteBag: async function (req, res) {
     console.log("------DELETE BAG------");
 
-    const bagToDelete = req.body.bag;
+    const encBagToDelete = req.body.bag;
+    const bagToDelete = decrypt(encBagToDelete, process.env.KEY);
     console.log("bag ID to delete: ", bagToDelete);
 
-    const userID = req.params.id;
+    const userID = req.session.user.uID;
 
     try {
       // const user = await User.findOne({ _id: userID }).lean().exec();
@@ -561,8 +566,9 @@ const controller = {
   },
 
   editBag: async function (req, res) {
-    console.log("EDIT BAG CONTROLLER");
-    const bagID = req.body.bagID;
+    console.log("------EDIT BAG CONTROLLER-------");
+    const encBagID = req.body.bagID;
+    const bagID = decrypt(encBagID, process.env.KEY);
     const bagDesc = req.body.bagdesc;
     const bagName = req.body.bagname;
     const bagWeight = req.body.weight;
@@ -594,7 +600,7 @@ const controller = {
         if (updatedBag) {
           console.log("Successfull editing of bag");
           res.status(200).json({
-            bagid: bagID,
+            bagid: encBagID,
           });
         } else {
           console.log("unsuccessful edit bag");
@@ -609,7 +615,9 @@ const controller = {
 
   findBag: async function (req, res) {
     console.log("-------FIND BAG--------");
-    const bagToFind = req.body.findbag;
+    const bagToFindEnc = req.body.findbag;
+    console.log(bagToFindEnc);
+    const bagToFind = decrypt(bagToFindEnc, process.env.KEY);
     const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
     console.log("bag sched: ", bagFound.dateUsage);
@@ -757,6 +765,53 @@ const controller = {
     });
   },
 };
+
+function encrypt(objectId, key) {
+  const text = objectId.toString(); // Convert ObjectID to string
+
+  // Ensure the key is 32 bytes (256 bits) long
+  const keyBuffer = Buffer.alloc(32); // Create a buffer of 32 bytes filled with zeros
+  Buffer.from(key, "utf-8").copy(keyBuffer); // Copy the key string bytes into the buffer
+
+  const iv = crypto.randomBytes(16); // Generate a random IV (Initialization Vector)
+  const cipher = crypto.createCipheriv("aes-256-cbc", keyBuffer, iv);
+  let encrypted = cipher.update(text, "utf8", "base64"); // Use base64 encoding for the encrypted data
+  encrypted += cipher.final("base64"); // Finalize encryption with base64 encoding
+
+  // Replace '/' with '_' and '+' with '-'
+  encrypted = encrypted.replace(/\//g, "_").replace(/\+/g, "-");
+
+  const ivBase64 = iv.toString("base64"); // Encode IV to base64
+  // Replace '/' with '_' in IV (no need to replace '+', IV doesn't contain it)
+  const ivEncoded = ivBase64.replace(/\//g, "_");
+
+  return ivEncoded + ":" + encrypted; // Concatenate IV and encrypted data with ':'
+}
+
+// Decryption function
+function decrypt(encryptedData, key) {
+  // Revert '_' back to '/' and '-' back to '+'
+  encryptedData = encryptedData.replace(/_/g, "/").replace(/-/g, "+");
+
+  // Split IV and encrypted data using ':'
+  const [ivEncoded, encryptedBase64] = encryptedData.split(":");
+
+  // Replace '_' back to '/' in IV
+  const ivBase64 = ivEncoded.replace(/_/g, "/");
+
+  // Decode IV and encrypted data from base64
+  const iv = Buffer.from(ivBase64, "base64");
+  const encrypted = Buffer.from(encryptedBase64, "base64").toString("base64"); // Decode from base64 and convert to string
+
+  // Ensure the key is 32 bytes (256 bits) long
+  const keyBuffer = Buffer.alloc(32); // Create a buffer of 32 bytes filled with zeros
+  Buffer.from(key, "utf-8").copy(keyBuffer); // Copy the key string bytes into the buffer
+
+  const decipher = crypto.createDecipheriv("aes-256-cbc", keyBuffer, iv);
+  let decrypted = decipher.update(encrypted, "base64", "utf8"); // Decrypt using base64 encoding
+  decrypted += decipher.final("utf8"); // Finalize decryption
+  return decrypted;
+}
 
 // export default controller;
 module.exports = controller;

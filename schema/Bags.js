@@ -6,6 +6,10 @@ const bagsSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  encID: {
+    type: String,
+    required: true,
+  },
   bagName: {
     type: String,
     required: true,

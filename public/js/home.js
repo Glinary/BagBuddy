@@ -44,7 +44,7 @@ function addItemLinkRedirect() {
   window.location.href = `/addItem/${par}`;
 }
 function addBagRedirect() {
-  window.location.href = `/addbag/${par}`;
+  window.location.href = `/addbag`;
 }
 
 searchIcon.addEventListener("click", function () {

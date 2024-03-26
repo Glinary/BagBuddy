@@ -101,9 +101,7 @@ submitBtn.addEventListener("click", async function (e) {
 });
 
 async function add_bag(json) {
-  const userIDClass = document.querySelector("#userid");
-  const userID = userIDClass.value;
-  const response = await fetch(`/ab/${userID}`, {
+  const response = await fetch(/ab/, {
     method: "POST",
     body: json,
     headers: {
@@ -115,7 +113,7 @@ async function add_bag(json) {
     let redirect = await response.json();
     let redirectData = redirect.bag;
     console.log("redirect", redirectData);
-    window.location.href = `/bag/${userID}/${redirectData}`;
+    window.location.href = `/bag/${redirectData}`;
   } else {
     console.log("server error occurred");
   }

@@ -135,8 +135,6 @@ saveBtn.addEventListener("click", async function (e) {
 });
 
 async function edit_bag(json) {
-  const userIDClass = document.querySelector("#userid");
-  const userID = userIDClass.value;
   const response = await fetch(`/eb`, {
     method: "POST",
     body: json,
@@ -148,7 +146,7 @@ async function edit_bag(json) {
   if (response.status === 200) {
     let redirectedData = await response.json();
     let redirectLink = redirectedData.bagid;
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectLink}`;
+    window.location.href = `http://localhost:3000/bag/${redirectLink}`;
   }
 }
 

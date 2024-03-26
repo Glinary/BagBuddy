@@ -53,10 +53,7 @@ confirmDeleteBtn.addEventListener("click", async function () {
     bag: bag,
   };
 
-  const userIDClass = document.querySelector("#userid");
-  const userID = userIDClass.value;
-  console.log("value: ", userID);
-  const response = await fetch(`/db/${userID}`, {
+  const response = await fetch(`/db`, {
     method: "POST",
     body: JSON.stringify(bagToDelete),
     headers: {
@@ -68,7 +65,7 @@ confirmDeleteBtn.addEventListener("click", async function () {
 
   if (response.status == 200) {
     console.log("redirect to home");
-    window.location.href = `/home/${userID}`;
+    window.location.href = `/home`;
   }
 });
 
@@ -101,6 +98,8 @@ async function findBagDate() {
   let bagToFind = {
     findbag: parB,
   };
+
+  console.log(bagToFind);
   const response = await fetch(`/fb`, {
     method: "POST",
     body: JSON.stringify(bagToFind),
