@@ -1,14 +1,14 @@
 #itemGallery {
   height: 100%;
   width: 100%;
-  /* overflow-y: hidden; */
+  /* overflow-y: scroll; */
   background-color: var(--main-blue);
 }
-
 
 .itemGallery-wrapper {
   height: 100%;
   padding: 1rem 0rem;
+  /* overflow: scroll; */
 }
 
 .gallery-titledesc-wrapper {

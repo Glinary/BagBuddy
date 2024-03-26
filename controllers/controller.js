@@ -143,7 +143,8 @@ const controller = {
   getAddItem: async function (req, res) {
     console.log("-------GET ITEM--------");
 
-    const bagID = req.params.id;
+    const encBagID = req.params.id;
+    const bagID = decrypt(encBagID, process.env.KEY);
 
     const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
     console.log("Bag to Display", bagToDisplay);
@@ -224,7 +225,7 @@ const controller = {
 
   getItemGallery: async function (req, res) {
     console.log("----GET ITEM GALLERY PAGE----");
-    const userID = req.params.user;
+    const userID = req.session.user.uID;
     const user = await User.findOne({ _id: userID }).lean().exec();
     console.log("user item gallery look: ", user.itemGallery);
 
@@ -633,7 +634,8 @@ const controller = {
 
   findBagItem: async function (req, res) {
     console.log("-------FIND BAG ITEM--------");
-    const bagToFind = req.body.tofindbag;
+    const encBagToFind = req.body.tofindbag;
+    const bagToFind = decrypt(encBagToFind, process.env.KEY);
     const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
     console.log("Bag Found:", bagFound);
@@ -685,7 +687,8 @@ const controller = {
     console.log("-------ADD ITEM--------");
     const itemList = req.body;
 
-    const bagID = itemList.shift();
+    const encBagID = itemList.shift();
+    const bagID = decrypt(encBagID, process.env.KEY);
 
     console.log("Items to add in the bag: ", itemList);
 
@@ -697,7 +700,7 @@ const controller = {
         (addedItem) => {
           if (addedItem) {
             console.log("adding item successful");
-            res.status(200).json({ redLink: bagID });
+            res.status(200).json({ redLink: encBagID });
           } else {
             console.log("adding item unsuccessful");
           }
@@ -711,7 +714,7 @@ const controller = {
   addItemGallery: async function (req, res) {
     console.log("----ADD ITEM TO GALLERY----");
     const newItems = req.body;
-    const user = req.params.user;
+    const user = req.session.user.uID;
     const totalItems = newItems.length;
     let savedItems = 0;
 

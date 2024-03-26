@@ -11,7 +11,7 @@ router.get("/bag/:id", controller.getBag);
 router.get("/notification", controller.getNotif);
 router.get("/addbag", controller.getAddBag);
 router.get("/additem/:id", controller.getAddItem);
-router.get("/itemgallery/:user/:id", controller.getItemGallery);
+router.get("/itemgallery/:id", controller.getItemGallery);
 router.get("/editbag/:id", controller.getBagFormEdit);
 
 router.post("/ab", controller.addTheBag);
@@ -21,7 +21,7 @@ router.post("/eb", controller.editBag);
 router.post("/ai", controller.addItem);
 router.post("/fbi", controller.findBagItem);
 router.post("/fi", controller.findItem);
-router.post("/aig/:user", controller.addItemGallery);
+router.post("/aig", controller.addItemGallery);
 
 router.get("/", controller.getOnboarding);
 router.get("/register", controller.getRegister);

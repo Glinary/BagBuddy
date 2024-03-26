@@ -78,9 +78,7 @@ async function add_items() {
     let redirectData = redirect.redLink;
     console.log("redirect", redirectData);
 
-    const userIDClass = document.querySelector("#userid");
-    const userID = userIDClass.value;
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectData}`;
+    window.location.href = `http://localhost:3000/bag/${redirectData}`;
   } else {
     console.log("server error occurred");
   }

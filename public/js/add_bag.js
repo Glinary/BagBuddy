@@ -62,7 +62,7 @@ function form_cancel() {
     cancelBtn.textContent = "cancel";
     cancel = 0;
   } else {
-    window.location.href = `/home/${parB}`;
+    window.location.href = `/home`;
   }
 }
 

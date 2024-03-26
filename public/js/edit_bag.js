@@ -13,7 +13,6 @@ const parBag = currentURL.split("/");
 
 // Get the last segment, which should be 'bdn23232' - bag ID
 const parB = parSegments[parBag.length - 1];
-const parU = parSegments[parBag.length - 2];
 
 let savedColor = selectedColor.value;
 let prev = "";
@@ -94,7 +93,7 @@ function form_cancel() {
     cancelBtn.textContent = "cancel";
     cancel = 0;
   } else {
-    window.location.href = `/bag/${parU}/${parB}`;
+    window.location.href = `/bag/${parB}`;
   }
 }
 
@@ -146,7 +145,7 @@ async function edit_bag(json) {
   if (response.status === 200) {
     let redirectedData = await response.json();
     let redirectLink = redirectedData.bagid;
-    window.location.href = `http://localhost:3000/bag/${redirectLink}`;
+    window.location.href = `/bag/${redirectLink}`;
   }
 }
 

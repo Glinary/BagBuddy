@@ -104,7 +104,7 @@ function showConfirmationSwal(element) {
 }
 
 async function savetoDatabase(element) {
-  const response = await fetch(`/aig/${userIDClass.value}`, {
+  const response = await fetch(`/aig`, {
     method: "POST",
     body: JSON.stringify(element),
     headers: {
@@ -129,7 +129,7 @@ async function savetoDatabase(element) {
     localStorage.setItem("resItems", JSON.stringify(resItems));
 
     setTimeout(function () {
-      window.location.href = `/itemgallery/${userIDClass.value}/${bagClass.value}`;
+      window.location.href = `/itemgallery/${bagClass.value}`;
     }, 1500);
   } else {
     console.log("server error occurred");
@@ -139,7 +139,6 @@ async function savetoDatabase(element) {
 function scrolltoNewlyAdded() {
   const storedResItems = localStorage.getItem("resItems");
   const resItems = storedResItems ? JSON.parse(storedResItems) : [];
-
   resItems.forEach((newID) => {
     // Find the corresponding div in the gallery based on its ID
     const divToHighlight = document.querySelector(`[data-objID="${newID}"]`);
@@ -147,13 +146,40 @@ function scrolltoNewlyAdded() {
 
     // Check if the div exists
     if (divToHighlight) {
-      // Apply highlighting or focus style to the div
-      divToHighlight.style.border = "1px solid var(--main-blue)"; // Example highlighting
-      divToHighlight.scrollIntoView({ behavior: "smooth" }); // Example focusing
+      // Get the scrollable container
+      const scrollableContainer = divToHighlight.closest(
+        ".gallery-itemlist-wrapper"
+      );
+      if (scrollableContainer) {
+        // Get the dimensions and scroll position of the container
+        const containerRect = scrollableContainer.getBoundingClientRect();
+        const containerTop = containerRect.top;
+        const containerBottom = containerRect.bottom;
 
-      setTimeout(function () {
-        divToHighlight.style.border = "none";
-      }, 2500);
+        // Get the dimensions and position of the element
+        const elementRect = divToHighlight.getBoundingClientRect();
+        const elementTop = elementRect.top;
+        const elementBottom = elementRect.bottom;
+
+        // Check if the element is fully visible within the container
+        const isFullyVisible =
+          elementTop >= containerTop && elementBottom <= containerBottom;
+
+        // If the element is not fully visible, scroll to it
+        if (!isFullyVisible) {
+          // Apply highlighting or focus style to the div
+          divToHighlight.style.border = "1px solid var(--main-blue)"; // Example highlighting
+          divToHighlight.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest",
+          }); // Example focusing
+
+          setTimeout(function () {
+            divToHighlight.style.border = "none";
+          }, 2500);
+        }
+      }
     }
   });
   localStorage.clear();

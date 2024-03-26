@@ -43,6 +43,7 @@ function addButtonToggle() {
 function addItemLinkRedirect() {
   window.location.href = `/addItem/${par}`;
 }
+
 function addBagRedirect() {
   window.location.href = `/addbag`;
 }
