@@ -48,7 +48,7 @@ async function findItems() {
   };
 
   console.log("BD", bagToFind);
-  const response = await fetch(`/fi`, {
+  const response = await fetch(`/fbi`, {
     method: "POST",
     body: JSON.stringify(bagToFind),
     headers: {
@@ -62,6 +62,7 @@ async function findItems() {
     return items;
   }
 }
+
 
 async function add_items() {
   const response = await fetch("/ai", {
@@ -78,9 +79,7 @@ async function add_items() {
     let redirectData = redirect.redLink;
     console.log("redirect", redirectData);
 
-    const userIDClass = document.querySelector("#userid");
-    const userID = userIDClass.value;
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectData}`;
+    window.location.href = `http://localhost:3000/bag/${redirectData}`;
   } else {
     console.log("server error occurred");
   }

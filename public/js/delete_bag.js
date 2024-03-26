@@ -8,6 +8,7 @@ const cancelDeleteBtn = document.querySelector("#confirm-cancel");
 const bagdate = document.querySelector(".inside-bag-sched1");
 
 var currentURL = window.location.href;
+var resCode = 0;
 
 const parBag = currentURL.split("/");
 
@@ -53,10 +54,7 @@ confirmDeleteBtn.addEventListener("click", async function () {
     bag: bag,
   };
 
-  const userIDClass = document.querySelector("#userid");
-  const userID = userIDClass.value;
-  console.log("value: ", userID);
-  const response = await fetch(`/db/${userID}`, {
+  const response = await fetch(`/db`, {
     method: "POST",
     body: JSON.stringify(bagToDelete),
     headers: {
@@ -66,9 +64,31 @@ confirmDeleteBtn.addEventListener("click", async function () {
 
   console.log("response: ", response.status);
 
-  if (response.status == 200) {
-    console.log("redirect to home");
-    window.location.href = `http://localhost:3000/home/${userID}`;
+  if (response.status == 200 && resCode == 200) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Bag deleted",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    setTimeout(function () {
+      window.location.href = `/home`;
+    }, 1500);
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 });
 
@@ -80,19 +100,35 @@ onload();
 
 async function onload() {
   console.log("-----ONLOAD()------");
-  const bagSched = await findBagDate();
 
-  console.log("Bag Date: ", bagSched);
+  try {
+    const bagSched = await findBagDate();
 
-  if (bagSched == undefined) {
-    bagdate.children[1].innerText = "Not Scheduled";
-  } else {
-    bagDate = new Date(bagSched);
+    console.log("Bag Date: ", bagSched);
 
-    const dateOptions = { month: "long", day: "numeric", year: "numeric" };
-    const formattedDate = bagDate.toLocaleString("en-US", dateOptions);
+    if (bagSched == undefined) {
+      bagdate.children[1].innerText = "Not Scheduled";
+    } else {
+      bagDate = new Date(bagSched);
 
-    bagdate.children[1].innerText = formattedDate;
+      const dateOptions = { month: "long", day: "numeric", year: "numeric" };
+      const formattedDate = bagDate.toLocaleString("en-US", dateOptions);
+
+      bagdate.children[1].innerText = formattedDate;
+    }
+  } catch (error) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 }
 
@@ -101,6 +137,9 @@ async function findBagDate() {
   let bagToFind = {
     findbag: parB,
   };
+
+  console.log(bagToFind);
+
   const response = await fetch(`/fb`, {
     method: "POST",
     body: JSON.stringify(bagToFind),
@@ -109,9 +148,24 @@ async function findBagDate() {
     },
   });
 
-  if (response.status == 200) {
+  resCode = response.status;
+
+  if (resCode == 200) {
     let resBag = await response.json();
     let bag = resBag.bagDate;
     return bag;
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 }

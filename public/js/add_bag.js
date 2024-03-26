@@ -6,6 +6,13 @@ const cancelBtn = document.querySelector("#form-cancel");
 let prev = "";
 let cancel = 0;
 
+var currentURL = window.location.href;
+
+const parBag = currentURL.split("/");
+
+// Get the last segment, which should be 'bdn23232' - bag ID
+const parB = parSegments[parBag.length - 1];
+
 function selectColor(color, item) {
   let selectedColor = document.querySelector("#selectedColor");
   console.log("prev color: ", selectedColor.value);
@@ -54,6 +61,8 @@ function form_cancel() {
   if (cancel == 1) {
     cancelBtn.textContent = "cancel";
     cancel = 0;
+  } else {
+    window.location.href = `/home`;
   }
 }
 
@@ -69,7 +78,13 @@ submitBtn.addEventListener("click", async function (e) {
   console.log("bagname: ", bagname);
 
   if (!bagname) {
-    alert("Bag Name is required!");
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Bag name is required!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
     return;
   }
 
@@ -92,9 +107,7 @@ submitBtn.addEventListener("click", async function (e) {
 });
 
 async function add_bag(json) {
-  const userIDClass = document.querySelector("#userid");
-  const userID = userIDClass.value;
-  const response = await fetch(`/ab/${userID}`, {
+  const response = await fetch(/ab/, {
     method: "POST",
     body: json,
     headers: {
@@ -105,8 +118,18 @@ async function add_bag(json) {
   if (response.status == 200) {
     let redirect = await response.json();
     let redirectData = redirect.bag;
-    console.log("redirect", redirectData);
-    window.location.href = `/bag/${userID}/${redirectData}`;
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Bag created",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    setTimeout(function () {
+      window.location.href = `/bag/${redirectData}`;
+    }, 1500);
   } else {
     console.log("server error occurred");
   }

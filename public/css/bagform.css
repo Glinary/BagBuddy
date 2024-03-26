@@ -222,3 +222,12 @@ a {
   text-decoration: none;
   color: white;
 }
+
+textarea {
+  resize: none;
+  width: 100%;
+  padding: 0.35rem;
+  border-radius: 10px;
+  border: 0.5px solid rgb(59, 57, 57, 0.5);
+  margin-top: 2px;
+}

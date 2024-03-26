@@ -103,7 +103,7 @@ i {
   display: flex;
   justify-content: center;
   padding: 1rem 0.5rem;
-  z-index: 500;
+  z-index: 100;
 }
 
 .edit-option-box {
