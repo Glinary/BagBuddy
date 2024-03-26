@@ -100,14 +100,29 @@ function form_cancel() {
 onload();
 
 async function onload() {
-  const bagSched = await findBag();
+  try {
+    const bagSched = await findBag();
 
-  const dateClass = document.querySelector("#date");
-  console.log("Bag Date: ", bagSched);
+    const dateClass = document.querySelector("#date");
+    console.log("Bag Date: ", bagSched);
 
-  if (bagSched != undefined) {
-    const dateFormat = new Date(bagSched).toISOString().split("T")[0];
-    dateClass.value = dateFormat;
+    if (bagSched != undefined) {
+      const dateFormat = new Date(bagSched).toISOString().split("T")[0];
+      dateClass.value = dateFormat;
+    }
+  } catch (error) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 }
 
@@ -172,5 +187,18 @@ async function findBag() {
     let bag = resBag.bagDate;
     console.log("FoundBag: ", bag);
     return bag;
+  } else if (response.status == 404) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 }

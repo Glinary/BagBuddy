@@ -63,6 +63,7 @@ async function findItems() {
   }
 }
 
+
 async function add_items() {
   const response = await fetch("/ai", {
     method: "POST",

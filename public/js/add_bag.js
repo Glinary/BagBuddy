@@ -78,7 +78,13 @@ submitBtn.addEventListener("click", async function (e) {
   console.log("bagname: ", bagname);
 
   if (!bagname) {
-    alert("Bag Name is required!");
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Bag name is required!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
     return;
   }
 
@@ -112,8 +118,20 @@ async function add_bag(json) {
   if (response.status == 200) {
     let redirect = await response.json();
     let redirectData = redirect.bag;
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Bag created",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
     console.log("redirect", redirectData);
-    window.location.href = `/bag/${redirectData}`;
+
+    setTimeout(function () {
+      window.location.href = `/bag/${redirectData}`;
+    }, 1500);
   } else {
     console.log("server error occurred");
   }

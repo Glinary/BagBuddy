@@ -1,7 +1,8 @@
-const userIDClass = document.querySelector("#userid");
 const bagClass = document.querySelector("#userbag");
 
 var savedItems = [];
+var editedItems = [];
+var editItems = false;
 
 scrolltoNewlyAdded();
 
@@ -28,32 +29,64 @@ function add_item() {
   confirmBtn.style.display = "block";
 }
 
-async function save_items() {
+async function edit_items(item) {
+  const mainParent = item.parentNode.parentNode;
+  const itemblock = mainParent.querySelectorAll("#item");
+  mainParent.dataset.edited = 1;
+
+  itemblock[0].removeAttribute("disabled");
+  itemblock[0].focus();
+  itemblock[1].removeAttribute("readonly");
+  itemblock[1].style.backgroundColor = "white";
+  itemblock[1].style.width = "25%";
+
+  const confirmBtn = document.querySelector(".confirm-btn");
+  confirmBtn.style.display = "block";
+  editItems = true;
+  console.dir(mainParent);
+}
+
+function iterateArr(allItems) {
   itemsArray = [];
 
-  var itemsBlocks = document.querySelectorAll(".gallery-add");
-  console.log("gall", itemsBlocks);
-
-  itemsBlocks.forEach((blocks) => {
+  allItems.forEach((blocks) => {
     var blockItems = {};
 
-    textareaList = blocks.querySelectorAll("#item");
-    console.log("Textarealist: ", textareaList);
+    textAreaList = textareaList = blocks.querySelectorAll("#item");
+    const blockID = blocks.dataset.objid;
 
+    blockItems["itemID"] = blockID;
     textareaList.forEach((textarea) => {
       var itemval = textarea.value;
       var classname = textarea.name;
-      console.log(itemval, classname);
+      // console.log(itemval, classname);
 
       blockItems[classname] = itemval;
     });
-
     itemsArray.push(blockItems);
   });
 
-  console.log("Items array: ", itemsArray);
+  return itemsArray;
+}
+async function save_items() {
+  if (editItems) {
+    // const allItems = document.querySelectorAll("#item-wrapper");
+    const allItems = document.querySelectorAll(`[data-edited="1"]`);
+    console.log(allItems);
 
-  await checkUniqueDB(itemsArray);
+    let editsArray = iterateArr(allItems);
+    console.log("edits array: ", editsArray);
+
+    editItems == false;
+    await updateDatabase(editsArray);
+  } else {
+    var itemsBlocks = document.querySelectorAll(".gallery-add");
+
+    let saveArray = iterateArr(itemsBlocks);
+    console.log("Items array: ", saveArray);
+
+    await checkUniqueDB(saveArray);
+  }
 }
 
 async function checkUniqueDB(itemsArray) {
@@ -72,11 +105,8 @@ async function checkUniqueDB(itemsArray) {
     for (const element of resultList) {
       if (element == 200) {
         let index = resultList.indexOf(element);
-        const confirmed = await showConfirmationSwal(
-          itemsArray[index].itemname
-        );
+        await showExistingSwal(itemsArray[index].itemname);
 
-        console.log("index: ", index);
         if (index !== -1) {
           itemsArray.splice(index, 1);
         }
@@ -86,11 +116,11 @@ async function checkUniqueDB(itemsArray) {
     console.log("server error occurred");
   }
 
-  // After processing all items, save to database
+  // After processing all items, save to/update database
   savetoDatabase(itemsArray);
 }
 
-function showConfirmationSwal(element) {
+function showExistingSwal(element) {
   return new Promise((resolve) => {
     Swal.fire({
       title: "Oops",
@@ -103,7 +133,36 @@ function showConfirmationSwal(element) {
   });
 }
 
+async function updateDatabase(element) {
+  console.log("to save: ", element);
+  const response = await fetch("/udb", {
+    method: "POST",
+    body: JSON.stringify(element),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status == 200) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Item/s have been updated",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    setTimeout(function () {
+      window.location.href = `/itemgallery/${bagClass.value}`;
+    }, 1500);
+  }
+}
+
 async function savetoDatabase(element) {
+  element = element.filter(
+    (item) => !(item.itemname === "" && item.itemweight === "")
+  );
+
   const response = await fetch(`/aig`, {
     method: "POST",
     body: JSON.stringify(element),

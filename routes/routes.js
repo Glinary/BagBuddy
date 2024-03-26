@@ -22,6 +22,7 @@ router.post("/ai", controller.addItem);
 router.post("/fbi", controller.findBagItem);
 router.post("/fi", controller.findItem);
 router.post("/aig", controller.addItemGallery);
+router.post("/udb", controller.updateItemGallery);
 
 router.get("/", controller.getOnboarding);
 router.get("/register", controller.getRegister);

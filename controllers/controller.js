@@ -53,52 +53,61 @@ const controller = {
   getBag: async function (req, res) {
     console.log("-------GET BAG VIEW--------");
 
-    const encryptedBagId = req.params.id;
-    console.log("encrypted bag ID: ", encryptedBagId);
-
-    const userID = req.session.user.uID;
-    console.log("user ID:", userID);
-
-    const bagID = decrypt(encryptedBagId, process.env.KEY);
-    console.log("decrypted bag ID: ", bagID);
-
-    const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
-    const itemsToDisplay = bagToDisplay.bagItems;
-
-    console.log("Bag to be displayed: ", bagToDisplay);
-    console.log("items to display: ", itemsToDisplay);
-
-    let itemList = [];
-
-    //code when item pool contains only user item gallery
     try {
-      // Use map instead of forEach
-      await Promise.all(
-        itemsToDisplay.map(async (element) => {
-          const items = await Items.find({ _id: element }).lean().exec();
-          // console.log(items);
-          itemList.push(...items);
-        })
-      );
+      const encryptedBagId = req.params.id;
+      console.log("encrypted bag ID: ", encryptedBagId);
+
+      const userID = req.session.user.uID;
+      console.log("user ID:", userID);
+
+      const bagID = decrypt(encryptedBagId, process.env.KEY);
+      console.log("decrypted bag ID: ", bagID);
+
+      const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
+
+      const itemsToDisplay = bagToDisplay.bagItems;
+
+      console.log("Bag to be displayed: ", bagToDisplay);
+      console.log("items to display: ", itemsToDisplay);
+
+      let itemList = [];
+
+      //code when item pool contains only user item gallery
+      try {
+        // Use map instead of forEach
+        await Promise.all(
+          itemsToDisplay.map(async (element) => {
+            const items = await Items.find({ _id: element }).lean().exec();
+            // console.log(items);
+            itemList.push(...items);
+          })
+        );
+      } catch (error) {
+        console.log("listing users in bags for items failed due to: ", error);
+      }
+
+      console.log("bag items: ", itemList);
+
+      res.render("insidebag", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/home.css",
+        partialcss: "/static/css/dItem.css",
+        mainscript: "/static/js/home.js",
+        js1: "/static/js/delete_bag.js",
+        showBot: true,
+        showAddBtn: true,
+        /*Sample list for testing bag view*/
+        bag: bagToDisplay,
+        items: itemList,
+        user: userID,
+      });
     } catch (error) {
-      console.log("listing users in bags for items failed due to: ", error);
+      res.render("errorpage", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/errorpage.css",
+        mainscript: "/static/js/errorpage.js",
+      });
     }
-
-    console.log("bag items: ", itemList);
-
-    res.render("insidebag", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/home.css",
-      partialcss: "/static/css/dItem.css",
-      mainscript: "/static/js/home.js",
-      js1: "/static/js/delete_bag.js",
-      showBot: true,
-      showAddBtn: true,
-      /*Sample list for testing bag view*/
-      bag: bagToDisplay,
-      items: itemList,
-      user: userID,
-    });
   },
 
   getNotif: async function (req, res) {
@@ -126,101 +135,98 @@ const controller = {
   },
 
   getBagFormEdit: async function (req, res) {
-    const encbagToFind = req.params.id;
-    const bagToFind = decrypt(encbagToFind, process.env.KEY);
+    try {
+      const encbagToFind = req.params.id;
+      const bagToFind = decrypt(encbagToFind, process.env.KEY);
 
-    const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
+      const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
-    res.render("editBagForm", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/bagform.css",
-      mainscript: "/static/js/home.js",
-      js1: "/static/js/edit_bag.js",
-      bags: bagFound,
-    });
+      res.render("editBagForm", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/bagform.css",
+        mainscript: "/static/js/home.js",
+        js1: "/static/js/edit_bag.js",
+        bags: bagFound,
+      });
+    } catch (error) {
+      res.render("errorpage", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/errorpage.css",
+        mainscript: "/static/js/errorpage.js",
+      });
+    }
   },
 
   getAddItem: async function (req, res) {
     console.log("-------GET ITEM--------");
 
-    const encBagID = req.params.id;
-    const bagID = decrypt(encBagID, process.env.KEY);
-
-    const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
-    console.log("Bag to Display", bagToDisplay);
-
-    // populate bag's userItemPools with users itself
-    const bagUsers = await Bags.findById(bagID)
-      .populate("userItemsPool")
-      .exec();
-
-    // get the user in userItemsPool
-    const bagUsersPool = bagUsers.userItemsPool;
-    const bagUsersItemGallery = bagUsersPool.itemGallery.sort();
-
-    console.log("User item ID:", bagUsersItemGallery);
-
-    let itemList = [];
-
-    //code when item pool contains only user item gallery
     try {
-      // Use map instead of forEach
-      await Promise.all(
-        bagUsersItemGallery.map(async (element) => {
-          const items = await Items.find({ _id: element }).lean().exec();
-          // console.log(items);
-          itemList.push(...items);
-        })
-      );
+      const encBagID = req.params.id;
+      const bagID = decrypt(encBagID, process.env.KEY);
+
+      const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
+      console.log("Bag to Display", bagToDisplay);
+
+      // populate bag's userItemPools with users itself
+      const bagUsers = await Bags.findById(bagID)
+        .populate("userItemsPool")
+        .exec();
+
+      // get the user in userItemsPool
+      const bagUsersPool = bagUsers.userItemsPool;
+      const bagUsersItemGallery = bagUsersPool.itemGallery.sort();
+
+      console.log("User item ID:", bagUsersItemGallery);
+
+      let itemList = [];
+
+      //code when item pool contains only user item gallery
+      try {
+        // Use map instead of forEach
+        await Promise.all(
+          bagUsersItemGallery.map(async (element) => {
+            const items = await Items.find({ _id: element }).lean().exec();
+            // console.log(items);
+            itemList.push(...items);
+          })
+        );
+      } catch (error) {
+        console.log("listing users in bags for items failed due to: ", error);
+      }
+
+      // sort items so its sorted in item pool
+      itemList.sort((a, b) => {
+        const itemNameA = a.itemName.toUpperCase();
+        const itemNameB = b.itemName.toUpperCase();
+
+        if (itemNameA < itemNameB) {
+          return -1; // Item A comes before Item B
+        }
+        if (itemNameA > itemNameB) {
+          return 1; // Item A comes after Item B
+        }
+        return 0; // Item Names are equal
+      });
+
+      console.log("user item gallery: ", itemList);
+
+      res.render("addItem", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/addItem.css",
+        partialcss: "/static/css/dItem.css",
+        mainscript: "/static/js/home.js",
+        js1: "/static/js/add_bagitem.js",
+        bag: bagToDisplay,
+        items: itemList,
+        user: bagUsersPool._id,
+      });
     } catch (error) {
-      console.log("listing users in bags for items failed due to: ", error);
+      res.render("errorpage", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/errorpage.css",
+        mainscript: "/static/js/errorpage.js",
+      });
     }
-
-    // sort items so its sorted in item pool
-    itemList.sort((a, b) => {
-      const itemNameA = a.itemName.toUpperCase();
-      const itemNameB = b.itemName.toUpperCase();
-
-      if (itemNameA < itemNameB) {
-        return -1; // Item A comes before Item B
-      }
-      if (itemNameA > itemNameB) {
-        return 1; // Item A comes after Item B
-      }
-      return 0; // Item Names are equal
-    });
-
-    console.log("user item gallery: ", itemList);
-
-    // code when itemPool must contain the item gallery of all collaborators
-    // try {
-    //   // Use map instead of forEach
-    //   await Promise.all(
-    //     bagUsersList.map(async (element) => {
-    //       console.log("ELEMENT: ", element.itemGallery);
-    //       var itemGalID = element.itemGallery;
-
-    //       const items = await Items.find({ itemGalleryID: itemGalID })
-    //         .lean()
-    //         .exec();
-    //       //console.log(items);
-    //       itemList.push(...items);
-    //     })
-    //   );
-    // } catch (error) {
-    //   console.log("listing users in bags for items failed due to: ", error);
-    // }
-
-    res.render("addItem", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/addItem.css",
-      partialcss: "/static/css/dItem.css",
-      mainscript: "/static/js/home.js",
-      js1: "/static/js/add_bagitem.js",
-      bag: bagToDisplay,
-      items: itemList,
-      user: bagUsersPool._id,
-    });
   },
 
   getItemGallery: async function (req, res) {
@@ -553,7 +559,7 @@ const controller = {
           await Bags.deleteOne({ _id: bagToDelete }).then((deletedBagBag) => {
             if (deletedBagBag) {
               console.log("bag deleted successfully in Bags");
-              res.redirect(`/home`);
+              res.status(200).send();
             }
           });
         } else {
@@ -616,19 +622,26 @@ const controller = {
 
   findBag: async function (req, res) {
     console.log("-------FIND BAG--------");
-    const bagToFindEnc = req.body.findbag;
-    console.log(bagToFindEnc);
-    const bagToFind = decrypt(bagToFindEnc, process.env.KEY);
-    const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
-    console.log("bag sched: ", bagFound.dateUsage);
+    try {
+      const bagToFindEnc = req.body.findbag;
+      console.log(bagToFindEnc);
+      const bagToFind = decrypt(bagToFindEnc, process.env.KEY);
+      console.log(bagToFind);
+      const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
-    if (bagFound) {
-      console.log("Schedule sent to client");
-      bagToSend = bagFound.dateUsage;
-      res.status(200).json({
-        bagDate: bagToSend,
-      });
+      if (bagFound != null) {
+        console.log("bag sched: ", bagFound.dateUsage);
+        console.log("Schedule sent to client");
+        bagToSend = bagFound.dateUsage;
+        res.status(200).json({
+          bagDate: bagToSend,
+        });
+      } else {
+        res.status(404).send();
+      }
+    } catch (error) {
+      res.status(404).send();
     }
   },
 
@@ -655,24 +668,42 @@ const controller = {
     const itemToFind = req.body;
 
     console.log("item to find:", itemToFind);
+    userID = req.session.user.uID;
+
+    const userPop = await User.findById(userID).populate("itemGallery").exec();
+    const itemGallery = userPop.itemGallery;
+
+    console.log("the item gallery: ", itemGallery);
 
     try {
       const result = [];
 
       for (const item of itemToFind) {
-        const existingItem = await Items.findOne({
-          itemName: item.itemname,
-          itemWeight: item.itemweight,
-        })
-          .lean()
-          .exec();
+        var existingItem = false;
 
-        if (existingItem) {
-          console.log("item exists in the database already");
-          result.push(200);
+        if (item.itemname == "" && item.itemweight == "") {
+          existingItem = false;
         } else {
-          console.log("item does not exist in the database yet");
-          result.push(500);
+          itemweightInt = parseInt(item.itemweight);
+          for (const itemGal of itemGallery) {
+            if (
+              itemGal.itemName === item.itemname &&
+              itemGal.itemWeight === itemweightInt
+            ) {
+              existingItem = true;
+              break;
+            }
+          }
+
+          console.log(existingItem);
+
+          if (existingItem) {
+            console.log("item exists in the database already");
+            result.push(200);
+          } else {
+            console.log("item does not exist in the database yet");
+            result.push(500);
+          }
         }
       }
 
@@ -714,11 +745,11 @@ const controller = {
   addItemGallery: async function (req, res) {
     console.log("----ADD ITEM TO GALLERY----");
     const newItems = req.body;
-    const user = req.session.user.uID;
+    const userID = req.session.user.uID;
     const totalItems = newItems.length;
     let savedItems = 0;
 
-    console.log("user: ", user);
+    console.log("user: ", userID);
     console.log("items to add in the gallery: ", newItems);
 
     newIDs = [];
@@ -734,7 +765,7 @@ const controller = {
         await newItem.save();
 
         const addedItem = await User.findOneAndUpdate(
-          { _id: user },
+          { _id: userID },
           {
             $push: {
               itemGallery: {
@@ -766,6 +797,46 @@ const controller = {
         res.status(200).json({ addedItems: newIDs });
       }
     });
+  },
+
+  updateItemGallery: async function (req, res) {
+    console.log("----UPDATE ITEM IN GALLERY----");
+    const allItems = req.body;
+    const userID = req.session.user.uID;
+    var savedItems = 0;
+    itemLen = allItems.length;
+
+    console.log("allitems: ", allItems);
+
+    for (const element of allItems) {
+      const editedItemId = new mongoose.Types.ObjectId(element.itemID);
+      const editedItemName = element.itemname;
+      const editedItemWeight = parseInt(element.itemweight);
+
+      try {
+        const updatedItem = await Items.findOneAndUpdate(
+          { _id: editedItemId },
+          { itemName: editedItemName, itemWeight: editedItemWeight },
+          { new: true }
+        );
+
+        if (updatedItem) {
+          console.log(updatedItem);
+          savedItems++;
+        } else {
+          console.log("Updating item unsuccessful");
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+        // Handle error, optionally send an error response
+        res.status(500).send("Error occurred while updating items");
+        return; // Exit the function early in case of an error
+      }
+    }
+
+    if (savedItems === itemLen) {
+      res.status(200).send();
+    }
   },
 };
 
