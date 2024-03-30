@@ -1,6 +1,8 @@
 const supertest = require('supertest');
 const app = require('../../index.js');
 
+
+
 /********** START OF GET REQUESTS **********/
 describe("GET /", () => {
     describe("when onboarding loads properly", () => {
@@ -168,6 +170,7 @@ describe("GET /register", () => {
             await supertest(app).get(`/register`).expect(200);
         })
     })
+
 })
 
 
