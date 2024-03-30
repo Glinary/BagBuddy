@@ -213,7 +213,7 @@ const controller = {
     //   console.log("listing users in bags for items failed due to: ", error);
     // }
 
-    res.render("addItem", {
+    res.status(200).render("addItem", {
       maincss: "/static/css/main.css",
       css1: "/static/css/addItem.css",
       partialcss: "/static/css/dItem.css",
@@ -254,7 +254,7 @@ const controller = {
   },
 
   getLogin: async function (req, res) {
-    res.render("login", {
+    res.status(200).render("login", {
       maincss: "/static/css/main.css",
       css1: "/static/css/login-register.css",
       partialcss: "",
@@ -267,7 +267,7 @@ const controller = {
   },
 
   getRegister: async function (req, res) {
-    res.render("register", {
+    res.status(200).render("register", {
       maincss: "/static/css/main.css",
       css1: "/static/css/login-register.css",
       showTop: false,
@@ -284,7 +284,7 @@ const controller = {
     console.log("User: ", user);
 
 
-    res.render("profile", {
+    res.status(200).render("profile", {
       maincss: "/static/css/main.css",
       css1: "/static/css/profile.css",
       showTop: false,
