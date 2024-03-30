@@ -111,6 +111,24 @@ const controller = {
   },
 
   getNotif: async function (req, res) {
+    console.log("-------GET HOME VIEW--------");
+    let userID = req.session.user.uID;
+    console.log("USER ID: ", userID);
+
+    const user = await User.findOne({ _id: userID }).lean().exec();
+        const userBags = await Bags.find({ _id: { $in: user.bags } }).lean().exec();
+
+        console.log("user: ", user);
+        console.log("bags in home view: ", userBags);
+
+        // Extract bagName and dateUsage from userBags
+        const bagsInfo = userBags.map(bag => ({
+            bagName: bag.bagName,
+            dateUsage: formatDate(bag.dateUsage)
+        }));
+
+        console.log("Bags information: ", bagsInfo);
+
     res.render("notification", {
       maincss: "/static/css/main.css",
       css1: "/static/css/notificationPage.css",
@@ -118,10 +136,11 @@ const controller = {
       mainscript: "/static/js/home.js",
       showBot: true,
       /*Sample list for testing bag view*/
-      notifs: [
-        { bagtype: "travel", date: "Feb 20" },
-        { bagtype: "personal", date: "Feb 21" },
-      ],
+      // notifs: [
+      //   { bagtype: "travel", date: "Feb 20" },
+      //   { bagtype: "personal", date: "Feb 21" },
+      // ],
+      notifs: bagsInfo,
     });
   },
 
@@ -288,7 +307,7 @@ const controller = {
 
   getOnboarding: async function (req, res) {
     sessionChecker(req, res, () => {
-      res.render("onboarding", {
+      res.status(200).render("onboarding", {
         maincss: "/static/css/main.css",
         css1: "/static/css/onboarding.css",
         showTop: false,
@@ -447,6 +466,8 @@ const controller = {
 
     try {
       const logUser = await User.findOne({ email: email });
+      console.log("READ ME")
+      console.log(logUser)
       const userID = logUser._id;
       console.log("user ID: ", userID);
       console.log("Session ID: ", req.sessionID);
@@ -863,6 +884,7 @@ const controller = {
     }
   },
 };
+
 
 function encrypt(objectId, key) {
   const text = objectId.toString(); // Convert ObjectID to string

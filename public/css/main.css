@@ -132,9 +132,9 @@
 }
 
 #homepage {
-  background-color: var(--main-orange);
-  width: 60%;
-  border-radius: 10px;
+  /*background-color: var(--main-orange);*/ /*refer to inline css*/
+  /*width: 60%;*/
+  /*border-radius: 10px;*/
 }
 .menu-item svg {
   width: calc(1rem + 1vw);
@@ -218,7 +218,7 @@
   display: block;
   width: 100%;
   bottom: 0;
-  pointer-events: none;
+  /*pointer-events: none;*/
   /* background-color: black; */
 }
 
