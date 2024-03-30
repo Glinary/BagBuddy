@@ -242,7 +242,7 @@ const controller = {
 
   getOnboarding: async function (req, res) {
     sessionChecker(req, res, () => {
-      res.render("onboarding", {
+      res.status(200).render("onboarding", {
         maincss: "/static/css/main.css",
         css1: "/static/css/onboarding.css",
         showTop: false,
