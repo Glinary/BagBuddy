@@ -85,11 +85,42 @@ describe("GET /addbag", () => {
     })
 
     describe("when bag is added without user id", () => {
-        const userId = '111';
         test("return a status code 200", async () => {
             await supertest(app).get(`/addbag`).expect(404);
         })
     })
+
+    //TODO: add test for GET /addbag page loads with a nonexistent user id
+    // describe("when addbag page loads with a nonexistent user id", () => {
+    //     const userId = '88888';
+    //     test("return a status code 200", async () => {
+    //         await supertest(app).get(`/addbag/${userId}`).expect(404);
+    //     })
+    // })
 })
 
+describe("GET /editbag", () => {
+    describe("when editbag page loads to existing user id", () => {
+        const userId = '6607c1d30a1effb0643f2f34';
+        const bagId = '6607c2400a1effb0643f2f3b';
+        test("return a status code 200", async () => {
+            await supertest(app).get(`/editbag/${userId}/${bagId}`).expect(200);
+        })
+    })
 
+    describe("when bag is added without user id", () => {
+        test("return a status code 200", async () => {
+            await supertest(app).get(`/addbag`).expect(404);
+        })
+    })
+
+    //TODO: add test for GET /editbag loads with nonexistent id credentials
+    // describe("when bag is added without user id", () => {
+    //     const userId = '8888';
+    //     const bagId = '8888';
+    //     test("return a status code 200", async () => {
+    //         await supertest(app).get(`/addbag/${userId}/${bagId}`).expect(404);
+    //     })
+    // })
+
+})
