@@ -384,6 +384,8 @@ const controller = {
 
     try {
       const logUser = await User.findOne({ email: email });
+      console.log("READ ME")
+      console.log(logUser)
       const userID = logUser._id;
       console.log("user ID: ", userID);
       console.log("Session ID: ", req.sessionID);
