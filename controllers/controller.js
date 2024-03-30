@@ -6,8 +6,10 @@ const User = require("../schema/Users");
 const Bags = require("../schema/Bags");
 const Items = require("../schema/Items");
 const mongoose = require("mongoose");
+require("dotenv").config();
+const crypto = require("crypto");
 
-const session = require('express-session');
+const session = require("express-session");
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,11 +17,11 @@ app.use(bodyParser.json());
 const sessionChecker = (req, res, next) => {
   // Assuming you're using express-session for managing sessions
   if (req.session.user) {
-      // User is already logged in, redirect to home page
-      res.redirect(`/home/${req.session.user.uID}`);
+    // User is already logged in, redirect to home page
+    res.redirect(`/home`);
   } else {
-      next();
-  } 
+    next();
+  }
 };
 
 const controller = {
@@ -45,56 +47,67 @@ const controller = {
       showBot: true,
       showAddBtn: true,
       bags: userBags,
-      user: userID,
     });
   },
 
   getBag: async function (req, res) {
     console.log("-------GET BAG VIEW--------");
 
-    const bagID = req.params.id;
-    console.log("bag ID: ", bagID);
-
-    const userID = req.params.user;
-    console.log("user ID:", req.params.user);
-
-    const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
-    const itemsToDisplay = bagToDisplay.bagItems;
-
-    console.log("Bag to be displayed: ", bagToDisplay);
-    console.log("items to display: ", itemsToDisplay);
-
-    let itemList = [];
-
-    //code when item pool contains only user item gallery
     try {
-      // Use map instead of forEach
-      await Promise.all(
-        itemsToDisplay.map(async (element) => {
-          const items = await Items.find({ _id: element }).lean().exec();
-          // console.log(items);
-          itemList.push(...items);
-        })
-      );
+      const encryptedBagId = req.params.id;
+      console.log("encrypted bag ID: ", encryptedBagId);
+
+      const userID = req.session.user.uID;
+      console.log("user ID:", userID);
+
+      const bagID = decrypt(encryptedBagId, process.env.KEY);
+      console.log("decrypted bag ID: ", bagID);
+
+      const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
+
+      const itemsToDisplay = bagToDisplay.bagItems;
+
+      console.log("Bag to be displayed: ", bagToDisplay);
+      console.log("items to display: ", itemsToDisplay);
+
+      let itemList = [];
+
+      //code when item pool contains only user item gallery
+      try {
+        // Use map instead of forEach
+        await Promise.all(
+          itemsToDisplay.map(async (element) => {
+            const items = await Items.find({ _id: element }).lean().exec();
+            // console.log(items);
+            itemList.push(...items);
+          })
+        );
+      } catch (error) {
+        console.log("listing users in bags for items failed due to: ", error);
+      }
+
+      console.log("bag items: ", itemList);
+
+      res.render("insidebag", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/home.css",
+        partialcss: "/static/css/dItem.css",
+        mainscript: "/static/js/home.js",
+        js1: "/static/js/delete_bag.js",
+        showBot: true,
+        showAddBtn: true,
+        /*Sample list for testing bag view*/
+        bag: bagToDisplay,
+        items: itemList,
+        user: userID,
+      });
     } catch (error) {
-      console.log("listing users in bags for items failed due to: ", error);
+      res.render("errorpage", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/errorpage.css",
+        mainscript: "/static/js/errorpage.js",
+      });
     }
-
-    console.log("bag items: ", itemList);
-
-    res.render("insidebag", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/home.css",
-      partialcss: "/static/css/dItem.css",
-      mainscript: "/static/js/home.js",
-      js1: "/static/js/delete_bag.js",
-      showBot: true,
-      showAddBtn: true,
-      /*Sample list for testing bag view*/
-      bag: bagToDisplay,
-      items: itemList,
-      user: userID,
-    });
   },
 
   getNotif: async function (req, res) {
@@ -118,106 +131,158 @@ const controller = {
       css1: "/static/css/bagform.css",
       mainscript: "/static/js/home.js",
       js1: "/static/js/add_bag.js",
-      user: req.params.id,
     });
   },
 
   getBagFormEdit: async function (req, res) {
-    const bagToFind = req.params.id;
-    const userID = req.params.user;
+    try {
+      const encbagToFind = req.params.id;
+      const bagToFind = decrypt(encbagToFind, process.env.KEY);
 
-    const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
+      const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
-    res.render("editBagForm", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/bagform.css",
-      mainscript: "/static/js/home.js",
-      js1: "/static/js/edit_bag.js",
-      bags: bagFound,
-      user: userID,
-    });
+      res.render("editBagForm", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/bagform.css",
+        mainscript: "/static/js/home.js",
+        js1: "/static/js/edit_bag.js",
+        bags: bagFound,
+      });
+    } catch (error) {
+      res.render("errorpage", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/errorpage.css",
+        mainscript: "/static/js/errorpage.js",
+      });
+    }
   },
 
   getAddItem: async function (req, res) {
     console.log("-------GET ITEM--------");
 
-    const bagID = req.params.id;
+    try {
+      const encBagID = req.params.id;
+      const bagID = decrypt(encBagID, process.env.KEY);
 
-    const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
-    console.log("Bag to Display", bagToDisplay);
+      const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
+      console.log("Bag to Display", bagToDisplay);
 
-    // populate bag's userItemPools with users itself
-    const bagUsers = await Bags.findById(bagID)
-      .populate("userItemsPool")
+      // populate bag's userItemPools with users itself
+      const bagUsers = await Bags.findById(bagID)
+        .populate("userItemsPool")
+        .exec();
+
+      // get the user in userItemsPool
+      const bagUsersPool = bagUsers.userItemsPool;
+      const bagUsersItemGallery = bagUsersPool.itemGallery.sort();
+
+      console.log("User item ID:", bagUsersItemGallery);
+
+      let itemList = [];
+
+      //code when item pool contains only user item gallery
+      try {
+        // Use map instead of forEach
+        await Promise.all(
+          bagUsersItemGallery.map(async (element) => {
+            const items = await Items.find({ _id: element }).lean().exec();
+            // console.log(items);
+            itemList.push(...items);
+          })
+        );
+      } catch (error) {
+        console.log("listing users in bags for items failed due to: ", error);
+      }
+
+      // sort items so its sorted in item pool
+      itemList.sort((a, b) => {
+        const itemNameA = a.itemName.toUpperCase();
+        const itemNameB = b.itemName.toUpperCase();
+
+        if (itemNameA < itemNameB) {
+          return -1; // Item A comes before Item B
+        }
+        if (itemNameA > itemNameB) {
+          return 1; // Item A comes after Item B
+        }
+        return 0; // Item Names are equal
+      });
+
+      console.log("user item gallery: ", itemList);
+
+      res.render("addItem", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/addItem.css",
+        partialcss: "/static/css/dItem.css",
+        mainscript: "/static/js/home.js",
+        js1: "/static/js/add_bagitem.js",
+        bag: bagToDisplay,
+        items: itemList,
+        user: bagUsersPool._id,
+      });
+    } catch (error) {
+      res.render("errorpage", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/errorpage.css",
+        mainscript: "/static/js/errorpage.js",
+      });
+    }
+  },
+
+  getItemGallery: async function (req, res) {
+    console.log("----GET ITEM GALLERY PAGE----");
+    const userID = req.session.user.uID;
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    console.log("user item gallery look: ", user.itemGallery);
+
+    const userItemsPop = await User.findById(userID)
+      .populate("itemGallery")
       .exec();
 
-    // get the user in userItemsPool
-    const bagUsersPool = bagUsers.userItemsPool;
-    const bagUsersItemGallery = bagUsersPool.itemGallery;
+    const userItems = userItemsPop.itemGallery;
+    console.log("populated: ", userItems);
 
-    console.log("User item ID:", bagUsersItemGallery);
-
-    let itemList = [];
+    userItemList = [];
 
     //code when item pool contains only user item gallery
     try {
       // Use map instead of forEach
       await Promise.all(
-        bagUsersItemGallery.map(async (element) => {
-          const items = await Items.find({ _id: element }).lean().exec();
+        userItems.map(async (element) => {
+          const items = await Items.find({ _id: element._id }).lean().exec();
           // console.log(items);
-          itemList.push(...items);
+          userItemList.push(...items);
         })
       );
     } catch (error) {
       console.log("listing users in bags for items failed due to: ", error);
     }
 
-    console.log("user item gallery: ", itemList);
+    // sort items so its sorted in item pool
+    userItemList.sort((a, b) => {
+      const itemNameA = a.itemName.toUpperCase();
+      const itemNameB = b.itemName.toUpperCase();
 
-    // code when itemPool must contain the item gallery of all collaborators
-    // try {
-    //   // Use map instead of forEach
-    //   await Promise.all(
-    //     bagUsersList.map(async (element) => {
-    //       console.log("ELEMENT: ", element.itemGallery);
-    //       var itemGalID = element.itemGallery;
-
-    //       const items = await Items.find({ itemGalleryID: itemGalID })
-    //         .lean()
-    //         .exec();
-    //       //console.log(items);
-    //       itemList.push(...items);
-    //     })
-    //   );
-    // } catch (error) {
-    //   console.log("listing users in bags for items failed due to: ", error);
-    // }
-
-    res.render("addItem", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/addItem.css",
-      partialcss: "/static/css/dItem.css",
-      mainscript: "/static/js/home.js",
-      js1: "/static/js/additem.js",
-      bag: bagToDisplay,
-      items: itemList,
-      user: bagUsersPool._id,
+      if (itemNameA < itemNameB) {
+        return -1; // Item A comes before Item B
+      }
+      if (itemNameA > itemNameB) {
+        return 1; // Item A comes after Item B
+      }
+      return 0; // Item Names are equal
     });
-  },
 
-  getItemGallery: async function (req, res) {
+    console.log("user item gallery: ", userItemList);
+
     res.render("itemGallery", {
       maincss: "/static/css/main.css",
       css1: "/static/css/itemGallery.css",
       partialcss: "/static/css/item.css",
       mainscript: "/static/js/home.js",
-      bag: { name: "ETC", weight: "7kg", color: "red" },
-      items: [
-        { id: "123456", name: "Pencil", weight: "5kg" },
-        { id: "123457", name: "Pencil", weight: "5kg" },
-        { id: "123458", name: "Pencil", weight: "5kg" },
-      ],
+      js1: "/static/js/add_galleryitem.js",
+      items: userItemList,
+      bag: req.params.id,
+      user: req.params.user,
     });
   },
 
@@ -263,7 +328,6 @@ const controller = {
     const userID = req.session.user.uID;
     const user = await User.findOne({ _id: userID }).lean().exec();
     console.log("User: ", user);
-
 
     res.render("profile", {
       maincss: "/static/css/main.css",
@@ -371,7 +435,6 @@ const controller = {
       // after successful registration, send the email and password
       // to login the client
       res.status(200).json({ userID: newUser._id });
-      
     } catch (error) {
       console.log("Error registering user: ", error);
       res.status(500).json({ message: "Server error." });
@@ -414,7 +477,7 @@ const controller = {
 
   /** DB controls - BAGS AND ITEMS */
   addTheBag: async function (req, res) {
-    let userID = req.params.id;
+    let userID = req.session.user.uID;
     const user = await User.findOne({ _id: userID }).lean().exec();
     console.log(req.body.bagname);
 
@@ -427,179 +490,22 @@ const controller = {
     }
 
     dateUsage = dateBag;
+    console.log("bagdesc: ", req.body.bagdesc);
 
-    let delete_laterID = new mongoose.Types.ObjectId(
-      "65e859dc190b035ad6bc3b2b"
-    );
+    const newid = new mongoose.Types.ObjectId();
+    const encryptBag = encrypt(newid, process.env.KEY);
 
-    let delete_laterGID = new mongoose.Types.ObjectId(
-      "65f2a0a2a092520f8f480869"
-    );
     // create new Bag of Bag Schema format
     const newBag = new Bags({
-      _id: new mongoose.Types.ObjectId(),
+      _id: newid,
+      encID: encryptBag,
+      bagDesc: req.body.bagdesc,
       bagName: req.body.bagname,
       bagColor: req.body.selectedColor,
       bagWeight: req.body.weight,
       dateUsage: dateUsage,
       userItemsPool: [user._id],
     });
-
-    const newItem = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Pencil",
-      itemWeight: 1,
-    });
-
-    const newItem1 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Eraser",
-      itemWeight: 1,
-    });
-
-    const newItem2 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Sharpener",
-      itemWeight: 1,
-    });
-
-    const newItem3 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Pentel",
-      itemWeight: 1,
-    });
-    const newItem4 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Phone",
-      itemWeight: 1,
-    });
-
-    const newItem5 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-
-    const newItem6 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Sharpener",
-      itemWeight: 1,
-    });
-
-    const newItem7 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Pentel",
-      itemWeight: 1,
-    });
-    const newItem8 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Phone",
-      itemWeight: 1,
-    });
-
-    const newItem9 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem10 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem11 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem12 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem13 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-
-    const newItem14 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem15 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem16 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem17 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem18 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem19 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem20 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem21 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem22 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    const newItem23 = new Items({
-      _id: new mongoose.Types.ObjectId(),
-      itemName: "Paper",
-      itemWeight: 1,
-    });
-    let items = [
-      newItem,
-      newItem1,
-      newItem2,
-      newItem3,
-      newItem4,
-      newItem5,
-      newItem6,
-      newItem7,
-      newItem8,
-      newItem9,
-      newItem10,
-      newItem11,
-      newItem12,
-      newItem13,
-      newItem14,
-      newItem15,
-      newItem16,
-      newItem17,
-      newItem18,
-      newItem19,
-      newItem20,
-      newItem21,
-      newItem22,
-      newItem23,
-    ];
-    console.log("Items to be put in bag: ", items);
 
     newBag.save().then(async () => {
       User.findOneAndUpdate(
@@ -611,42 +517,15 @@ const controller = {
               _id: newBag._id,
             },
           },
-
-          itemGallery: items,
         },
         { new: true }
       )
         .then((addedBag) => {
           if (addedBag) {
-            console.log("Success add bag", addedBag);
-            newItem.save();
-            newItem1.save();
-            newItem2.save();
-            newItem3.save();
-            newItem4.save();
-            newItem5.save();
-            newItem6.save();
-            newItem7.save();
-            newItem8.save();
-            newItem9.save();
-            newItem10.save();
-            newItem11.save();
-            newItem12.save();
-            newItem13.save();
-            newItem14.save();
-            newItem15.save();
-            newItem16.save();
-            newItem17.save();
-            newItem18.save();
-            newItem19.save();
-            newItem20.save();
-            newItem21.save();
-            newItem22.save();
-            newItem23.save();
-
+            console.log("Success add bag", addedBag.bags);
             res.status(200).json({
               message: "Bag added successfully",
-              bag: newBag._id,
+              bag: encryptBag,
             });
           } else {
             console.log("unsuccessful add bag");
@@ -661,10 +540,11 @@ const controller = {
   deleteBag: async function (req, res) {
     console.log("------DELETE BAG------");
 
-    const bagToDelete = req.body.bag;
+    const encBagToDelete = req.body.bag;
+    const bagToDelete = decrypt(encBagToDelete, process.env.KEY);
     console.log("bag ID to delete: ", bagToDelete);
 
-    const userID = req.params.id;
+    const userID = req.session.user.uID;
 
     try {
       // const user = await User.findOne({ _id: userID }).lean().exec();
@@ -679,7 +559,7 @@ const controller = {
           await Bags.deleteOne({ _id: bagToDelete }).then((deletedBagBag) => {
             if (deletedBagBag) {
               console.log("bag deleted successfully in Bags");
-              res.redirect(`/home`);
+              res.status(200).send();
             }
           });
         } else {
@@ -693,8 +573,10 @@ const controller = {
   },
 
   editBag: async function (req, res) {
-    console.log("EDIT BAG CONTROLLER");
-    const bagID = req.body.bagID;
+    console.log("------EDIT BAG CONTROLLER-------");
+    const encBagID = req.body.bagID;
+    const bagID = decrypt(encBagID, process.env.KEY);
+    const bagDesc = req.body.bagdesc;
     const bagName = req.body.bagname;
     const bagWeight = req.body.weight;
     const bagColor = req.body.selectedColor;
@@ -714,6 +596,7 @@ const controller = {
         { _id: bagID },
         {
           $set: {
+            bagDesc: bagDesc,
             bagName: bagName,
             bagWeight: bagWeight,
             bagColor: bagColor,
@@ -724,7 +607,7 @@ const controller = {
         if (updatedBag) {
           console.log("Successfull editing of bag");
           res.status(200).json({
-            bagid: bagID,
+            bagid: encBagID,
           });
         } else {
           console.log("unsuccessful edit bag");
@@ -739,23 +622,33 @@ const controller = {
 
   findBag: async function (req, res) {
     console.log("-------FIND BAG--------");
-    const bagToFind = req.body.findbag;
-    const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
-    console.log("bag sched: ", bagFound.dateUsage);
+    try {
+      const bagToFindEnc = req.body.findbag;
+      console.log(bagToFindEnc);
+      const bagToFind = decrypt(bagToFindEnc, process.env.KEY);
+      console.log(bagToFind);
+      const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
-    if (bagFound) {
-      console.log("Schedule sent to client");
-      bagToSend = bagFound.dateUsage;
-      res.status(200).json({
-        bagDate: bagToSend,
-      });
+      if (bagFound != null) {
+        console.log("bag sched: ", bagFound.dateUsage);
+        console.log("Schedule sent to client");
+        bagToSend = bagFound.dateUsage;
+        res.status(200).json({
+          bagDate: bagToSend,
+        });
+      } else {
+        res.status(404).send();
+      }
+    } catch (error) {
+      res.status(404).send();
     }
   },
 
-  findItem: async function (req, res) {
-    console.log("-------FIND ITEM--------");
-    const bagToFind = req.body.tofindbag;
+  findBagItem: async function (req, res) {
+    console.log("-------FIND BAG ITEM--------");
+    const encBagToFind = req.body.tofindbag;
+    const bagToFind = decrypt(encBagToFind, process.env.KEY);
     const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
 
     console.log("Bag Found:", bagFound);
@@ -770,11 +663,63 @@ const controller = {
     }
   },
 
+  findItem: async function (req, res) {
+    console.log("-------FIND ITEM--------");
+    const itemToFind = req.body;
+
+    console.log("item to find:", itemToFind);
+    userID = req.session.user.uID;
+
+    const userPop = await User.findById(userID).populate("itemGallery").exec();
+    const itemGallery = userPop.itemGallery;
+
+    console.log("the item gallery: ", itemGallery);
+
+    try {
+      const result = [];
+
+      for (const item of itemToFind) {
+        var existingItem = false;
+
+        if (item.itemname == "" && item.itemweight == "") {
+          existingItem = false;
+        } else {
+          itemweightInt = parseInt(item.itemweight);
+          for (const itemGal of itemGallery) {
+            if (
+              itemGal.itemName === item.itemname &&
+              itemGal.itemWeight === itemweightInt
+            ) {
+              existingItem = true;
+              break;
+            }
+          }
+
+          console.log(existingItem);
+
+          if (existingItem) {
+            console.log("item exists in the database already");
+            result.push(200);
+          } else {
+            console.log("item does not exist in the database yet");
+            result.push(500);
+          }
+        }
+      }
+
+      res.status(200).json(result); // Send the result back to the client
+    } catch (error) {
+      console.error("Error finding items:", error);
+      res.status(500).json({ error: "An error occurred" }); // Handle error
+    }
+  },
+
   addItem: async function (req, res) {
     console.log("-------ADD ITEM--------");
     const itemList = req.body;
 
-    const bagID = itemList.shift();
+    const encBagID = itemList.shift();
+    const bagID = decrypt(encBagID, process.env.KEY);
 
     console.log("Items to add in the bag: ", itemList);
 
@@ -786,7 +731,7 @@ const controller = {
         (addedItem) => {
           if (addedItem) {
             console.log("adding item successful");
-            res.status(200).json({ redLink: bagID });
+            res.status(200).json({ redLink: encBagID });
           } else {
             console.log("adding item unsuccessful");
           }
@@ -796,7 +741,151 @@ const controller = {
       console.log("Error in adding items loop: ", err);
     }
   },
+
+  addItemGallery: async function (req, res) {
+    console.log("----ADD ITEM TO GALLERY----");
+    const newItems = req.body;
+    const userID = req.session.user.uID;
+    const totalItems = newItems.length;
+    let savedItems = 0;
+
+    console.log("user: ", userID);
+    console.log("items to add in the gallery: ", newItems);
+
+    newIDs = [];
+
+    newItems.forEach(async (obj) => {
+      const newItem = new Items({
+        _id: new mongoose.Types.ObjectId(),
+        itemName: obj.itemname,
+        itemWeight: obj.itemweight,
+      });
+
+      try {
+        await newItem.save();
+
+        const addedItem = await User.findOneAndUpdate(
+          { _id: userID },
+          {
+            $push: {
+              itemGallery: {
+                _id: newItem._id,
+              },
+            },
+          },
+          { new: true }
+        );
+
+        if (addedItem) {
+          newIDs.push(newItem._id);
+        } else {
+          console.log("Unsuccessful adding of items in user");
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+        // Handle error, optionally send an error response
+        res.status(500).send("Error occurred while adding items");
+        return; // Exit the function early in case of an error
+      }
+
+      // Increment the savedItems counter
+      savedItems++;
+
+      // Check if all items have been processed
+      if (savedItems === totalItems) {
+        // If all items have been processed, send a 200 status code
+        res.status(200).json({ addedItems: newIDs });
+      }
+    });
+  },
+
+  updateItemGallery: async function (req, res) {
+    console.log("----UPDATE ITEM IN GALLERY----");
+    const allItems = req.body;
+    const userID = req.session.user.uID;
+    var savedItems = 0;
+    itemLen = allItems.length;
+
+    console.log("allitems: ", allItems);
+
+    for (const element of allItems) {
+      const editedItemId = new mongoose.Types.ObjectId(element.itemID);
+      const editedItemName = element.itemname;
+      const editedItemWeight = parseInt(element.itemweight);
+
+      try {
+        const updatedItem = await Items.findOneAndUpdate(
+          { _id: editedItemId },
+          { itemName: editedItemName, itemWeight: editedItemWeight },
+          { new: true }
+        );
+
+        if (updatedItem) {
+          console.log(updatedItem);
+          savedItems++;
+        } else {
+          console.log("Updating item unsuccessful");
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+        // Handle error, optionally send an error response
+        res.status(500).send("Error occurred while updating items");
+        return; // Exit the function early in case of an error
+      }
+    }
+
+    if (savedItems === itemLen) {
+      res.status(200).send();
+    }
+  },
 };
+
+function encrypt(objectId, key) {
+  const text = objectId.toString(); // Convert ObjectID to string
+
+  // Ensure the key is 32 bytes (256 bits) long
+  const keyBuffer = Buffer.alloc(32); // Create a buffer of 32 bytes filled with zeros
+  Buffer.from(key, "utf-8").copy(keyBuffer); // Copy the key string bytes into the buffer
+
+  const iv = crypto.randomBytes(16); // Generate a random IV (Initialization Vector)
+  const cipher = crypto.createCipheriv("aes-256-cbc", keyBuffer, iv);
+  let encrypted = cipher.update(text, "utf8", "base64"); // Use base64 encoding for the encrypted data
+  encrypted += cipher.final("base64"); // Finalize encryption with base64 encoding
+
+  // Replace '/' with '_' and '+' with '-'
+  encrypted = encrypted.replace(/\//g, "_").replace(/\+/g, "-");
+
+  const ivBase64 = iv.toString("base64"); // Encode IV to base64
+  // Replace '/' with '_' in IV (no need to replace '+', IV doesn't contain it)
+  const ivEncoded = ivBase64.replace(/\//g, "_");
+
+  return ivEncoded + ":" + encrypted; // Concatenate IV and encrypted data with ':'
+}
+
+// Decryption function
+function decrypt(encryptedData, key) {
+  // Revert '_' back to '/' and '-' back to '+'
+  encryptedData = encryptedData.replace(/_/g, "/").replace(/-/g, "+");
+
+  // Split IV and encrypted data using ':'
+  const [ivEncoded, encryptedBase64] = encryptedData.split(":");
+
+  // Replace '_' back to '/' in IV
+  const ivBase64 = ivEncoded.replace(/_/g, "/");
+
+  // Decode IV and encrypted data from base64
+  const iv = Buffer.from(ivBase64, "base64");
+  const encrypted = Buffer.from(encryptedBase64, "base64").toString("base64"); // Decode from base64 and convert to string
+
+  // Ensure the key is 32 bytes (256 bits) long
+  const keyBuffer = Buffer.alloc(32); // Create a buffer of 32 bytes filled with zeros
+  Buffer.from(key, "utf-8").copy(keyBuffer); // Copy the key string bytes into the buffer
+
+  const decipher = crypto.createDecipheriv("aes-256-cbc", keyBuffer, iv);
+  let decrypted = decipher.update(encrypted, "base64", "utf8"); // Decrypt using base64 encoding
+  decrypted += decipher.final("utf8"); // Finalize decryption
+  return decrypted;
+}
 
 // export default controller;
 module.exports = controller;

@@ -7,6 +7,13 @@ const firstPage = document.querySelector(".first-page");
 const secondPage = document.querySelector(".second-page");
 const cancelBtn = document.querySelector("#form-cancel");
 
+var currentURL = window.location.href;
+
+const parBag = currentURL.split("/");
+
+// Get the last segment, which should be 'bdn23232' - bag ID
+const parB = parSegments[parBag.length - 1];
+
 let savedColor = selectedColor.value;
 let prev = "";
 let cancel = 0;
@@ -80,24 +87,42 @@ function form_cancel() {
   firstPage.style.display = "block";
   secondPage.style.display = "none";
   nextBtn.style.display = "block";
+  console.log("HERE");
 
   if (cancel == 1) {
     cancelBtn.textContent = "cancel";
     cancel = 0;
+  } else {
+    window.location.href = `/bag/${parB}`;
   }
 }
 
 onload();
 
 async function onload() {
-  const bagSched = await findBag();
+  try {
+    const bagSched = await findBag();
 
-  const dateClass = document.querySelector("#date");
-  console.log("Bag Date: ", bagSched);
+    const dateClass = document.querySelector("#date");
+    console.log("Bag Date: ", bagSched);
 
-  if (bagSched != undefined) {
-    const dateFormat = new Date(bagSched).toISOString().split("T")[0];
-    dateClass.value = dateFormat;
+    if (bagSched != undefined) {
+      const dateFormat = new Date(bagSched).toISOString().split("T")[0];
+      dateClass.value = dateFormat;
+    }
+  } catch (error) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 }
 
@@ -124,8 +149,6 @@ saveBtn.addEventListener("click", async function (e) {
 });
 
 async function edit_bag(json) {
-  const userIDClass = document.querySelector("#userid");
-  const userID = userIDClass.value;
   const response = await fetch(`/eb`, {
     method: "POST",
     body: json,
@@ -137,7 +160,18 @@ async function edit_bag(json) {
   if (response.status === 200) {
     let redirectedData = await response.json();
     let redirectLink = redirectedData.bagid;
-    window.location.href = `http://localhost:3000/bag/${userID}/${redirectLink}`;
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Bag edited",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    setTimeout(function () {
+      window.location.href = `/bag/${redirectLink}`;
+    }, 1500);
   }
 }
 
@@ -164,5 +198,18 @@ async function findBag() {
     let bag = resBag.bagDate;
     console.log("FoundBag: ", bag);
     return bag;
+  } else if (response.status == 404) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
   }
 }

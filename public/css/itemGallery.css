@@ -1,13 +1,14 @@
 #itemGallery {
   height: 100%;
   width: 100%;
-  overflow-y: hidden;
+  /* overflow-y: scroll; */
   background-color: var(--main-blue);
 }
 
 .itemGallery-wrapper {
   height: 100%;
   padding: 1rem 0rem;
+  /* overflow: scroll; */
 }
 
 .gallery-titledesc-wrapper {
@@ -28,8 +29,9 @@
 .gallery-itemlist-wrapper {
   height: fit-content;
   overflow-y: scroll;
-  height: 100vh;
-  padding-bottom: calc(2rem + 2vw) * 2;
+  height: 72vh;
+  padding-bottom: calc(1rem + 0.25vw);
+  /* background-color: beige; */
   /* background-color: white; */
 }
 
@@ -40,6 +42,7 @@
   text-align: center;
   background-color: var(--main-peach);
   margin-bottom: 0.5rem;
+  cursor: pointer;
 }
 
 .confirm-bar {
@@ -52,10 +55,12 @@
 
 .confirm-btn {
   background-color: var(--main-blue);
-  padding: calc(0.5rem + 0.15vw) calc(0.35rem + 0.35vw);
+  padding: calc(0.25rem + 0.15vw) calc(0.35rem + 0.35vw);
   font-size: 0.85em;
   border-radius: 5px;
   color: white;
   outline: none;
   border: none;
+  z-index: 100;
+  display: none;
 }
