@@ -475,6 +475,30 @@ const controller = {
     }
   },
 
+  // gets the session userID
+  getBagList: async function (req, res) {
+    console.log("-------GET BAG LIST--------");
+    let userID = req.session.user.uID;
+    console.log("USER ID: ", userID);
+    const { bagname } = req.body;
+    console.log("Current Bag Name: ", bagname);
+
+    try {
+      const user = await User.findOne({ _id: userID }).lean().exec();
+      userBags = await Bags.find({
+        _id: { $in: user.bags },
+        bagName: { $regex: bagname, $options: "i" }, // Case-insensitive search
+      }).lean().exec();
+      
+      console.log("Bag List: ", userBags );
+      res.status(200).json({ bags: userBags });
+    } catch (error) {
+      console.error("Error retrieving session uID:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+
+  },
+
   /** DB controls - BAGS AND ITEMS */
   addTheBag: async function (req, res) {
     let userID = req.session.user.uID;

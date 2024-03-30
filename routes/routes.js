@@ -37,5 +37,7 @@ router.post("/postRegister", controller.postRegister);
 router.post("/postlogin", controller.postLogin);
 router.post("/postSignout", controller.postSignout);
 
+router.post("/getbags", controller.getBagList);
+
 // export default router;
 module.exports = router;
