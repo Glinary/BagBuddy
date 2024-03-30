@@ -39,10 +39,10 @@ async function login(jsonData) {
 
     if (response.ok) {
       console.log("-----LOGIN SUCCESS-----");
-      resData = await response.json();
-      resLink = resData.uID;
+      // resData = await response.json();
+      // resLink = resData.uID;
       //   Redirect to home page upon successful login
-      window.location.href = `/home/${resLink}`;
+      window.location.href = `/home`;
     } else {
       // Unsuccessful login
       console.error("Login failed: ", response.statusText);
