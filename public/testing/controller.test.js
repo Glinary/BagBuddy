@@ -186,4 +186,18 @@ describe("GET /register", () => {
 
 /********** END OF GET REQUESTS **********/
 /********** START OF POST REQUESTS **********/
+describe("POST /postRegister", () => {
+    //TODO: do not permanently add the new id since testing should be done repeatedly
+    describe("when user registers with new credentials", () => {
+        test("return a status code 200", async () => {
+            const response = await supertest(app).post(`/postRegister`).send({
+                registerName: "Gleglegle",
+                registerEmail: "gleeee@gmail.com",
+                registerPassword: "1234567890",
+            })
+            expect(response.status).toBe(200);
+        })
+    })
+
+})
 /********** END OF POST REQUESTS **********/
