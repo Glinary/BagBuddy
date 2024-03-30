@@ -98,6 +98,24 @@ const controller = {
   },
 
   getNotif: async function (req, res) {
+    console.log("-------GET HOME VIEW--------");
+    let userID = req.session.user.uID;
+    console.log("USER ID: ", userID);
+
+    const user = await User.findOne({ _id: userID }).lean().exec();
+        const userBags = await Bags.find({ _id: { $in: user.bags } }).lean().exec();
+
+        console.log("user: ", user);
+        console.log("bags in home view: ", userBags);
+
+        // Extract bagName and dateUsage from userBags
+        const bagsInfo = userBags.map(bag => ({
+            bagName: bag.bagName,
+            dateUsage: formatDate(bag.dateUsage)
+        }));
+
+        console.log("Bags information: ", bagsInfo);
+
     res.render("notification", {
       maincss: "/static/css/main.css",
       css1: "/static/css/notificationPage.css",
@@ -105,10 +123,11 @@ const controller = {
       mainscript: "/static/js/home.js",
       showBot: true,
       /*Sample list for testing bag view*/
-      notifs: [
-        { bagtype: "travel", date: "Feb 20" },
-        { bagtype: "personal", date: "Feb 21" },
-      ],
+      // notifs: [
+      //   { bagtype: "travel", date: "Feb 20" },
+      //   { bagtype: "personal", date: "Feb 21" },
+      // ],
+      notifs: bagsInfo,
     });
   },
 
@@ -799,6 +818,14 @@ const controller = {
     }
   },
 };
+
+// Function to format date
+function formatDate(date) {
+  // Convert to Date object
+  const formattedDate = new Date(date);
+  // Format the date (e.g., "January 1, 2022")
+  return formattedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
 
 // export default controller;
 module.exports = controller;
