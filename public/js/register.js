@@ -149,8 +149,8 @@ async function register(data) {
     // Parse the JSON response
     const responseData = await regResponse.json();
     console.log(responseData);
-    const redLink = responseData.userID;
-    window.location.href = `/home/${redLink}`;
+    // const redLink = responseData.userID;
+    window.location.href = `/home`;
 
     // // Clear email and password fields
     // nameInput.value = "";
