@@ -319,7 +319,7 @@ const controller = {
   },
 
   getLogin: async function (req, res) {
-    res.render("login", {
+    res.status(200).render("login", {
       maincss: "/static/css/main.css",
       css1: "/static/css/login-register.css",
       partialcss: "",
@@ -332,7 +332,7 @@ const controller = {
   },
 
   getRegister: async function (req, res) {
-    res.render("register", {
+    res.status(200).render("register", {
       maincss: "/static/css/main.css",
       css1: "/static/css/login-register.css",
       showTop: false,
@@ -348,7 +348,7 @@ const controller = {
     const user = await User.findOne({ _id: userID }).lean().exec();
     console.log("User: ", user);
 
-    res.render("profile", {
+    res.status(200).render("profile", {
       maincss: "/static/css/main.css",
       css1: "/static/css/profile.css",
       showTop: false,
