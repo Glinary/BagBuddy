@@ -933,5 +933,13 @@ function decrypt(encryptedData, key) {
   return decrypted;
 }
 
+// Function to format date
+function formatDate(date) {
+  // Convert to Date object
+  const formattedDate = new Date(date);
+  // Format the date (e.g., "January 1, 2022")
+  return formattedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
 // export default controller;
 module.exports = controller;
