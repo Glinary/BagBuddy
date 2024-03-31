@@ -1,5 +1,5 @@
 <section class="bag-form">
-    <div class="bck"><a href="/home/{{user}}"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
+    <div class="bck"><a href="/home"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
     <div class="form-wrapper white-wrapper">
         <div class="form-bag-info-list center">
             <div id="form-add-title" class="form-add-bag-title white-wrap-title info-list">Add a Bag</div>
@@ -26,13 +26,16 @@
                         <label for="bagname">Bag Weight</label><br>
                         <input type="number" name="weight" id="weight" placeholder="set maximum kg">
                         <input type="hidden" name="selectedColor" id="selectedColor" value="black">
-                        <input type="hidden" name="userid" id="userid" value={{user}}>
                     </div>
                 </div>
                 <div class="second-page">
                     <div class="input">
-                        <label for="bagdate">Bag Date</label><br>
+                        <label for="bagdate">When will you use the bag?</label><br>
                         <input type="date" name="bagdate" id="date" value="today">
+                    </div>
+                    <div class="input">
+                        <label for="bagdate">Bag Description</label><br>
+                        <textarea id="bagdesc" name="bagdesc" maxlength="25" placeholder="add bag description">{{bags.bagDesc}}</textarea>
                     </div>
                     <button id="submit-btn" type="submit">Create</button>
                 </div>

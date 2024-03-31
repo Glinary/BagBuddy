@@ -1,5 +1,5 @@
 <section class="bag-form">
-    <div class="bck"><a href="/bag/{{user}}/{{bags._id}}"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
+    <div class="bck"><a href="/bag/{{bags.encID}}"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
     <div class="form-wrapper white-wrapper">
         <div class="form-bag-info-list center">
             <div id="form-add-title" class="form-add-bag-title white-wrap-title info-list">Edit Bag</div>
@@ -26,14 +26,17 @@
                         <label for="bagname">Bag Weight</label><br>
                         <input type="number" name="weight" id="weight" placeholder="set maximum kg" value={{bags.bagWeight}}>
                         <input type="hidden" name="selectedColor" id="selectedColor" value={{bags.bagColor}}>
-                        <input type="hidden" name="bagID" id="bagID" value={{bags._id}}>
-                        <input type="hidden" name="userid" id="userid" value={{user}}>
+                        <input type="hidden" name="bagID" id="bagID" value={{bags.encID}}>
                     </div>
                 </div>
                  <div class="second-page">
                     <div class="input">
-                        <label for="bagdate">Bag Date</label><br>
+                        <label for="bagdate">When will you use the bag?</label><br>
                         <input type="date" name="bagdate" id="date">
+                    </div>
+                    <div class="input">
+                        <label for="bagdate">Bag Description</label><br>
+                        <textarea id="bagdesc" name="bagdesc" maxlength="25">{{bags.bagDesc}}</textarea>
                     </div>
                    <button id="save-btn" type="submit">Save</button>
                 </div>
