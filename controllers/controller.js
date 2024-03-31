@@ -28,26 +28,26 @@ const controller = {
   getHome: async function (req, res) {
     console.log("-------GET HOME VIEW--------");
     let userID = req.session.user.uID; //TODO: uID is undefined with tested
-    // console.log("USER ID: ", userID);
+    console.log("USER ID: ", userID);
 
-    // const user = await User.findOne({ _id: userID }).lean().exec();
-    // const userBags = await Bags.find({ _id: { $in: user.bags } })
-    //   .lean()
-    //   .exec();
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    const userBags = await Bags.find({ _id: { $in: user.bags } })
+      .lean()
+      .exec();
 
-    // console.log("user: ", user);
-    // console.log("bags in home view: ", userBags);
+    console.log("user: ", user);
+    console.log("bags in home view: ", userBags);
 
-    // res.status(200).render("home", {
-    //   maincss: "/static/css/main.css",
-    //   css1: "/static/css/home.css",
-    //   partialcss: "/static/css/bag.css",
-    //   mainscript: "/static/js/home.js",
-    //   showTop: true,
-    //   showBot: true,
-    //   showAddBtn: true,
-    //   bags: userBags,
-    // });
+    res.status(200).render("home", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/home.css",
+      partialcss: "/static/css/bag.css",
+      mainscript: "/static/js/home.js",
+      showTop: true,
+      showBot: true,
+      showAddBtn: true,
+      bags: userBags,
+    });
   },
 
   getBag: async function (req, res) {
