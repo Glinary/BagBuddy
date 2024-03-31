@@ -178,6 +178,15 @@ describe("GET /editprofile", () => {
     })
 })
 
+//TODO: bags cannot be retrieved
+// describe("GET /getbags", () => {
+//     describe("when bags can be retrieved", () => {
+//         test("return a status code 200", async () => {
+//             await supertest(app).get(`/getbags`).expect(200);
+//         })
+//     })
+// })
+
 
 /********** END OF GET REQUESTS **********/
 /********** START OF POST REQUESTS **********/
