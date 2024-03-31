@@ -38,7 +38,7 @@ const controller = {
     console.log("user: ", user);
     console.log("bags in home view: ", userBags);
 
-    res.render("home", {
+    res.status(200).render("home", {
       maincss: "/static/css/main.css",
       css1: "/static/css/home.css",
       partialcss: "/static/css/bag.css",
