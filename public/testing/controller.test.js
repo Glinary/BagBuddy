@@ -170,10 +170,19 @@ describe("GET /register", () => {
 //     })
 // })
 
+describe("GET /editprofile", () => {
+    describe("when editprofile page loads properly", () => {
+        test("return a status code 200", async () => {
+            await supertest(app).get(`/editprofile`).expect(200);
+        })
+    })
+})
+
+
 /********** END OF GET REQUESTS **********/
 /********** START OF POST REQUESTS **********/
-// describe("POST /postRegister", () => {
-    //TODO: do not permanently add the new id since testing should be done repeatedly
+describe("POST /postRegister", () => {
+    // NOTE: Uncomment before testing and remove credentials once tested (code is nonreusable)
     // describe("when user registers with new credentials", () => {
     //     test("return a status code 200", async () => {
     //         const response = await supertest(app).post(`/postRegister`).send({
@@ -185,5 +194,50 @@ describe("GET /register", () => {
     //     })
     // })
 
-// })
+})
+
+describe("POST /postlogin", () => {
+    describe("when user logs in with correct credentials", () => {
+        test("return a status code 200", async () => {
+            const response = await supertest(app).post('/postlogin').send({
+                email: "gleezelluy@dlsu.edu.ph",
+                password: "1234567890"
+            })
+            expect(response.status).toBe(200);
+        })
+    })
+
+    // TODO: expected error status code is incorrect
+    // describe("when user logs in with incorrect email", () => {
+    //     test("return a status code 404", async () => {
+    //         const response = await supertest(app).post('/postlogin').send({
+    //             email: "gleeze@dlsu.edu.ph",
+    //             password: "1234567890"
+    //         })
+    //         expect(response.status).toBe(404);
+    //     })
+    // })
+
+    describe("when user logs in with incorrect password", () => {
+        test("return a status code 401", async () => {
+            const response = await supertest(app).post('/postlogin').send({
+                email: "gleezelluy@dlsu.edu.ph",
+                password: "1111111111"
+            })
+            expect(response.status).toBe(401);
+        })
+    })
+})
+
+describe("POST /postSignout", () => {
+    describe("when user signs out", () => {
+        test("redirect to /login", async () => {
+            const response = await supertest(app).post('/postSignout').send({})
+            expect(response.header['location']).toBe('/login');
+        })
+    })
+})
+
+
+
 /********** END OF POST REQUESTS **********/
