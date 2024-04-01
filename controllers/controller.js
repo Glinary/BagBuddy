@@ -111,37 +111,44 @@ const controller = {
   },
 
   getNotif: async function (req, res) {
-    console.log("-------GET HOME VIEW--------");
-    let userID = req.session.user.uID;
-    console.log("USER ID: ", userID);
+    console.log("-------GET NOTIF VIEW--------");
 
-    const user = await User.findOne({ _id: userID }).lean().exec();
-        const userBags = await Bags.find({ _id: { $in: user.bags } }).lean().exec();
+    try {
+      let userID = req.session.user.uID;
+      console.log("USER ID: ", userID);
 
-        console.log("user: ", user);
-        console.log("bags in home view: ", userBags);
+      const user = await User.findOne({ _id: userID }).lean().exec();
+      const userBags = await Bags.find({ _id: { $in: user.bags } })
+        .lean()
+        .exec();
 
-        // Extract bagName and dateUsage from userBags
-        const bagsInfo = userBags.map(bag => ({
-            bagName: bag.bagName,
-            dateUsage: formatDate(bag.dateUsage)
-        }));
+      console.log("user: ", user);
+      console.log("bags in home view: ", userBags);
 
-        console.log("Bags information: ", bagsInfo);
+      // Extract bagName and dateUsage from userBags
+      const bagsInfo = userBags.map((bag) => ({
+        bagName: bag.bagName,
+        dateUsage: formatDate(bag.dateUsage),
+      }));
 
-    res.render("notification", {
-      maincss: "/static/css/main.css",
-      css1: "/static/css/notificationPage.css",
-      partialcss: "/static/css/notif.css",
-      mainscript: "/static/js/home.js",
-      showBot: true,
-      /*Sample list for testing bag view*/
-      // notifs: [
-      //   { bagtype: "travel", date: "Feb 20" },
-      //   { bagtype: "personal", date: "Feb 21" },
-      // ],
-      notifs: bagsInfo,
-    });
+      console.log("Bags information: ", bagsInfo);
+
+      res.render("notification", {
+        maincss: "/static/css/main.css",
+        css1: "/static/css/notificationPage.css",
+        partialcss: "/static/css/notif.css",
+        mainscript: "/static/js/home.js",
+        showBot: true,
+        /*Sample list for testing bag view*/
+        // notifs: [
+        //   { bagtype: "travel", date: "Feb 20" },
+        //   { bagtype: "personal", date: "Feb 21" },
+        // ],
+        notifs: bagsInfo,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   getAddBag: async function (req, res) {
@@ -466,8 +473,8 @@ const controller = {
 
     try {
       const logUser = await User.findOne({ email: email });
-      console.log("READ ME")
-      console.log(logUser)
+      console.log("READ ME");
+      console.log(logUser);
       const userID = logUser._id;
       console.log("user ID: ", userID);
       console.log("Session ID: ", req.sessionID);
@@ -509,15 +516,16 @@ const controller = {
       userBags = await Bags.find({
         _id: { $in: user.bags },
         bagName: { $regex: bagname, $options: "i" }, // Case-insensitive search
-      }).lean().exec();
-      
-      console.log("Bag List: ", userBags );
+      })
+        .lean()
+        .exec();
+
+      console.log("Bag List: ", userBags);
       res.status(200).json({ bags: userBags });
     } catch (error) {
       console.error("Error retrieving session uID:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
-
   },
 
   /** DB controls - BAGS AND ITEMS */
@@ -593,7 +601,6 @@ const controller = {
 
     try {
       // const user = await User.findOne({ _id: userID }).lean().exec();
-      console.log("HEY");
 
       await User.findOneAndUpdate(
         { _id: userID },
@@ -787,6 +794,35 @@ const controller = {
     }
   },
 
+  deleteItem: async function (req, res) {
+    console.log("-------DELETE ITEM--------");
+    const itemID = req.body.itemID;
+    console.log(itemID);
+
+    try {
+      let userID = req.session.user.uID;
+
+      await User.findOneAndUpdate(
+        { _id: userID },
+        { $pull: { itemGallery: itemID } }
+      ).then(async (deletedItem) => {
+        console.log("item deleted successfully in User");
+        if (deletedItem) {
+          await Items.deleteOne({ _id: itemID }).then((deletedItemItem) => {
+            if (deletedItemItem) {
+              console.log("item deleted successfully in Items");
+              res.status(200).send();
+            }
+          });
+        } else {
+          console.log("unsuccessful delete item");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   addItemGallery: async function (req, res) {
     console.log("----ADD ITEM TO GALLERY----");
     const newItems = req.body;
@@ -885,7 +921,6 @@ const controller = {
   },
 };
 
-
 function encrypt(objectId, key) {
   const text = objectId.toString(); // Convert ObjectID to string
 
@@ -938,7 +973,11 @@ function formatDate(date) {
   // Convert to Date object
   const formattedDate = new Date(date);
   // Format the date (e.g., "January 1, 2022")
-  return formattedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return formattedDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // export default controller;

@@ -23,8 +23,16 @@
   /* background-color: blue; */
 }
 
+#item-move {
+  /* background-color: blue; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #item-move svg {
-  height: 2rem;
+  height: 1.5rem;
+  /* background-color: aqua; */
 }
 
 #item-setting svg {

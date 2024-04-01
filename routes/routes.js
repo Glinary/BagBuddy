@@ -17,6 +17,7 @@ router.get("/editbag/:id", controller.getBagFormEdit);
 router.post("/ab", controller.addTheBag);
 router.post("/fb", controller.findBag);
 router.post("/db", controller.deleteBag);
+router.post("/di", controller.deleteItem);
 router.post("/eb", controller.editBag);
 router.post("/ai", controller.addItem);
 router.post("/fbi", controller.findBagItem);
