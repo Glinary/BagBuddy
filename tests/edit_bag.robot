@@ -4,7 +4,6 @@ Resource          resource.robot
 Suite Teardown      Close Browser
 
 *** Test Cases ***
-
 Valid Bag Edit Change Color
     Create A Bag
     Start Edit Bag
@@ -15,6 +14,11 @@ Valid Bag Edit Change Color
     Wait Until Element Is Visible       ${HEADING}
     ${color_attribute} =    Execute JavaScript    return window.getComputedStyle(document.querySelector('svg[fill="#1F4F24"]')).fill
     Should Be Equal As Strings    ${color_attribute}    rgb(31, 79, 36)  #this is the equivalent of #1F4F24
+
+
+
+
+
 
 Valid Bag Edit Name
     Create A Bag
@@ -61,7 +65,7 @@ Valid Bag Edit No Date
 Invalid Bag Edit No Name
     Create A Bag
     Start Edit Bag
-    Input Text           ${BAG_NAME_INPUT}        newName
+    Clear Element Text           ${BAG_NAME_INPUT}        
     Click Element        ${NEXT_BUTTON}
     Wait Until Element Is Visible        ${BAG_DATE_INPUT}
     Click Element        ${SAVE_BAG_BUTTON}
