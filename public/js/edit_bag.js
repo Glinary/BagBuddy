@@ -133,6 +133,19 @@ saveBtn.addEventListener("click", async function (e) {
   const addbagForm = document.forms.addbagForm;
   const formData = new FormData(addbagForm);
 
+  const bagname = addbagForm.elements.bagname.value.trim();
+
+  if (!bagname) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Bag name is required!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+
   for (const entry of formData.entries()) {
     console.log(entry);
   }
