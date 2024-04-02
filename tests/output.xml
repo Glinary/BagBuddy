@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.0 (Python 3.11.5 on darwin)" generated="2024-04-02T13:56:49.142286" rpa="false" schemaversion="5">
+<suite id="s1" name="Search" source="/Users/sarahjumilla/Documents/STSWENG_PROJ/BagBuddy/tests/search.robot">
+<test id="s1-t1" name="Valid Search" line="10">
+<kw name="Login As User" owner="resource">
+<kw name="Open Browser in Login Page" owner="resource">
+<kw name="Start" owner="resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:50.102246" level="INFO">Opening browser 'Chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${SERVER}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-04-02T13:56:50.101910" elapsed="4.346074"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:56:50.100632" elapsed="4.348537"/>
+</kw>
+<kw name="Click Link" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:54.451098" level="INFO">Clicking link '/login'.</msg>
+<arg>/login</arg>
+<doc>Clicks a link identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:56:54.450145" elapsed="0.385629"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:56:50.100253" elapsed="4.735704"/>
+</kw>
+<kw name="Input Username and Password" owner="resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:54.837845" level="INFO">Typing text 'endicoco@gmail.com' into text field 'id:email'.</msg>
+<arg>${EMAIL_LOCATOR}</arg>
+<arg>${email}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:56:54.837480" elapsed="0.276890"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:55.115250" level="INFO">Typing text 'test123' into text field 'id:password'.</msg>
+<arg>${PASSWORD_LOCATOR}</arg>
+<arg>${password}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:56:55.114778" elapsed="0.130466"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<status status="PASS" start="2024-04-02T13:56:54.836423" elapsed="0.409052"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:55.246213" level="INFO">Clicking element 'id:login-submit-btn'.</msg>
+<arg>${LOGIN_BUTTON}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:56:55.245793" elapsed="0.103204"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:56:50.099790" elapsed="5.249368"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${HOME_TITLE}</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-04-02T13:56:55.349888" elapsed="0.655665"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:56.006418" level="INFO">Clicking element 'id:search-bar-icon'.</msg>
+<arg>${SEARCH_BUTTON}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:56:56.006110" elapsed="0.067005"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:56:56.073777" level="INFO">Typing text '123' into text field 'id:searchBar'.</msg>
+<arg>${SEARCH_INPUT}</arg>
+<arg>${VALID_BAG_NAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:56:56.073440" elapsed="0.185161"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${WRAPPER_ID}</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-04-02T13:56:56.259043" elapsed="0.036988"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2024-04-02T13:57:03.296859" level="INFO">Slept 7 seconds.</msg>
+<arg>7s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2024-04-02T13:56:56.296357" elapsed="7.000690"/>
+</kw>
+<kw name="Get WebElements" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:03.313711" level="INFO">${bag_names} = [&lt;selenium.webdriver.remote.webelement.WebElement (session="a74bb7e6117108cd8c5c222020e2d202", element="f.C6FAE0EE1261AB13034C10F2812F7B06.d.59EB7627F55905F340BB3E3022AA6D88.e.1553")&gt;, &lt;selenium.webdr...</msg>
+<var>${bag_names}</var>
+<arg>${BAGS_LIST}</arg>
+<doc>Returns a list of WebElement objects matching the ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:03.297618" elapsed="0.016184"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Get Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:03.365784" level="INFO">${bag_name} = 123123e</msg>
+<var>${bag_name}</var>
+<arg>${element}</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:03.315023" elapsed="0.050864"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>not "${VALID_BAG_NAME}" in "${bag_name}"</arg>
+<arg>Fail</arg>
+<arg>Bag name "${bag_name}" does not contain "${VALID_BAG_NAME}"</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2024-04-02T13:57:03.366275" elapsed="0.000787"/>
+</kw>
+<var name="${element}">&lt;selenium.webdriver.remote.webelement.WebElement (session="a74bb7e6117108cd8c5c222020e2d202", element="f.C6FAE0EE1261AB13034C10F2812F7B06.d.59EB7627F55905F340BB3E3022AA6D88.e.1553")&gt;</var>
+<status status="PASS" start="2024-04-02T13:57:03.314707" elapsed="0.052530"/>
+</iter>
+<iter>
+<kw name="Get Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:03.381590" level="INFO">${bag_name} = 123123123</msg>
+<var>${bag_name}</var>
+<arg>${element}</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:03.367892" elapsed="0.013750"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>not "${VALID_BAG_NAME}" in "${bag_name}"</arg>
+<arg>Fail</arg>
+<arg>Bag name "${bag_name}" does not contain "${VALID_BAG_NAME}"</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2024-04-02T13:57:03.381867" elapsed="0.000276"/>
+</kw>
+<var name="${element}">&lt;selenium.webdriver.remote.webelement.WebElement (session="a74bb7e6117108cd8c5c222020e2d202", element="f.C6FAE0EE1261AB13034C10F2812F7B06.d.59EB7627F55905F340BB3E3022AA6D88.e.1554")&gt;</var>
+<status status="PASS" start="2024-04-02T13:57:03.367599" elapsed="0.014616"/>
+</iter>
+<var>${element}</var>
+<value>@{bag_names}</value>
+<status status="PASS" start="2024-04-02T13:57:03.314134" elapsed="0.068158"/>
+</for>
+<status status="PASS" start="2024-04-02T13:56:50.099096" elapsed="13.283545"/>
+</test>
+<test id="s1-t2" name="Invalid Search" line="23">
+<kw name="Login As User" owner="resource">
+<kw name="Open Browser in Login Page" owner="resource">
+<kw name="Start" owner="resource">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:03.384840" level="INFO">Opening browser 'Chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${SERVER}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-04-02T13:57:03.384571" elapsed="3.740894"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:57:03.384252" elapsed="3.741865"/>
+</kw>
+<kw name="Click Link" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:07.127377" level="INFO">Clicking link '/login'.</msg>
+<arg>/login</arg>
+<doc>Clicks a link identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:07.126820" elapsed="0.369588"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:57:03.383964" elapsed="4.112664"/>
+</kw>
+<kw name="Input Username and Password" owner="resource">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:07.498349" level="INFO">Typing text 'endicoco@gmail.com' into text field 'id:email'.</msg>
+<arg>${EMAIL_LOCATOR}</arg>
+<arg>${email}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:07.497693" elapsed="0.325434"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:07.824610" level="INFO">Typing text 'test123' into text field 'id:password'.</msg>
+<arg>${PASSWORD_LOCATOR}</arg>
+<arg>${password}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:07.824110" elapsed="0.214920"/>
+</kw>
+<arg>${VALID_EMAIL}</arg>
+<arg>${VALID_PASSWORD}</arg>
+<status status="PASS" start="2024-04-02T13:57:07.496987" elapsed="0.542248"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:08.040080" level="INFO">Clicking element 'id:login-submit-btn'.</msg>
+<arg>${LOGIN_BUTTON}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:08.039559" elapsed="0.121820"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:57:03.383600" elapsed="4.778006"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${HOME_TITLE}</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-04-02T13:57:08.162145" elapsed="0.559796"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:08.722706" level="INFO">Clicking element 'id:search-bar-icon'.</msg>
+<arg>${SEARCH_BUTTON}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:08.722315" elapsed="0.068841"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:08.792010" level="INFO">Typing text 'Nothing' into text field 'id:searchBar'.</msg>
+<arg>${SEARCH_INPUT}</arg>
+<arg>Nothing</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:08.791577" elapsed="0.257270"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${WRAPPER_ID}</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-04-02T13:57:09.049213" elapsed="0.038019"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2024-04-02T13:57:16.088830" level="INFO">Slept 7 seconds.</msg>
+<arg>7s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2024-04-02T13:57:09.087713" elapsed="7.001337"/>
+</kw>
+<kw name="Get WebElements" owner="SeleniumLibrary">
+<msg time="2024-04-02T13:57:16.108380" level="INFO">${bag_names} = []</msg>
+<var>${bag_names}</var>
+<arg>${BAGS_LIST}</arg>
+<doc>Returns a list of WebElement objects matching the ``locator``.</doc>
+<status status="PASS" start="2024-04-02T13:57:16.093016" elapsed="0.015450"/>
+</kw>
+<kw name="Should Be Empty" owner="BuiltIn">
+<msg time="2024-04-02T13:57:16.109367" level="INFO">Length is 0.</msg>
+<arg>${bag_names}</arg>
+<doc>Verifies that the given item is empty.</doc>
+<status status="PASS" start="2024-04-02T13:57:16.108894" elapsed="0.000570"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:57:03.383108" elapsed="12.726764"/>
+</test>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2024-04-02T13:57:16.111595" elapsed="0.238031"/>
+</kw>
+<status status="PASS" start="2024-04-02T13:56:49.144048" elapsed="27.205755"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="2" fail="0" skip="0" id="s1" name="Search">Search</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
