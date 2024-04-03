@@ -15,6 +15,7 @@ router.get("/itemgallery/:id", controller.getItemGallery);
 router.get("/editbag/:id", controller.getBagFormEdit);
 
 router.get("/join/:id", controller.joinBag);
+router.post("/sendBagLink", controller.sendBagLink);
 
 router.post("/ab", controller.addTheBag);
 router.post("/fb", controller.findBag);

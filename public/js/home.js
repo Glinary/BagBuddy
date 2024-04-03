@@ -158,3 +158,46 @@ function closeSearch() {
   searchBar.style.display = "none";
   topBarAct.style.display = "flex";
 }
+
+function enterShareLink() {
+  Swal.fire({
+  position: "center",
+  title: "Enter join link",
+  html: `<span style='font-size: 20px;'>TIP! Ask the owner to share their bag.</span>`,
+  input: 'text', // Add a textbox input
+  inputAttributes: {
+    autocapitalize: 'off',
+    placeholder: 'Enter share link...'
+  },
+  showCancelButton: true,
+  confirmButtonText: 'Submit',
+  cancelButtonText: 'Cancel',
+  showLoaderOnConfirm: true,
+  preConfirm: async (link) => {
+    try {
+      const response = await fetch('/sendBagLink', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ link })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send data');
+      }
+      
+      return response.json(); // Return the response if needed
+    } catch (error) {
+      Swal.showValidationMessage(
+        `Request failed: ${error}`
+      );
+    }
+  }
+}).then((result) => {
+  // Handle the result if needed
+  console.log(result);
+});
+
+
+}

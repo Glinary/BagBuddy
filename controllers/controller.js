@@ -975,6 +975,12 @@ const controller = {
       res.status(200).send();
     }
   },
+
+  sendBagLink: async function (req, res) {
+    const { link } = req.body;
+
+    //TODO: redirect user to given bagLink
+  },
 };
 
 function encrypt(objectId, key) {
