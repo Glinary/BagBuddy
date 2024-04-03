@@ -214,3 +214,131 @@ function comingSoonCalendar() {
     showConfirmButton: true,
   });
 }
+
+function showInfo(name, date, desc) {
+  let formattedDate = 'N/A';
+  if (date) {
+      formattedDate = new Date(date).toLocaleDateString();
+  }
+  const description = desc.trim() !== '' ? desc : 'N/A';
+  Swal.fire({
+      position: "center",
+              title: `${name} bag`,
+              html: `<p>Packing date: ${formattedDate}</p><p>Description: ${description}</p>`,
+              showConfirmButton: true,
+  });
+}
+
+// Function to format date
+function formatDate(date) {
+// Convert to Date object
+const formattedDate = new Date(date);
+// Format the date (e.g., "January 1, 2022")
+return formattedDate.toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+}
+
+function editName(name, bagID) {
+  Swal.fire({
+      position: "center",
+      title: "Change bag name",
+      input: 'text', // Add a textbox input
+      inputAttributes: {
+      autocapitalize: 'off',
+      placeholder: `${name}`
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      showLoaderOnConfirm: true,
+      preConfirm: async (newName) => {
+      console.log("New Bag Name: ", newName);
+      try {
+          const data = {
+            name: newName,
+            bagID: bagID,
+          }
+          const response = await fetch('/changeBagName', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data),
+          });
+          
+          if (!response.ok) {
+          throw new Error('Failed to send data');
+          }
+
+          if (response.status === 404) {
+          throw new Error('Bag not found');
+          }
+
+          // Close the SweetAlert2 popup after fetch completion
+          //Swal.close();
+
+          if (response.status === 200) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Bag edited",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+        
+            setTimeout(function () {
+              window.location.href = `/home`;
+            }, 1500);
+          }
+
+          //window.location.href = `/home`;
+      } catch (error) {
+          Swal.showValidationMessage(
+          `Request failed: ${error}`
+          );
+      }
+      }
+  })
+}
+
+async function showBagCollabStatus(bagID) {
+  try {
+
+    const response = await fetch('/postBagCollabStatus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({bagID}),
+    })
+
+    if (response.ok) {
+      let statusMsg = "";
+      const responseData = await response.json();
+
+      if (responseData.hasMultipleCollabs) {
+        statusMsg = "This is a group bag";
+      } else {
+        statusMsg = "This is a solo bag";
+      }
+      Swal.fire({
+        position: "center",
+        title: "Bag collaboration status",
+        html: `<span style='font-size: 20px;'>${statusMsg}</span>`,
+        showConfirmButton: true,
+      });
+    } else {
+      // Handle non-200 response
+      throw new Error('Failed to get bag collab status');
+    }
+    
+
+  } catch (error) {
+    Swal.showValidationMessage(
+      `Request failed: ${error}`
+      );
+  }
+}

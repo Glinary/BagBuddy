@@ -427,6 +427,30 @@ const controller = {
     });
   },
 
+  postBagCollabStatus: async function (req, res) {
+    const {bagID} = req.body;
+    try {
+      const bag = await Bags.findOne({ _id: bagID });
+
+      // Check if bag is found
+      if (!bag) {
+        return res.status(404).json({ error: 'Bag not found' });
+      }
+
+      // Check if bag item pool has more than one id
+      const collabsCount = bag.userItemsPool.length;
+
+      const response = {
+        bagID: bag._id,
+        hasMultipleCollabs: collabsCount > 1
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Failed to get bag collab status:', error);
+      res.status(500).json({ error: 'Failed to get bag collab status' });
+    }
+  },
   postSignout: async function (req, res) {
     console.log("------SIGN OUT------");
     req.session.destroy((err) => {
@@ -853,7 +877,7 @@ const controller = {
       await bag.save();
 
       // Optionally, you can send a response indicating success
-      res.redirect("/home");
+      res.redirect(`/home`);
     } catch (error) {
       console.error("Failed to add user to bagCollabs:", error);
       // Optionally, you can send a response indicating failure
@@ -1121,18 +1145,38 @@ const controller = {
 
   sendBagLink: async function (req, res) {
     const { link } = req.body;
-
-    //TODO: Process the link and obtain the redirect URL
     
     try {
       const redirectUrl = '/join/' + link;
       res.status(200).json({ redirectUrl });
+
     } catch (error) {
       console.error("Failed to redirect user:", error);
       res.status(500).json({ error: "Failed to redirect user" });
     }
     
   },
+
+  changeBagName: async function (req, res) {
+    const {name, bagID} = req.body;
+    try {
+      //Update the bag name
+      const updatedBag = await Bags.findOneAndUpdate(
+          { _id: bagID }, // Find the bag by ID
+          { $set: { bagName: name } }, // Set the new bag name
+          { new: true } // Return the updated document
+      );
+
+      if (!updatedBag) {
+          return res.status(404).json({ error: 'Bag not found' });
+      }
+      // Send a success response
+      res.status(200).json({ message: 'Bag name updated successfully', updatedBag });
+  } catch (error) {
+      console.error('Failed to update bag name:', error);
+      res.status(500).json({ error: 'Failed to update bag name' });
+  }
+  }
 };
 
 function encrypt(objectId, key) {
