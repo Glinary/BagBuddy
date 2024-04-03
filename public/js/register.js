@@ -1,10 +1,12 @@
 var nameInput = document.getElementById("register-name");
 var emailInput = document.getElementById("register-email");
 var passwordInput = document.getElementById("register-password");
+var confirmPasswordInput = document.getElementById("register-confirm-password");
 
 var nameFeedback = document.getElementById("register-name-feedback");
 var emailFeedback = document.getElementById("register-email-feedback");
 var passwordFeedback = document.getElementById("register-password-feedback");
+var confirmPasswordFeedback = document.getElementById("register-confirm-password-feedback");
 
 // REGEX FROM: https://www.geeksforgeeks.org/javascript-program-to-check-if-a-string-contains-only-alphabetic-characters/
 function validateName() {
@@ -66,12 +68,42 @@ function validatePassword() {
   }
 }
 
+function validateConfirmPassword() {
+  if (passwordInput.value === "") {
+    confirmPasswordFeedback.textContent = "Please re-enter the password to confirm.";
+    confirmPasswordFeedback.style.color = "var(--main-red)";
+    confirmPasswordFeedback.style.display = "block";
+  } else {
+    if (passwordInput.value !== confirmPasswordInput.value) {
+      confirmPasswordFeedback.textContent = "Passwords do not match.";
+      confirmPasswordFeedback.style.color = "var(--main-red)";
+      confirmPasswordFeedback.style.display = "block";
+    } else {
+      // hide feedback
+      confirmPasswordFeedback.style.display = "none";
+    }
+  }
+}
+
 nameInput.addEventListener("keyup", validateName);
 emailInput.addEventListener("keyup", validateEmail);
 passwordInput.addEventListener("keyup", validatePassword);
+confirmPasswordInput.addEventListener("keyup", validateConfirmPassword);
 
 document.getElementById("register-submit-btn").addEventListener("click", async function (event) {
     event.preventDefault();
+
+    // If the form is invalid, do not submit
+    if (!nameInput.value || !emailInput.value || !passwordInput.value || !confirmPasswordInput.value) {
+      console.log("Form is invalid");
+
+      // Call the validation functions to display feedback
+      validateName();
+      validateEmail();
+      validatePassword();
+      validateConfirmPassword();
+      return;
+    }
 
     const formElement = document.getElementById("registration-form");
     const formData = new FormData(formElement);

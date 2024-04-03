@@ -2,6 +2,21 @@
 // it will send a request to the server to
 // delete the session and redirect to the login page
 
+document.getElementById("edit-profile-btn").addEventListener("click", function (event) {
+  event.preventDefault();
+  console.log("Editing profile...");
+
+  window.location.href = "/editprofile";
+});
+
+document.getElementById("item-gallery-btn").addEventListener("click", function (event) {
+  event.preventDefault();
+  console.log("Viewing item gallery...");
+
+  window.location.href = "/itemgallery/:id";
+});
+
+
 document.getElementById("signout-btn").addEventListener("click", async function (event) {
   event.preventDefault();
   console.log("Signing out...");

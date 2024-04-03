@@ -117,7 +117,7 @@
 }
 
 .onboarding-footer {
-    padding: 2rem 1rem 1rem 1rem;
+    padding: 1.5rem 1rem 1rem 1rem;
     display: flex;
     justify-content: space-between;
 }
@@ -125,4 +125,8 @@
 .onboarding-footer a {
     color: var(--white-bg);
     text-decoration: none;
+}
+
+.onboarding-footer a:hover {
+    color: var(--light-blue);
 }

@@ -15,10 +15,15 @@
     box-sizing: border-box;
 }
 
+/* GENERAL */
+/* make the body scrollable */
+
+
 #form-page {
-    height: 100%;
+    height: 100vh;
     width: 100%;
     background-color: var(--main-blue);
+    overflow: hidden;
 }
 
 .app-logo-placeholder {
@@ -59,12 +64,18 @@
 
 .form-placeholder {
     width: 100%;
-    position: absolute;
-    bottom: 0rem;
     border-radius: 2rem 2rem 0rem 0rem;
     background-color: var(--white-bg);
-    padding: 1.5rem 0rem 0rem 0rem;
+    padding: 1.5rem 0rem 1rem 0rem;
     text-align: center;
+
+    /* place the form beginning from the bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    overflow: auto;
+    padding: 0.5rem 0.5rem 5rem 0.5rem;
 }
 
 .form-header {
@@ -108,7 +119,7 @@
     margin: 1rem 1rem 0rem 1rem;
 }
 
-#register-name-feedback, #register-email-feedback, #register-password-feedback {
+#register-name-feedback, #register-email-feedback, #register-password-feedback, #register-confirm-password-feedback{
     font-style: italic;
     display: block;
 }
@@ -131,6 +142,8 @@
 
 #register-submit-btn:hover, #login-submit-btn:hover {
     cursor: pointer;
+    color: var(--main-blue);
+    background: var(--white-bg);
 }
 
 .login-form input[type=submit] {
@@ -150,6 +163,11 @@
 a {
     color: var(--main-blue);
     text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+    color: var(--main-orange);
 }
 
 .profile-link {
