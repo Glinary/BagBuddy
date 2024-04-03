@@ -437,9 +437,8 @@ const controller = {
         return res.status(404).json({ error: 'Bag not found' });
       }
 
-      // Check if bagCollabs array has more than one element
-      const collabsCount = bag.bagCollabs.length;
-      console.log("THE LENGTH IS", collabsCount)
+      // Check if bag item pool has more than one id
+      const collabsCount = bag.userItemsPool.length;
 
       const response = {
         bagID: bag._id,
@@ -1150,8 +1149,6 @@ const controller = {
     try {
       const redirectUrl = '/join/' + link;
       res.status(200).json({ redirectUrl });
-
-      //TODO: add user's id to bagCollab
 
     } catch (error) {
       console.error("Failed to redirect user:", error);

@@ -319,7 +319,6 @@ async function showBagCollabStatus(bagID) {
       let statusMsg = "";
       const responseData = await response.json();
 
-      console.log("I GOT", responseData);
       if (responseData.hasMultipleCollabs) {
         statusMsg = "This is a group bag";
       } else {
