@@ -161,49 +161,49 @@ function closeSearch() {
 
 function enterShareLink() {
   Swal.fire({
-  position: "center",
-  title: "Enter join link",
-  html: `<span style='font-size: 20px;'>TIP! Ask the owner to share their bag.</span>`,
-  input: 'text', // Add a textbox input
-  inputAttributes: {
-    autocapitalize: 'off',
-    placeholder: 'Enter share link...'
-  },
-  showCancelButton: true,
-  confirmButtonText: 'Submit',
-  cancelButtonText: 'Cancel',
-  showLoaderOnConfirm: true,
-  preConfirm: async (link) => {
-    console.log("Link: ", link);
-    try {
-      const response = await fetch('/sendBagLink', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ link })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to send data');
-      }
+    position: "center",
+    title: "Enter join link",
+    html: `<span style='font-size: 20px;'>TIP! Ask the owner to share their bag.</span>`,
+    input: 'text', // Add a textbox input
+    inputAttributes: {
+      autocapitalize: 'off',
+      placeholder: 'Enter share link...'
+    },
+    showCancelButton: true,
+    confirmButtonText: 'Submit',
+    cancelButtonText: 'Cancel',
+    showLoaderOnConfirm: true,
+    preConfirm: async (link) => {
+      console.log("Link: ", link);
+      try {
+        const response = await fetch('/sendBagLink', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ link })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to send data');
+        }
 
-      if (response.status === 404) {
-        throw new Error('Bag not found');
-      }
+        if (response.status === 404) {
+          throw new Error('Bag not found');
+        }
 
-      window.location.href = 'https://' + link;
-      
-      return response.json(); // Return the response if needed
-    } catch (error) {
-      Swal.showValidationMessage(
-        `Request failed: ${error}`
-      );
+        return response.json(); // Return the response
+      } catch (error) {
+        Swal.showValidationMessage(
+          `Request failed: ${error}`
+        );
+      }
     }
-  }
   }).then((result) => {
-    // Handle the result if needed
-    console.log(result);
+    // Redirect if response is successful
+    if (result.isConfirmed && result.value.redirectUrl) {
+      window.location.href = result.value.redirectUrl;
+    }
   });
 }
 
