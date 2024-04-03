@@ -11,6 +11,11 @@ const crypto = require("crypto");
 
 const session = require("express-session");
 
+// Reference fro axois
+//https://singh-sandeep.medium.com/using-axios-in-node-js-a-guide-to-sending-http-requests-e981d7f73264
+//https://developer.vonage.com/en/blog/5-ways-to-make-http-requests-in-node-js
+const axios = require("axios");
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -1078,7 +1083,32 @@ const controller = {
   sendBagLink: async function (req, res) {
     const { link } = req.body;
 
+    var url = 'https://' + link + '/'
+
+    // Print the link to the console
+    console.log("Link to redirect user:", url);
+
     //TODO: redirect user to given bagLink
+    try {
+      let countSec = 5;
+
+      const interval = setInterval(async () => {
+        console.log("Redirecting in", countSec, "seconds...");
+        countSec--;
+
+        if (countSec === 0) {
+          clearInterval(interval);
+
+          const response = await axios.get(url);
+
+          res.status(200).json({ message: "User redirected to bag" });
+        }
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to redirect user:", error);
+      res.status(500).json({ error: "Failed to redirect user" });
+    }
+    
   },
 };
 

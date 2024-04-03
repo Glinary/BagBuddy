@@ -174,6 +174,7 @@ function enterShareLink() {
   cancelButtonText: 'Cancel',
   showLoaderOnConfirm: true,
   preConfirm: async (link) => {
+    console.log("Link: ", link);
     try {
       const response = await fetch('/sendBagLink', {
         method: 'POST',
@@ -186,6 +187,12 @@ function enterShareLink() {
       if (!response.ok) {
         throw new Error('Failed to send data');
       }
+
+      if (response.status === 404) {
+        throw new Error('Bag not found');
+      }
+
+      window.location.href = 'https://' + link;
       
       return response.json(); // Return the response if needed
     } catch (error) {
