@@ -3,6 +3,7 @@ const itemPool = document.querySelector(".float-items-wrapper");
 const itemBox = document.querySelector(".float-item-box");
 const instruct = document.querySelector(".instruct");
 const itemList = document.querySelectorAll(".dItem-section");
+const tryme = document.querySelectorAll("#getme");
 
 var currentURL = window.location.href;
 
@@ -65,6 +66,8 @@ async function onload() {
   // });
   checkDropZone();
 }
+
+console.log("try: ", tryme);
 
 // Find bag in database
 async function findItems() {

@@ -149,21 +149,21 @@ async function save_items() {
     console.log(allItems);
 
     let editsArray = iterateArr(allItems);
-    console.log("edits array: ", editsArray);
 
+    await checkUniqueDB(editsArray, "edit");
+    console.log("edits array: ", editsArray);
     editItems == false;
-    await updateDatabase(editsArray);
   } else {
     var itemsBlocks = document.querySelectorAll(".gallery-add");
 
     let saveArray = iterateArr(itemsBlocks);
     console.log("Items array: ", saveArray);
 
-    await checkUniqueDB(saveArray);
+    await checkUniqueDB(saveArray, "save");
   }
 }
 
-async function checkUniqueDB(itemsArray) {
+async function checkUniqueDB(itemsArray, type) {
   const response = await fetch(`/fi`, {
     method: "POST",
     body: JSON.stringify(itemsArray),
@@ -191,7 +191,11 @@ async function checkUniqueDB(itemsArray) {
   }
 
   // After processing all items, save to/update database
-  savetoDatabase(itemsArray);
+  if (type == "save") {
+    savetoDatabase(itemsArray);
+  } else if (type == "edit") {
+    await updateDatabase(itemsArray);
+  }
 }
 
 function showExistingSwal(element) {
@@ -208,64 +212,102 @@ function showExistingSwal(element) {
 }
 
 async function updateDatabase(element) {
-  console.log("to save: ", element);
-  const response = await fetch("/udb", {
-    method: "POST",
-    body: JSON.stringify(element),
-    headers: {
-      "Content-Type": "application/json",
-    },
+  let flag = 0;
+  element.forEach(async (item) => {
+    if (item.itemname == "") {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Item Name is required!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      flag = 1;
+      return;
+    }
   });
 
-  if (response.status == 200) {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Item/s have been updated",
-      showConfirmButton: false,
-      timer: 1500,
+  if (flag == 0) {
+    element = element.filter(
+      (item) => !(item.itemname === "" && item.itemweight === "")
+    );
+
+    console.log("to save: ", element);
+    const response = await fetch("/udb", {
+      method: "POST",
+      body: JSON.stringify(element),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    setTimeout(function () {
-      window.location.href = `/itemgallery/${bagClass.value}`;
-    }, 1500);
+    if (response.status == 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Item/s have been updated",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
+      setTimeout(function () {
+        window.location.href = `/itemgallery/${bagClass.value}`;
+      }, 1500);
+    }
   }
 }
 
 async function savetoDatabase(element) {
-  element = element.filter(
-    (item) => !(item.itemname === "" && item.itemweight === "")
-  );
-
-  const response = await fetch(`/aig`, {
-    method: "POST",
-    body: JSON.stringify(element),
-    headers: {
-      "Content-Type": "application/json",
-    },
+  let flag = 0;
+  element.forEach(async (item) => {
+    if (item.itemname == "") {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Item Name is required!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      flag = 1;
+      return;
+    }
   });
 
-  if (response.status == 200) {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Item/s has been added",
-      showConfirmButton: false,
-      timer: 1500,
+  if (flag == 0) {
+    element = element.filter(
+      (item) => !(item.itemname === "" && item.itemweight === "")
+    );
+
+    const response = await fetch(`/aig`, {
+      method: "POST",
+      body: JSON.stringify(element),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    responseData = await response.json();
-    resItems = responseData.addedItems;
-    console.log("addedItems: ", resItems);
+    if (response.status == 200) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Item/s has been added",
+        showConfirmButton: false,
+        timer: 1500,
+      });
 
-    // Store resItems in local storage
-    localStorage.setItem("resItems", JSON.stringify(resItems));
+      responseData = await response.json();
+      resItems = responseData.addedItems;
+      console.log("addedItems: ", resItems);
 
-    setTimeout(function () {
-      window.location.href = `/itemgallery/${bagClass.value}`;
-    }, 1500);
-  } else {
-    console.log("server error occurred");
+      // Store resItems in local storage
+      localStorage.setItem("resItems", JSON.stringify(resItems));
+
+      setTimeout(function () {
+        window.location.href = `/itemgallery/${bagClass.value}`;
+      }, 1500);
+    } else {
+      console.log("server error occurred");
+    }
   }
 }
 

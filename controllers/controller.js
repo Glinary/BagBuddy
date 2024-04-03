@@ -266,6 +266,7 @@ const controller = {
         partialcss: "/static/css/dItem.css",
         mainscript: "/static/js/home.js",
         js1: "/static/js/add_bagitem.js",
+        bagDisplay: bagToDisplay,
         bag: bagItemList,
         items: itemList,
         user: userID,
@@ -321,7 +322,7 @@ const controller = {
       js1: "/static/js/add_galleryitem.js",
       items: userItemList,
       bag: req.params.id,
-      user: req.params.user,
+      user: userID,
     });
   },
 
@@ -909,10 +910,14 @@ const controller = {
     newIDs = [];
 
     newItems.forEach(async (obj) => {
+      if (obj.itemweight == "") {
+        var itemW = 0;
+      }
+
       const newItem = new Items({
         _id: new mongoose.Types.ObjectId(),
         itemName: obj.itemname,
-        itemWeight: obj.itemweight,
+        itemWeight: itemW,
       });
 
       try {
@@ -965,7 +970,13 @@ const controller = {
     for (const element of allItems) {
       const editedItemId = new mongoose.Types.ObjectId(element.itemID);
       const editedItemName = element.itemname;
-      const editedItemWeight = parseInt(element.itemweight);
+      console.log(element.itemweight);
+
+      if (element.itemweight == "") {
+        var editedItemWeight = 0;
+      } else {
+        var editedItemWeight = parseInt(element.itemweight);
+      }
 
       try {
         const updatedItem = await Items.findOneAndUpdate(
