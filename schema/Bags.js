@@ -39,10 +39,12 @@ const bagsSchema = new mongoose.Schema({
       ref: "Users",
     },
   ],
-  userItemsPool: {
-    type: mongoose.Types.ObjectId,
-    ref: "Users",
-  },
+  userItemsPool: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Users",
+    },
+  ],
   bagItems: [
     {
       type: mongoose.Types.ObjectId,

@@ -3,6 +3,7 @@ const itemPool = document.querySelector(".float-items-wrapper");
 const itemBox = document.querySelector(".float-item-box");
 const instruct = document.querySelector(".instruct");
 const itemList = document.querySelectorAll(".dItem-section");
+const tryme = document.querySelectorAll("#getme");
 
 var currentURL = window.location.href;
 
@@ -23,23 +24,50 @@ onload();
 
 async function onload() {
   console.log("DROPZONE: ", dropZone.childElementCount);
+
+  // onload check all items in bag and display it in dropzone
   const bagItems = await findItems();
   console.log("bagItems: ", bagItems);
-  itemList.forEach((element) => {
-    itemID = element.getAttribute("id");
 
-    console.log("current item ID: ", itemID);
+  itemPoolChildren = itemPool.childNodes;
+  console.log(itemPoolChildren);
 
-    bagItems.forEach((bagItemID) => {
-      console.log("current bagItemID: ", bagItemID);
-      if (bagItemID == itemID) {
-        dropZone.appendChild(element);
-        itemsList.push(itemID);
+  bagAllItems = dropZone.childNodes;
+  console.log("Dropzone children: ", bagAllItems);
+
+  bagAllItems.forEach((element) => {
+    bagItems.forEach((bagItem) => {
+      if (element.id == bagItem) {
+        itemPoolChildren.forEach((itemInPool) => {
+          if (itemInPool.id == bagItem) {
+            itemPool.removeChild(itemInPool);
+          }
+        });
+        itemsList.push(element.id);
       }
     });
   });
+
+  console.log("Item List: ", itemsList);
+
+  // itemList.forEach((element) => {
+  //   itemID = element.getAttribute("id");
+
+  //   console.log("current item ID: ", itemID);
+
+  //   bagItems.forEach((bagItemID) => {
+  //     console.log("current bagItemID: ", bagItemID);
+  //     if (bagItemID == itemID) {
+  //       //element.remove();
+  //       //dropZone.appendChild(element);
+  //       itemsList.push(itemID);
+  //     }
+  //   });
+  // });
   checkDropZone();
 }
+
+console.log("try: ", tryme);
 
 // Find bag in database
 async function findItems() {
@@ -58,11 +86,10 @@ async function findItems() {
 
   if (response.status == 200) {
     let resBag = await response.json();
-    let items = resBag.itemGallery;
+    let items = resBag.bagItems;
     return items;
   }
 }
-
 
 async function add_items() {
   const response = await fetch("/ai", {

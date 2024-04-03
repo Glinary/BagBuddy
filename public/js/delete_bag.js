@@ -2,6 +2,7 @@ const editBtn = document.querySelector(".edit");
 const editBtnOption = document.querySelector(".edit-option-box");
 const editIcon = document.querySelector(".inside-bag-edit");
 const deleteBtn = document.querySelector("#edit-delete-btn");
+const shareBtn = document.querySelector("#edit-share-btn");
 const confirmBox = document.querySelector(".confirm-delete");
 const confirmDeleteBtn = document.querySelector("#confirm-ok");
 const cancelDeleteBtn = document.querySelector("#confirm-cancel");
@@ -76,6 +77,65 @@ confirmDeleteBtn.addEventListener("click", async function () {
     setTimeout(function () {
       window.location.href = `/home`;
     }, 1500);
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Page does not exist",
+      text: "go back to main page?",
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("User confirmed!");
+        window.location.href = "/home";
+      }
+    });
+  }
+});
+
+// share bag
+shareBtn.addEventListener("click", async function () {
+  console.log("------SHARE BAG JS------");
+  console.log("bag from HTML: ", bag);
+
+  let bagToShare = {
+    bag: bag,
+  };
+
+  const response = await fetch(`/sb`, {
+    method: "POST",
+    body: JSON.stringify(bagToShare),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  console.log("response: ", response.status);
+
+  if (response.status == 200 && resCode == 200) {
+    const responseData = await response.json();
+    const link = responseData.sharelink; // Assuming your backend sends the link in the response
+
+    var textarea = document.createElement("textarea");
+    textarea.value = link;
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+
+    try {
+      document.execCommand("copy");
+      Swal.fire({ 
+        position: "center",
+        icon: "success",
+        title: "Share Link Created",
+        html: `<span style='font-size: 20px;'>Copied to Clipboard:<br>${link}</span>`,
+        showConfirmButton: true
+      });
+    } catch(err) {
+      console.error("Unable to copy to clipboard", err);
+    } finally {
+      document.body.removeChild(textarea);
+    }
   } else {
     Swal.fire({
       position: "center",
