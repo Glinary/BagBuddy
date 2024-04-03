@@ -31,12 +31,14 @@ const controller = {
     console.log("USER ID: ", userID);
 
     const user = await User.findOne({ _id: userID }).lean().exec();
-    const userBags = await Bags.find({ 
+    const userBags = await Bags.find({
       $or: [
-          { _id: { $in: user.bags } }, // User is owner
-          { bagCollabs: userID } // User is collaborator
-      ]
-    }).lean().exec();
+        { _id: { $in: user.bags } }, // User is owner
+        { bagCollabs: userID }, // User is collaborator
+      ],
+    })
+      .lean()
+      .exec();
 
     console.log("user: ", user);
     console.log("bags in home view: ", userBags);
@@ -192,6 +194,9 @@ const controller = {
     try {
       const encBagID = req.params.id;
       const bagID = decrypt(encBagID, process.env.KEY);
+      let userID = req.session.user.uID;
+      let userObjId = new mongoose.Types.ObjectId(userID);
+      let bagUsersItemGallery = "";
 
       const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
       console.log("Bag to Display", bagToDisplay);
@@ -201,9 +206,20 @@ const controller = {
         .populate("userItemsPool")
         .exec();
 
-      // get the user in userItemsPool
-      const bagUsersPool = bagUsers.userItemsPool;
-      const bagUsersItemGallery = bagUsersPool.itemGallery.sort();
+      // get users in bag
+      console.log("Users in bag: ", bagUsers.userItemsPool);
+
+      const totalUsers = bagUsers.userItemsPool.length;
+      console.log("user count: ", totalUsers);
+
+      for (i = 0; i < totalUsers; i++) {
+        currentUser = bagUsers.userItemsPool[i];
+        currentUserId = currentUser._id;
+
+        if (currentUserId.equals(userObjId)) {
+          bagUsersItemGallery = currentUser.itemGallery.sort();
+        }
+      }
 
       console.log("User item ID:", bagUsersItemGallery);
 
@@ -224,18 +240,7 @@ const controller = {
       }
 
       // sort items so its sorted in item pool
-      itemList.sort((a, b) => {
-        const itemNameA = a.itemName.toUpperCase();
-        const itemNameB = b.itemName.toUpperCase();
-
-        if (itemNameA < itemNameB) {
-          return -1; // Item A comes before Item B
-        }
-        if (itemNameA > itemNameB) {
-          return 1; // Item A comes after Item B
-        }
-        return 0; // Item Names are equal
-      });
+      itemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
 
       console.log("user item gallery: ", itemList);
 
@@ -247,7 +252,7 @@ const controller = {
         js1: "/static/js/add_bagitem.js",
         bag: bagToDisplay,
         items: itemList,
-        user: bagUsersPool._id,
+        user: userID,
       });
     } catch (error) {
       res.render("errorpage", {
@@ -287,19 +292,8 @@ const controller = {
       console.log("listing users in bags for items failed due to: ", error);
     }
 
-    // sort items so its sorted in item pool
-    userItemList.sort((a, b) => {
-      const itemNameA = a.itemName.toUpperCase();
-      const itemNameB = b.itemName.toUpperCase();
-
-      if (itemNameA < itemNameB) {
-        return -1; // Item A comes before Item B
-      }
-      if (itemNameA > itemNameB) {
-        return 1; // Item A comes after Item B
-      }
-      return 0; // Item Names are equal
-    });
+    // Sort items by name
+    userItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
 
     console.log("user item gallery: ", userItemList);
 
@@ -602,20 +596,19 @@ const controller = {
 
     // Create a link that gets copied to clipboard "localhost:3000/join/{encBag}"
     try {
-      console.log('Link Generated:', link);
+      console.log("Link Generated:", link);
       // Optionally, you can send a response indicating success
       res.status(200).json({ sharelink: link });
-  } catch (error) {
-      console.error('Failed to copy link to clipboard:', error);
+    } catch (error) {
+      console.error("Failed to copy link to clipboard:", error);
       // Optionally, you can send a response indicating failure
-      res.status(500).json({ error: 'Failed to copy link to clipboard' });
-  }
-
+      res.status(500).json({ error: "Failed to copy link to clipboard" });
+    }
   },
 
   deleteBag: async function (req, res) {
     console.log("------DELETE BAG------");
- 
+
     const encBagToDelete = req.body.bag;
     const bagToDelete = decrypt(encBagToDelete, process.env.KEY);
     console.log("bag ID to delete: ", bagToDelete);
@@ -705,33 +698,34 @@ const controller = {
     const bagID = decrypt(encrbagID, process.env.KEY);
 
     try {
-        // Find the bag document by its ID
-        const bag = await Bags.findById(bagID);
+      // Find the bag document by its ID
+      const bag = await Bags.findById(bagID);
 
-        // Check if the bag exists
-        if (!bag) {
-            return res.status(404).json({ error: "Bag not found" });
-        }
-
-        // Check if the user already exists in the bagCollabs array
-        if (bag.bagCollabs.includes(userID)) {
-          return res.status(400).json({ error: "User already exists in bagCollabs" });
+      // Check if the bag exists
+      if (!bag) {
+        return res.status(404).json({ error: "Bag not found" });
       }
 
-        // Add the user ID to the bag's bagCollabs array
-        bag.bagCollabs.push(userID);
+      // Check if the user already exists in the bagCollabs array
+      if (bag.bagCollabs.includes(userID)) {
+        return res
+          .status(400)
+          .json({ error: "User already exists in bagCollabs" });
+      }
 
-        // Save the updated bag document
-        await bag.save();
+      // Add the user ID to the bag's bagCollabs array
+      bag.bagCollabs.push(userID);
 
-        // Optionally, you can send a response indicating success
-        res.redirect("/home");
+      // Save the updated bag document
+      await bag.save();
+
+      // Optionally, you can send a response indicating success
+      res.redirect("/home");
     } catch (error) {
-        console.error("Failed to add user to bagCollabs:", error);
-        // Optionally, you can send a response indicating failure
-        res.status(500).json({ error: "Failed to add user to bagCollabs" });
+      console.error("Failed to add user to bagCollabs:", error);
+      // Optionally, you can send a response indicating failure
+      res.status(500).json({ error: "Failed to add user to bagCollabs" });
     }
-    
   },
 
   findBag: async function (req, res) {
@@ -1035,7 +1029,11 @@ function formatDate(date) {
   // Convert to Date object
   const formattedDate = new Date(date);
   // Format the date (e.g., "January 1, 2022")
-  return formattedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return formattedDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // export default controller;
