@@ -11,6 +11,11 @@ const crypto = require("crypto");
 
 const session = require("express-session");
 
+// Reference fro axois
+//https://singh-sandeep.medium.com/using-axios-in-node-js-a-guide-to-sending-http-requests-e981d7f73264
+//https://developer.vonage.com/en/blog/5-ways-to-make-http-requests-in-node-js
+const axios = require("axios");
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -26,6 +31,8 @@ const sessionChecker = (req, res, next) => {
 
 const controller = {
   getHome: async function (req, res) {
+    let isValidCount = false;
+
     console.log("-------GET HOME VIEW--------");
     let userID = req.session.user.uID; //TODO: uID is undefined with tested
     console.log("USER ID: ", userID);
@@ -43,6 +50,30 @@ const controller = {
     console.log("user: ", user);
     console.log("bags in home view: ", userBags);
 
+    const bagsInfo = userBags.map((bag) => ({
+      bagName: bag.bagName,
+      dateUsage: formatDate(bag.dateUsage),
+    }));
+
+    // If dateUsage is within the next 7 days, add to notifs
+    const today = new Date();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+
+    const alertBagInfo = bagsInfo.filter((bag) => {
+      const bagDate = new Date(bag.dateUsage);
+      return bagDate >= today && bagDate <= nextWeek;
+    });
+
+    // Count the number of bags that are due within the next 7 days
+    const alertBagCount = alertBagInfo.length;
+    console.log("Count of bags due within the next 7 days: ", alertBagCount)
+
+    if (alertBagCount > 0) {
+      isValidCount = true;
+    }
+
+
     res.status(200).render("home", {
       maincss: "/static/css/main.css",
       css1: "/static/css/home.css",
@@ -52,6 +83,8 @@ const controller = {
       showBot: true,
       showAddBtn: true,
       bags: userBags,
+      showCount: isValidCount,
+      notifCount: alertBagCount,
     });
   },
 
@@ -137,6 +170,16 @@ const controller = {
         dateUsage: formatDate(bag.dateUsage),
       }));
 
+      // If dateUsage is within the next 7 days, add to notifs
+      const today = new Date();
+      const nextWeek = new Date(today);
+      nextWeek.setDate(today.getDate() + 7);
+
+      const alertBagInfo = bagsInfo.filter((bag) => {
+        const bagDate = new Date(bag.dateUsage);
+        return bagDate >= today && bagDate <= nextWeek;
+      });
+
       console.log("Bags information: ", bagsInfo);
 
       res.render("notification", {
@@ -151,7 +194,7 @@ const controller = {
         //   { bagtype: "travel", date: "Feb 20" },
         //   { bagtype: "personal", date: "Feb 21" },
         // ],
-        notifs: bagsInfo,
+        notifs: alertBagInfo,
       });
     } catch (error) {
       console.log(error);
@@ -1079,7 +1122,32 @@ const controller = {
   sendBagLink: async function (req, res) {
     const { link } = req.body;
 
+    var url = 'https://' + link + '/'
+
+    // Print the link to the console
+    console.log("Link to redirect user:", url);
+
     //TODO: redirect user to given bagLink
+    try {
+      let countSec = 5;
+
+      const interval = setInterval(async () => {
+        console.log("Redirecting in", countSec, "seconds...");
+        countSec--;
+
+        if (countSec === 0) {
+          clearInterval(interval);
+
+          const response = await axios.get(url);
+
+          res.status(200).json({ message: "User redirected to bag" });
+        }
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to redirect user:", error);
+      res.status(500).json({ error: "Failed to redirect user" });
+    }
+    
   },
 };
 
