@@ -853,7 +853,7 @@ const controller = {
       await bag.save();
 
       // Optionally, you can send a response indicating success
-      res.redirect("/home");
+      res.redirect(`/home`);
     } catch (error) {
       console.error("Failed to add user to bagCollabs:", error);
       // Optionally, you can send a response indicating failure
@@ -1133,6 +1133,29 @@ const controller = {
     }
     
   },
+
+  changeBagName: async function (req, res) {
+    const {name, bagID} = req.body;
+    try {
+      //Update the bag name
+      const updatedBag = await Bags.findOneAndUpdate(
+          { _id: bagID }, // Find the bag by ID
+          { $set: { bagName: name } }, // Set the new bag name
+          { new: true } // Return the updated document
+      );
+
+      if (!updatedBag) {
+          return res.status(404).json({ error: 'Bag not found' });
+      }
+      // Send a success response
+      res.status(200).json({ message: 'Bag name updated successfully', updatedBag });
+  } catch (error) {
+      console.error('Failed to update bag name:', error);
+      res.status(500).json({ error: 'Failed to update bag name' });
+  }
+  }
+
+ 
 };
 
 function encrypt(objectId, key) {
