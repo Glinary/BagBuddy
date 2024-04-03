@@ -194,10 +194,16 @@ function enterShareLink() {
       );
     }
   }
-}).then((result) => {
-  // Handle the result if needed
-  console.log(result);
-});
+  }).then((result) => {
+    // Handle the result if needed
+    console.log(result);
+  });
+}
 
-
+function comingSoonCalendar() {
+  Swal.fire({
+    position: "center",
+    title: "Calendar is coming soon!",
+    showConfirmButton: true,
+  });
 }

@@ -144,6 +144,7 @@ const controller = {
         css1: "/static/css/notificationPage.css",
         partialcss: "/static/css/notif.css",
         mainscript: "/static/js/home.js",
+        js1: "/static/js/notification.js",
         showBot: true,
         /*Sample list for testing bag view*/
         // notifs: [
