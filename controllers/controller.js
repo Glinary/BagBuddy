@@ -402,8 +402,79 @@ const controller = {
       showTop: false,
       showBot: true,
       showAddBtn: false,
-      mainscript: "/static/js/editProfile.js",
+      mainscript: "/static/js/edit_profile.js",
     });
+  },
+
+  postEditProfile: async function (req, res) {
+    console.log("------EDIT PROFILE------");
+    const userID = req.session.user.uID;
+
+    try {
+      const updatedName = req.body.name;
+      const updatedAvatar = req.body.profileImage;
+
+      // Check request body for updated name and avatar
+      console.log("Updated Name: ", updatedName);
+      console.log("Updated Avatar: ", updatedAvatar);
+
+      if (updatedName && updatedAvatar) {
+        console.log("Name and Avatar updated");
+
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: userID },
+          {
+            name: updatedName,
+            avatar: updatedAvatar,
+          },
+          { new: true }
+        );
+
+        if (updatedUser) {
+          console.log("Profile updated successfully");
+          res.status(200).json({ message: "Profile updated successfully." });
+        } else {
+          console.log("Unsuccessful updating profile");
+          res.status(500).json({ message: "Error updating profile." });
+        }
+      } else if (updatedName) {
+        console.log("Name updated");
+
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: userID },
+          {
+            name: updatedName,
+          },
+          { new: true }
+        );
+
+        if (updatedUser) {
+          console.log("Profile updated successfully");
+          res.status(200).json({ message: "Profile updated successfully." });
+        }
+      } else if (updatedAvatar) {
+        console.log("Avatar updated");
+
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: userID },
+          {
+            avatar: updatedAvatar,
+          },
+          { new: true }
+        );
+
+        if (updatedUser) {
+          console.log("Profile updated successfully");
+          res.status(200).json({ message: "Profile updated successfully." });
+        }
+      } else {
+        console.log("No changes made to profile");
+        res.status(200).json({ message: "No changes made to profile." });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   },
 
   isNameValid: async function (req, res) {
@@ -464,7 +535,7 @@ const controller = {
         email: registerEmail,
         name: registerName,
         password: registerPassword,
-        avatar: "/static/images/boy.png",
+        avatar: "/static/images/user.png",
       });
 
       // save the user to the database

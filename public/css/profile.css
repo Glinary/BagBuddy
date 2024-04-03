@@ -20,6 +20,8 @@
     width: 100%;
     background-color: var(--white-bg);
     align-items: center;
+    padding: 0rem 0rem 3rem 0rem;
+    overflow-x: auto;
 }
 
 .profile-title {
@@ -78,40 +80,40 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* margin: 1.5rem 0rem 0rem 0rem;
-    padding: 2rem 5.5rem 0rem 5.5rem; */
-
-    /* align items to the center */
     align-items: center;
 }
 
 .btn {
+    font-family: var(--mainfont);
+    font-size: 1rem;
+    font-weight: bold;
+    outline: 0;
     background-color: var(--main-blue);
     height: 2.5rem;
     width: 13rem;
+    border: 1px solid var(--grey);
     border-radius: 10px;
     margin: 0rem 0rem 1rem 0rem;
-    padding: 0.6rem 0rem 0rem 0rem;
     text-align: center;
-    font-family: var(--mainfont);
-    font-weight: bold;
+    justify-content: center;
     color: var(--white-bg);
 }
 
 .btn:hover {
     cursor: pointer;
+    color: var(--main-blue);
+    background-color: var(--white-bg);
 }
 
 .btn-signout {
-    color: var(--grey);
+    height: 1.5rem;
+    width: 100%;
     text-align: center;
+    justify-content: center;
+    color: var(--grey);
 }
 
 .btn-signout:hover {
     cursor: pointer;
-}
-
-a {
-    color: var(--white-bg);
-    text-decoration: none;
+    color: var(--main-blue);
 }
