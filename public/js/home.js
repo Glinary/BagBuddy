@@ -303,3 +303,43 @@ function editName(name, bagID) {
       }
   })
 }
+
+async function showBagCollabStatus(bagID) {
+  try {
+
+    const response = await fetch('/postBagCollabStatus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({bagID}),
+    })
+
+    if (response.ok) {
+      let statusMsg = "";
+      const responseData = await response.json();
+
+      console.log("I GOT", responseData);
+      if (responseData.hasMultipleCollabs) {
+        statusMsg = "This is a group bag";
+      } else {
+        statusMsg = "This is a solo bag";
+      }
+      Swal.fire({
+        position: "center",
+        title: "Bag collaboration status",
+        html: `<span style='font-size: 20px;'>${statusMsg}</span>`,
+        showConfirmButton: true,
+      });
+    } else {
+      // Handle non-200 response
+      throw new Error('Failed to get bag collab status');
+    }
+    
+
+  } catch (error) {
+    Swal.showValidationMessage(
+      `Request failed: ${error}`
+      );
+  }
+}

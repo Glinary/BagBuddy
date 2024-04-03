@@ -427,6 +427,31 @@ const controller = {
     });
   },
 
+  postBagCollabStatus: async function (req, res) {
+    const {bagID} = req.body;
+    try {
+      const bag = await Bags.findOne({ _id: bagID });
+
+      // Check if bag is found
+      if (!bag) {
+        return res.status(404).json({ error: 'Bag not found' });
+      }
+
+      // Check if bagCollabs array has more than one element
+      const collabsCount = bag.bagCollabs.length;
+      console.log("THE LENGTH IS", collabsCount)
+
+      const response = {
+        bagID: bag._id,
+        hasMultipleCollabs: collabsCount > 1
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Failed to get bag collab status:', error);
+      res.status(500).json({ error: 'Failed to get bag collab status' });
+    }
+  },
   postSignout: async function (req, res) {
     console.log("------SIGN OUT------");
     req.session.destroy((err) => {
@@ -1121,12 +1146,13 @@ const controller = {
 
   sendBagLink: async function (req, res) {
     const { link } = req.body;
-
-    //TODO: Process the link and obtain the redirect URL
     
     try {
       const redirectUrl = '/join/' + link;
       res.status(200).json({ redirectUrl });
+
+      //TODO: add user's id to bagCollab
+
     } catch (error) {
       console.error("Failed to redirect user:", error);
       res.status(500).json({ error: "Failed to redirect user" });
@@ -1154,8 +1180,6 @@ const controller = {
       res.status(500).json({ error: 'Failed to update bag name' });
   }
   }
-
- 
 };
 
 function encrypt(objectId, key) {
