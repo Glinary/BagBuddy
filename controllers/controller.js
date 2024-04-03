@@ -724,7 +724,7 @@ const controller = {
 
     const encBag = req.body.bag;
     // const bagToShare = decrypt(encBagToDelete, process.env.KEY);
-    const link = `localhost:3000/join/${encBag}`;
+    const link = `${encBag}`;
 
     // Create a link that gets copied to clipboard "localhost:3000/join/{encBag}"
     try {
@@ -1122,27 +1122,11 @@ const controller = {
   sendBagLink: async function (req, res) {
     const { link } = req.body;
 
-    var url = 'https://' + link + '/'
-
-    // Print the link to the console
-    console.log("Link to redirect user:", url);
-
-    //TODO: redirect user to given bagLink
+    //TODO: Process the link and obtain the redirect URL
+    
     try {
-      let countSec = 5;
-
-      const interval = setInterval(async () => {
-        console.log("Redirecting in", countSec, "seconds...");
-        countSec--;
-
-        if (countSec === 0) {
-          clearInterval(interval);
-
-          const response = await axios.get(url);
-
-          res.status(200).json({ message: "User redirected to bag" });
-        }
-      }, 1000);
+      const redirectUrl = '/join/' + link;
+      res.status(200).json({ redirectUrl });
     } catch (error) {
       console.error("Failed to redirect user:", error);
       res.status(500).json({ error: "Failed to redirect user" });

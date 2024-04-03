@@ -127,8 +127,8 @@ shareBtn.addEventListener("click", async function () {
       Swal.fire({ 
         position: "center",
         icon: "success",
-        title: "Share Link Created",
-        html: `<span style='font-size: 20px;'>Copied to Clipboard:<br>${link}</span>`,
+        title: "Join Code Generated",
+        html: `<span style='font-size: 20px;'>Congratulations! Share this ID to start packing with your friends.<br>${link}</span>`,
         showConfirmButton: true
       });
     } catch(err) {
