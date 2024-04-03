@@ -1,10 +1,14 @@
 <section id="addItem-section">
     <div class="addItem-wrapper">
         <div class="addItem-top">
-            <div class="addItem-title">{{bag.bagName}}</div>
-            <div class="addItem-weight">Max: {{bag.bagWeight}}</div>
+            <div class="addItem-title">{{bagDisplay.bagName}}</div>
+            <div class="addItem-weight">Max: {{bagDisplay.bagWeight}}</div>
         </div>
-        <div class="addItem-mid" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div class="addItem-mid" ondrop="drop(event)" ondragover="allowDrop(event)">
+            {{#each bag}}
+                {{> addDItem this}}
+            {{/each}}
+        </div>
         <div class="addItem-float-bot">
             <div class="instruct">Click or drag item here to add into the bag</div>
             <div class="float-item-box">
@@ -17,7 +21,7 @@
             
                 <div class="float-btn">
                     <div class="float-btn-btn" onclick="add_items()">Done</div></a>
-                    <a href="/itemgallery/{{bag.encID}}"><div class="float-btn-btn">Edit Items Gallery</div></a>
+                    <a href="/itemgallery/{{bagDisplay.encID}}" id="getme"><div class="float-btn-btn">Edit Items Gallery</div></a>
                 </div>
             </div>
         </div>

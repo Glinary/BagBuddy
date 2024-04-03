@@ -31,7 +31,12 @@ const controller = {
     console.log("USER ID: ", userID);
 
     const user = await User.findOne({ _id: userID }).lean().exec();
-    const userBags = await Bags.find({ _id: { $in: user.bags } })
+    const userBags = await Bags.find({
+      $or: [
+        { _id: { $in: user.bags } }, // User is owner
+        { bagCollabs: userID }, // User is collaborator
+      ],
+    })
       .lean()
       .exec();
 
@@ -86,6 +91,8 @@ const controller = {
         console.log("listing users in bags for items failed due to: ", error);
       }
 
+      itemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
+
       console.log("bag items: ", itemList);
 
       res.render("insidebag", {
@@ -96,7 +103,6 @@ const controller = {
         js1: "/static/js/delete_bag.js",
         showBot: true,
         showAddBtn: true,
-        /*Sample list for testing bag view*/
         bag: bagToDisplay,
         items: itemList,
         user: userID,
@@ -189,20 +195,32 @@ const controller = {
     try {
       const encBagID = req.params.id;
       const bagID = decrypt(encBagID, process.env.KEY);
+      let userID = req.session.user.uID;
+      let userObjId = new mongoose.Types.ObjectId(userID);
 
       const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
       console.log("Bag to Display", bagToDisplay);
 
       // populate bag's userItemPools with users itself
       const bagUsers = await Bags.findById(bagID)
-        .populate("userItemsPool")
+        .populate(["userItemsPool", "bagItems"])
         .exec();
 
-      // get the user in userItemsPool
-      const bagUsersPool = bagUsers.userItemsPool;
-      const bagUsersItemGallery = bagUsersPool.itemGallery.sort();
+      const bagItems = bagUsers.bagItems;
 
-      console.log("User item ID:", bagUsersItemGallery);
+      const totalUsers = bagUsers.userItemsPool.length;
+      console.log("user count: ", totalUsers);
+
+      for (i = 0; i < totalUsers; i++) {
+        currentUser = bagUsers.userItemsPool[i];
+        currentUserId = currentUser._id;
+
+        if (currentUserId.equals(userObjId)) {
+          var bagUsersItemGallery = currentUser.itemGallery.sort();
+        }
+      }
+
+      console.log("User's items ID:", bagUsersItemGallery);
 
       let itemList = [];
 
@@ -217,24 +235,30 @@ const controller = {
           })
         );
       } catch (error) {
-        console.log("listing users in bags for items failed due to: ", error);
+        console.log("adding items to itemList failed due to: ", error);
+      }
+
+      let bagItemList = [];
+
+      try {
+        // Use map instead of forEach
+        await Promise.all(
+          bagItems.map(async (element) => {
+            const items = await Items.find({ _id: element._id }).lean().exec();
+            // console.log(items);
+            bagItemList.push(...items);
+          })
+        );
+      } catch (error) {
+        console.log("adding items to bag items list failed due to: ", error);
       }
 
       // sort items so its sorted in item pool
-      itemList.sort((a, b) => {
-        const itemNameA = a.itemName.toUpperCase();
-        const itemNameB = b.itemName.toUpperCase();
-
-        if (itemNameA < itemNameB) {
-          return -1; // Item A comes before Item B
-        }
-        if (itemNameA > itemNameB) {
-          return 1; // Item A comes after Item B
-        }
-        return 0; // Item Names are equal
-      });
+      itemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
+      bagItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
 
       console.log("user item gallery: ", itemList);
+      console.log("bag gallery: ", bagItemList);
 
       res.render("addItem", {
         maincss: "/static/css/main.css",
@@ -242,9 +266,10 @@ const controller = {
         partialcss: "/static/css/dItem.css",
         mainscript: "/static/js/home.js",
         js1: "/static/js/add_bagitem.js",
-        bag: bagToDisplay,
+        bagDisplay: bagToDisplay,
+        bag: bagItemList,
         items: itemList,
-        user: bagUsersPool._id,
+        user: userID,
       });
     } catch (error) {
       res.render("errorpage", {
@@ -284,19 +309,8 @@ const controller = {
       console.log("listing users in bags for items failed due to: ", error);
     }
 
-    // sort items so its sorted in item pool
-    userItemList.sort((a, b) => {
-      const itemNameA = a.itemName.toUpperCase();
-      const itemNameB = b.itemName.toUpperCase();
-
-      if (itemNameA < itemNameB) {
-        return -1; // Item A comes before Item B
-      }
-      if (itemNameA > itemNameB) {
-        return 1; // Item A comes after Item B
-      }
-      return 0; // Item Names are equal
-    });
+    // Sort items by name
+    userItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
 
     console.log("user item gallery: ", userItemList);
 
@@ -308,7 +322,7 @@ const controller = {
       js1: "/static/js/add_galleryitem.js",
       items: userItemList,
       bag: req.params.id,
-      user: req.params.user,
+      user: userID,
     });
   },
 
@@ -590,6 +604,25 @@ const controller = {
     });
   },
 
+  shareBag: async function (req, res) {
+    console.log("------SHARE BAG------");
+
+    const encBag = req.body.bag;
+    // const bagToShare = decrypt(encBagToDelete, process.env.KEY);
+    const link = `localhost:3000/join/${encBag}`;
+
+    // Create a link that gets copied to clipboard "localhost:3000/join/{encBag}"
+    try {
+      console.log("Link Generated:", link);
+      // Optionally, you can send a response indicating success
+      res.status(200).json({ sharelink: link });
+    } catch (error) {
+      console.error("Failed to copy link to clipboard:", error);
+      // Optionally, you can send a response indicating failure
+      res.status(500).json({ error: "Failed to copy link to clipboard" });
+    }
+  },
+
   deleteBag: async function (req, res) {
     console.log("------DELETE BAG------");
 
@@ -672,6 +705,47 @@ const controller = {
     }
   },
 
+  joinBag: async function (req, res) {
+    console.log("-------JOIN BAG--------");
+
+    const userID = req.session.user.uID;
+
+    // Extract the bag ID from the link
+    const encrbagID = req.params.id;
+    const bagID = decrypt(encrbagID, process.env.KEY);
+
+    try {
+      // Find the bag document by its ID
+      const bag = await Bags.findById(bagID);
+
+      // Check if the bag exists
+      if (!bag) {
+        return res.status(404).json({ error: "Bag not found" });
+      }
+
+      // Check if the user already exists in the bagCollabs array
+      if (bag.bagCollabs.includes(userID)) {
+        return res
+          .status(400)
+          .json({ error: "User already exists in bagCollabs" });
+      }
+
+      // Add the user ID to the bag's bagCollabs array
+      bag.bagCollabs.push(userID);
+      bag.userItemsPool.push(userID);
+
+      // Save the updated bag document
+      await bag.save();
+
+      // Optionally, you can send a response indicating success
+      res.redirect("/home");
+    } catch (error) {
+      console.error("Failed to add user to bagCollabs:", error);
+      // Optionally, you can send a response indicating failure
+      res.status(500).json({ error: "Failed to add user to bagCollabs" });
+    }
+  },
+
   findBag: async function (req, res) {
     console.log("-------FIND BAG--------");
 
@@ -710,7 +784,7 @@ const controller = {
       itemsToSend = bagFound.bagItems;
       console.log(itemsToSend);
       res.status(200).json({
-        itemGallery: itemsToSend,
+        bagItems: itemsToSend,
       });
     }
   },
@@ -836,10 +910,14 @@ const controller = {
     newIDs = [];
 
     newItems.forEach(async (obj) => {
+      if (obj.itemweight == "") {
+        var itemW = 0;
+      }
+
       const newItem = new Items({
         _id: new mongoose.Types.ObjectId(),
         itemName: obj.itemname,
-        itemWeight: obj.itemweight,
+        itemWeight: itemW,
       });
 
       try {
@@ -892,7 +970,13 @@ const controller = {
     for (const element of allItems) {
       const editedItemId = new mongoose.Types.ObjectId(element.itemID);
       const editedItemName = element.itemname;
-      const editedItemWeight = parseInt(element.itemweight);
+      console.log(element.itemweight);
+
+      if (element.itemweight == "") {
+        var editedItemWeight = 0;
+      } else {
+        var editedItemWeight = parseInt(element.itemweight);
+      }
 
       try {
         const updatedItem = await Items.findOneAndUpdate(
@@ -918,6 +1002,12 @@ const controller = {
     if (savedItems === itemLen) {
       res.status(200).send();
     }
+  },
+
+  sendBagLink: async function (req, res) {
+    const { link } = req.body;
+
+    //TODO: redirect user to given bagLink
   },
 };
 
@@ -973,7 +1063,11 @@ function formatDate(date) {
   // Convert to Date object
   const formattedDate = new Date(date);
   // Format the date (e.g., "January 1, 2022")
-  return formattedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return formattedDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // export default controller;
