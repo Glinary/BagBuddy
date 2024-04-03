@@ -31,6 +31,8 @@ const sessionChecker = (req, res, next) => {
 
 const controller = {
   getHome: async function (req, res) {
+    let isValidCount = false;
+
     console.log("-------GET HOME VIEW--------");
     let userID = req.session.user.uID; //TODO: uID is undefined with tested
     console.log("USER ID: ", userID);
@@ -48,6 +50,30 @@ const controller = {
     console.log("user: ", user);
     console.log("bags in home view: ", userBags);
 
+    const bagsInfo = userBags.map((bag) => ({
+      bagName: bag.bagName,
+      dateUsage: formatDate(bag.dateUsage),
+    }));
+
+    // If dateUsage is within the next 7 days, add to notifs
+    const today = new Date();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+
+    const alertBagInfo = bagsInfo.filter((bag) => {
+      const bagDate = new Date(bag.dateUsage);
+      return bagDate >= today && bagDate <= nextWeek;
+    });
+
+    // Count the number of bags that are due within the next 7 days
+    const alertBagCount = alertBagInfo.length;
+    console.log("Count of bags due within the next 7 days: ", alertBagCount)
+
+    if (alertBagCount > 0) {
+      isValidCount = true;
+    }
+
+
     res.status(200).render("home", {
       maincss: "/static/css/main.css",
       css1: "/static/css/home.css",
@@ -57,6 +83,8 @@ const controller = {
       showBot: true,
       showAddBtn: true,
       bags: userBags,
+      showCount: isValidCount,
+      notifCount: alertBagCount,
     });
   },
 
@@ -142,6 +170,16 @@ const controller = {
         dateUsage: formatDate(bag.dateUsage),
       }));
 
+      // If dateUsage is within the next 7 days, add to notifs
+      const today = new Date();
+      const nextWeek = new Date(today);
+      nextWeek.setDate(today.getDate() + 7);
+
+      const alertBagInfo = bagsInfo.filter((bag) => {
+        const bagDate = new Date(bag.dateUsage);
+        return bagDate >= today && bagDate <= nextWeek;
+      });
+
       console.log("Bags information: ", bagsInfo);
 
       res.render("notification", {
@@ -155,7 +193,7 @@ const controller = {
         //   { bagtype: "travel", date: "Feb 20" },
         //   { bagtype: "personal", date: "Feb 21" },
         // ],
-        notifs: bagsInfo,
+        notifs: alertBagInfo,
       });
     } catch (error) {
       console.log(error);

@@ -105,6 +105,21 @@
   fill: var(--main-orange);
 }
 
+.notif-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 100px;
+  background-color: var(--main-orange);
+  color: white;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /** ----------------------------------------------- MENU BAR SECTION */
 
 #menu-bar {
