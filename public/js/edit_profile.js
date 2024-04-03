@@ -29,6 +29,24 @@ function selectImage(element) {
 
 function selectCustomImage(input) {
     if (input.files && input.files[0]) {
+
+        // Check if the file type is an image
+        if (!input.files[0].type.startsWith('image')) {
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error updating profile.",
+                html: `<span style='font-size: 20px;'>Please make sure that it is an image.</span>`,
+                showConfirmButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Reload the edit profile page
+                    window.location.reload();
+                }
+            });
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('customImage').src = e.target.result;
@@ -55,6 +73,7 @@ uploadBtn.addEventListener('click', async function() {
 document.getElementById('fileInput').addEventListener('change', async function() {
     const file = this.files[0];
     if (file) {
+
         const reader = new FileReader();
         reader.onload = function() {
             previewImg.src = reader.result;

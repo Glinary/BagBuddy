@@ -58,7 +58,8 @@ app.set("view engine", "hbs"); // set express' default templating engine
 app.set("views", "./views");
 
 //user bodyParser
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // initialize session
 app.use(session({
