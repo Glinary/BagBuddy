@@ -33,6 +33,7 @@ router.get("/editprofile", controller.getEditProfile);
 router.post("/register/isNameValid", controller.isNameValid);
 router.post("/register/isEmailValid", controller.isEmailValid);
 router.post("/postRegister", controller.postRegister);
+router.post("/postEditProfile", controller.postEditProfile);
 
 router.post("/postlogin", controller.postLogin);
 router.post("/postSignout", controller.postSignout);
