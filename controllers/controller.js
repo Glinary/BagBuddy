@@ -31,9 +31,12 @@ const controller = {
     console.log("USER ID: ", userID);
 
     const user = await User.findOne({ _id: userID }).lean().exec();
-    const userBags = await Bags.find({ _id: { $in: user.bags } })
-      .lean()
-      .exec();
+    const userBags = await Bags.find({ 
+      $or: [
+          { _id: { $in: user.bags } }, // User is owner
+          { bagCollabs: userID } // User is collaborator
+      ]
+    }).lean().exec();
 
     console.log("user: ", user);
     console.log("bags in home view: ", userBags);
@@ -590,9 +593,29 @@ const controller = {
     });
   },
 
+  shareBag: async function (req, res) {
+    console.log("------SHARE BAG------");
+
+    const encBag = req.body.bag;
+    // const bagToShare = decrypt(encBagToDelete, process.env.KEY);
+    const link = `localhost:3000/join/${encBag}`;
+
+    // Create a link that gets copied to clipboard "localhost:3000/join/{encBag}"
+    try {
+      console.log('Link Generated:', link);
+      // Optionally, you can send a response indicating success
+      res.status(200).json({ sharelink: link });
+  } catch (error) {
+      console.error('Failed to copy link to clipboard:', error);
+      // Optionally, you can send a response indicating failure
+      res.status(500).json({ error: 'Failed to copy link to clipboard' });
+  }
+
+  },
+
   deleteBag: async function (req, res) {
     console.log("------DELETE BAG------");
-
+ 
     const encBagToDelete = req.body.bag;
     const bagToDelete = decrypt(encBagToDelete, process.env.KEY);
     console.log("bag ID to delete: ", bagToDelete);
@@ -670,6 +693,45 @@ const controller = {
       // Handle the error appropriately
       res.status(500).send("Internal Server Error");
     }
+  },
+
+  joinBag: async function (req, res) {
+    console.log("-------JOIN BAG--------");
+
+    const userID = req.session.user.uID;
+
+    // Extract the bag ID from the link
+    const encrbagID = req.params.id;
+    const bagID = decrypt(encrbagID, process.env.KEY);
+
+    try {
+        // Find the bag document by its ID
+        const bag = await Bags.findById(bagID);
+
+        // Check if the bag exists
+        if (!bag) {
+            return res.status(404).json({ error: "Bag not found" });
+        }
+
+        // Check if the user already exists in the bagCollabs array
+        if (bag.bagCollabs.includes(userID)) {
+          return res.status(400).json({ error: "User already exists in bagCollabs" });
+      }
+
+        // Add the user ID to the bag's bagCollabs array
+        bag.bagCollabs.push(userID);
+
+        // Save the updated bag document
+        await bag.save();
+
+        // Optionally, you can send a response indicating success
+        res.redirect("/home");
+    } catch (error) {
+        console.error("Failed to add user to bagCollabs:", error);
+        // Optionally, you can send a response indicating failure
+        res.status(500).json({ error: "Failed to add user to bagCollabs" });
+    }
+    
   },
 
   findBag: async function (req, res) {

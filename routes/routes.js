@@ -14,11 +14,14 @@ router.get("/additem/:id", controller.getAddItem);
 router.get("/itemgallery/:id", controller.getItemGallery);
 router.get("/editbag/:id", controller.getBagFormEdit);
 
+router.get("/join/:id", controller.joinBag);
+
 router.post("/ab", controller.addTheBag);
 router.post("/fb", controller.findBag);
 router.post("/db", controller.deleteBag);
 router.post("/di", controller.deleteItem);
 router.post("/eb", controller.editBag);
+router.post("/sb", controller.shareBag);
 router.post("/ai", controller.addItem);
 router.post("/fbi", controller.findBagItem);
 router.post("/fi", controller.findItem);
