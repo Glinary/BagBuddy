@@ -60,16 +60,12 @@ const controller = {
 
     try {
       const encryptedBagId = req.params.id;
-      console.log("encrypted bag ID: ", encryptedBagId);
-
       const userID = req.session.user.uID;
-      console.log("user ID:", userID);
 
       const bagID = decrypt(encryptedBagId, process.env.KEY);
       console.log("decrypted bag ID: ", bagID);
 
       const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
-
       const itemsToDisplay = bagToDisplay.bagItems;
 
       console.log("Bag to be displayed: ", bagToDisplay);
@@ -83,7 +79,6 @@ const controller = {
         await Promise.all(
           itemsToDisplay.map(async (element) => {
             const items = await Items.find({ _id: element }).lean().exec();
-            // console.log(items);
             itemList.push(...items);
           })
         );
@@ -222,15 +217,13 @@ const controller = {
 
       console.log("User's items ID:", bagUsersItemGallery);
 
+      // user item list
       let itemList = [];
 
-      //code when item pool contains only user item gallery
       try {
-        // Use map instead of forEach
         await Promise.all(
           bagUsersItemGallery.map(async (element) => {
             const items = await Items.find({ _id: element }).lean().exec();
-            // console.log(items);
             itemList.push(...items);
           })
         );
@@ -238,14 +231,13 @@ const controller = {
         console.log("adding items to itemList failed due to: ", error);
       }
 
+      // bag item list
       let bagItemList = [];
 
       try {
-        // Use map instead of forEach
         await Promise.all(
           bagItems.map(async (element) => {
             const items = await Items.find({ _id: element._id }).lean().exec();
-            // console.log(items);
             bagItemList.push(...items);
           })
         );
@@ -256,9 +248,6 @@ const controller = {
       // sort items so its sorted in item pool
       itemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
       bagItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
-
-      console.log("user item gallery: ", itemList);
-      console.log("bag gallery: ", bagItemList);
 
       res.render("addItem", {
         maincss: "/static/css/main.css",
@@ -291,17 +280,13 @@ const controller = {
       .exec();
 
     const userItems = userItemsPop.itemGallery;
-    console.log("populated: ", userItems);
 
     userItemList = [];
 
-    //code when item pool contains only user item gallery
     try {
-      // Use map instead of forEach
       await Promise.all(
         userItems.map(async (element) => {
           const items = await Items.find({ _id: element._id }).lean().exec();
-          // console.log(items);
           userItemList.push(...items);
         })
       );
@@ -311,8 +296,6 @@ const controller = {
 
     // Sort items by name
     userItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
-
-    console.log("user item gallery: ", userItemList);
 
     res.render("itemGallery", {
       maincss: "/static/css/main.css",
@@ -615,7 +598,7 @@ const controller = {
     try {
       console.log("Link Generated:", link);
       // Optionally, you can send a response indicating success
-      res.status(200).json({ sharelink: link });
+      res.status(200).json({ sharelink: link, owner: req.session.user.uID });
     } catch (error) {
       console.error("Failed to copy link to clipboard:", error);
       // Optionally, you can send a response indicating failure
@@ -633,8 +616,6 @@ const controller = {
     const userID = req.session.user.uID;
 
     try {
-      // const user = await User.findOne({ _id: userID }).lean().exec();
-
       await User.findOneAndUpdate(
         { _id: userID },
         { $pull: { bags: bagToDelete } }
@@ -751,17 +732,26 @@ const controller = {
 
     try {
       const bagToFindEnc = req.body.findbag;
-      console.log(bagToFindEnc);
       const bagToFind = decrypt(bagToFindEnc, process.env.KEY);
-      console.log(bagToFind);
-      const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
+      const bagFound = await Bags.findOne({ _id: bagToFind })
+        .populate(["userItemsPool"])
+        .exec();
 
       if (bagFound != null) {
         console.log("bag sched: ", bagFound.dateUsage);
-        console.log("Schedule sent to client");
-        bagToSend = bagFound.dateUsage;
+        console.log("Schedule and collaborators sent to client");
+        schedToSend = bagFound.dateUsage;
+        collabToSend = bagFound.userItemsPool;
+
+        const filteredCollab = collabToSend.filter(
+          (obj) => obj._id != req.session.user.uID
+        );
+
+        console.log("BAG COLLABS", collabToSend);
+
         res.status(200).json({
-          bagDate: bagToSend,
+          bagDate: schedToSend,
+          bagCollab: filteredCollab,
         });
       } else {
         res.status(404).send();
