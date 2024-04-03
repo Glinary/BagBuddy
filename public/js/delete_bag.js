@@ -117,13 +117,27 @@ shareBtn.addEventListener("click", async function () {
     const responseData = await response.json();
     const link = responseData.sharelink; // Assuming your backend sends the link in the response
 
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Share Link Created",
-      html: `<span style='font-size: 20px;'>Copy the link:<br>${link}</span>`,
-      showConfirmButton: true,
-    });
+
+    var textarea = document.createElement("textarea");
+    textarea.value = link;
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+
+    try {
+      document.execCommand("copy");
+      Swal.fire({ 
+        position: "center",
+        icon: "success",
+        title: "Share Link Created",
+        html: `<span style='font-size: 20px;'>Copied to Clipboard:<br>${link}</span>`,
+        showConfirmButton: true
+      });
+    } catch(err) {
+      console.error("Unable to copy to clipboard", err);
+    } finally {
+      document.body.removeChild(textarea);
+    }
   } else {
     Swal.fire({
       position: "center",
