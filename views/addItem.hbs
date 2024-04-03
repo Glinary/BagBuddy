@@ -4,7 +4,11 @@
             <div class="addItem-title">{{bag.bagName}}</div>
             <div class="addItem-weight">Max: {{bag.bagWeight}}</div>
         </div>
-        <div class="addItem-mid" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div class="addItem-mid" ondrop="drop(event)" ondragover="allowDrop(event)">
+            {{#each bag}}
+                {{> addDItem this}}
+            {{/each}}
+        </div>
         <div class="addItem-float-bot">
             <div class="instruct">Click or drag item here to add into the bag</div>
             <div class="float-item-box">
