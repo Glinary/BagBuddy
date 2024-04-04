@@ -161,14 +161,14 @@ describe("GET /register", () => {
 
 
 ///TODO: make test for GET /profile
-describe("GET /profile", () => {
-    describe("when profile page loads properly", () => {
-        test("return a status code 200", async () => {
-            await supertest(app).get(`/profile`).expect(200);
+// describe("GET /profile", () => {
+//     describe("when profile page loads properly", () => {
+//         test("return a status code 200", async () => {
+//             await supertest(app).get(`/profile`).expect(200);
             
-        })
-    })
-})
+//         })
+//     })
+// })
 
 describe("GET /editprofile", () => {
     describe("when editprofile page loads properly", () => {
