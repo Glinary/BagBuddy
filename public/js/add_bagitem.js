@@ -106,7 +106,7 @@ async function add_items() {
     let redirectData = redirect.redLink;
     console.log("redirect", redirectData);
 
-    window.location.href = `http://localhost:3000/bag/${redirectData}`;
+    window.location.href = `/bag/${redirectData}`;
   } else {
     console.log("server error occurred");
   }
