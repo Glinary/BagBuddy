@@ -139,7 +139,7 @@ searchClose.addEventListener("click", function () {
 });
 
 function toggleAddOption() {
-  if (!currentURL.includes("bagbuddy")) {
+  if (!currentURL.includes("home")) {
     if (addToggleFlag == 0) {
       addOpBag.style.display = "flex";
     } else {
