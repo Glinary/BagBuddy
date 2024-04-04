@@ -11,7 +11,12 @@ router.get("/bag/:id", controller.getBag);
 router.get("/notification", controller.getNotif);
 router.get("/addbag", controller.getAddBag);
 router.get("/additem/:id", controller.getAddItem);
+//NOTE: :id on /itemgallery is a bag id
 router.get("/itemgallery/:id", controller.getItemGallery);
+//NOTE: itemgallery for profile
+router.get("/itemgalleryprofile/", controller.getItemGalleryProfile);
+
+
 router.get("/editbag/:id", controller.getBagFormEdit);
 
 router.get("/join/:id", controller.joinBag);
