@@ -37,12 +37,6 @@ jobs:
       needs: [tests]
       runs-on: ubuntu-latest
 
-      env:
-        MONGODB_URL: ${{ secrets.MONGODB_URL }}
-        LOCAL_MONGODB_URL: ${{ secrets.LOCAL_MONGODB_URL }}
-        KEY: ${{ secrets.KEY }}
-        PORT: ${{ secrets.PORT }}
-
       steps:
         - name: Deploy to production
           uses: johnbeynon/render-deploy-action@v0.0.8
