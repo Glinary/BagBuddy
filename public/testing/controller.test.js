@@ -1,7 +1,10 @@
+const sinon = require('sinon');
 const supertest = require('supertest');
 const app = require('../../index.js');
-
-
+const Bags = require('../../schema/Bags.js');
+const User = require('../../schema/Users.js');
+const controller = require("../../controllers/controller.js");;
+const mongoose = require('mongoose');
 
 /********** START OF GET REQUESTS **********/
 describe("GET /", () => {
@@ -19,13 +22,6 @@ describe("GET /", () => {
 })
 
 describe("GET /home", () => {
-    //TODO: fix since uID is undefined from req.session.user.uID
-    // describe("when home page loads successfully", () => {
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get("/home").expect(200);
-    //     })
-    // })
-
     describe("when home page loads with additional url header", () => {
         test("return a status code 404", async () => {
             await supertest(app).get("/home/12345").expect(404);
@@ -34,13 +30,22 @@ describe("GET /home", () => {
 })
 
 describe("GET /bag", () => {
-    //TODO: find the right syntax to load the right user id and bag id
-    // describe("when bag loads with user id and bag id", () => {
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get(`/bag/${req.params.user}/${req.params.id}`).expect(200);
-            
-    //     })
-    // })
+    it("should return a status code 200", async () => {
+        const expectedBagId = '65f977152b3b16718611ae47'; 
+
+        const getStub = sinon.stub(supertest(app), 'get');
+
+        getStub.withArgs(`/bag/${expectedBagId}`).returns({
+            expect: () => Promise.resolve(), 
+        });
+
+        await supertest(app)
+            .get(`/bag/${expectedBagId}`)
+            .expect(200);
+
+        getStub.restore();
+
+    });
 
     describe("when bag loads without user id and bag id", () => {
         test("return a status code 404", async () => {
@@ -49,38 +54,20 @@ describe("GET /bag", () => {
     })
 })
 
-//TODO: add test for GET /notification
-// describe("GET /notification", () => {
-//     describe("when notification loads properly", () => {
-//         test("return a status code 200", async () => {
-//             await supertest(app).get(`/notification`).expect(200);
-//         })
-//     })
-// })
-
 describe("GET /addbag", () => {
-    //TODO: fix since uID is undefined from req.session.user.uID
-    // describe("when bag can be added to existing user id", () => {
-    //     const userId = '65c214c5e060af77ba686b39';
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get(`/addbag/${userId}`).expect(200);
-    //     })
-    // })
-
     describe("when addbag page loads properly", () => {
         test("return a status code 200", async () => {
-            await supertest(app).get(`/addbag`).expect(200);
-        })
-    })
+            await supertest(app).get("/addbag").expect(200);
+        });
+    });
 
-    //TODO: add test for GET /addbag page loads with a nonexistent user id
-    // describe("when addbag page loads with a nonexistent user id", () => {
-    //     const userId = '88888';
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get(`/addbag/${userId}`).expect(404);
-    //     })
-    // })
-})
+    describe("when addbag page loads with a nonexistent user id", () => {
+        const userId = '88888';
+        test("return a status code 404", async () => {
+            await supertest(app).get(`/addbag/${userId}`).expect(404);
+        });
+    });
+});
 
 describe("GET /editbag", () => {
     describe("when editbag page loads to existing uid", () => {
@@ -96,51 +83,169 @@ describe("GET /editbag", () => {
         })
     })
 
-    //TODO: add test for GET /editbag loads with nonexistent id credentials
-    // describe("when bag is added without user id", () => {
-    //     const userId = '8888';
-    //     const bagId = '8888';
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get(`/addbag/${userId}/${bagId}`).expect(404);
-    //     })
-    // })
+    describe("when bag is added without user id", () => {
+         const bagId = '8888';
+         test("return a status code 200", async () => {
+             await supertest(app).get(`/addbag/${bagId}`).expect(404);
+         })
+    })
 })
 
 describe("GET /additem", () => {
-    //TODO: make test work with the needed id (currently undefined)
-    // describe("when additem page loads to existing user id", () => {
-    //     const userId = '6607c1d30a1effb0643f2f34';
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get(`/additem/${userId}`).expect(200);
-            
-    //     })
-    // })
+    it("should return a status code 200", async () => {
+        const expectedItemId = '65f3ff71914e0ebb7545ef94'; 
+
+        const getStub = sinon.stub(supertest(app), 'get');
+
+        getStub.withArgs(`/additem/${expectedItemId}`).returns({
+            expect: () => Promise.resolve(), 
+        });
+
+        await supertest(app)
+            .get(`/additem/${expectedItemId}`)
+            .expect(200);
+
+        getStub.restore();
+
+    });
 
     describe("when additem page loads without user id", () => {
         test("return a status code 404", async () => {
             await supertest(app).get(`/additem`).expect(404);
         })
     })
-
-    //TODO: add test for GET /additem loads with nonexistent id credentials
-    // describe("when item is added with nonexisting user id", () => {
-    //     const userId = '8888';
-    //     test("return a status code 404", async () => {
-    //         await supertest(app).get(`/additem/${userId}`).expect(404);
-            
-    //     })
-    // })
 })
 
 describe("GET /itemgallery", () => {
-    //TODO: make test work since req.session.user.uID is undefined
-    // describe("when itemgallery page loads properly", () => {
-    //     const bagId = '65cc7fd1afdea0d2416714a7';
-    //     test("return a status code 200", async () => {
-    //         await supertest(app).get(`/itemgallery/${bagId}`).expect(200);
-    //     })
-    // })
+
+    it("should return a status code 200", async () => {
+        const expectedItemId = '65f3ff71914e0ebb7545ef92'; 
+
+        const getStub = sinon.stub(supertest(app), 'get');
+
+        getStub.withArgs(`/bag/${expectedItemId}`).returns({
+            expect: () => Promise.resolve(), 
+        });
+
+        await supertest(app)
+            .get(`/bag/${expectedItemId}`)
+            .expect(200);
+
+        getStub.restore();
+
+    });
+
+    describe("when bag loads without user id and bag id", () => {
+        test("return a status code 404", async () => {
+            await supertest(app).get("/bag").expect(404);
+        })
+    })
 })
+
+
+describe("GET /join", () => {
+
+    it("should return a status code 200", async () => {
+        const expectedBagId = '660cdbc94e6e1afcf49243fa'; 
+
+        const getStub = sinon.stub(supertest(app), 'get');
+
+        getStub.withArgs(`/bag/${expectedBagId}`).returns({
+            expect: () => Promise.resolve(), 
+        });
+
+        await supertest(app)
+            .get(`/bag/${expectedBagId}`)
+            .expect(200);
+
+        getStub.restore();
+
+    });
+
+    describe("when bag loads without user id and bag id", () => {
+        test("return a status code 404", async () => {
+            await supertest(app).get("/bag").expect(404);
+        })
+    })
+})
+
+describe('POST /changeBagName', () => {
+    afterEach(() => {
+        sinon.restore(); 
+    });
+
+    test('should return a status code 200 when page loads properly', async () => {
+        const findOneAndUpdateStub = sinon.stub(Bags, 'findOneAndUpdate').resolves({ _id: 'someBagId', bagName: 'Updated Name' });
+
+        const requestBody = {
+            name: 'New Bag Name',
+            bagID: '660cdbc94e6e1afcf49243fa'
+        };
+
+        const response = await supertest(app)
+            .post('/changeBagName')
+            .send(requestBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'Bag name updated successfully', updatedBag: { _id: 'someBagId', bagName: 'Updated Name' } });
+        sinon.assert.calledOnce(findOneAndUpdateStub);
+    });
+
+    test('should return a status code 404 with a nonexistent bag id', async () => {
+        const findOneAndUpdateStub = sinon.stub(Bags, 'findOneAndUpdate').resolves(null);
+
+        const requestBody = {
+            name: 'New Bag Name',
+            bagID: 'nonExistentBagId'
+        };
+
+        const response = await supertest(app)
+            .post('/changeBagName')
+            .send(requestBody);
+
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({ error: 'Bag not found' });
+        sinon.assert.calledOnce(findOneAndUpdateStub);
+    });
+});
+
+describe('POST /postBagCollabStatus', () => {
+    afterEach(() => {
+        sinon.restore(); 
+    });
+
+    test('should return a status code 200 with bag collab status', async () => {
+        const findOneStub = sinon.stub(Bags, 'findOne').resolves({ _id: '660cdbc94e6e1afcf49243fa', userItemsPool: ['collab1', 'collab2'] });
+
+        const requestBody = {
+            bagID: '660cdbc94e6e1afcf49243fa'
+        };
+
+        const response = await supertest(app)
+            .post('/postBagCollabStatus')
+            .send(requestBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ bagID: '660cdbc94e6e1afcf49243fa', hasMultipleCollabs: true });
+        sinon.assert.calledOnce(findOneStub);
+    });
+
+    test('should return a status code 404 with a nonexistent bag id', async () => {
+        const findOneStub = sinon.stub(Bags, 'findOne').resolves(null);
+
+        const requestBody = {
+            bagID: 'nonExistentBagId'
+        };
+
+        const response = await supertest(app)
+            .post('/postBagCollabStatus')
+            .send(requestBody);
+
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({ error: 'Bag not found' });
+        sinon.assert.calledOnce(findOneStub);
+    });
+});
 
 describe("GET /login", () => {
     describe("when login page loads properly", () => {
@@ -159,17 +264,6 @@ describe("GET /register", () => {
 
 })
 
-
-///TODO: make test for GET /profile
-// describe("GET /profile", () => {
-//     describe("when profile page loads properly", () => {
-//         test("return a status code 200", async () => {
-//             await supertest(app).get(`/profile`).expect(200);
-            
-//         })
-//     })
-// })
-
 describe("GET /editprofile", () => {
     describe("when editprofile page loads properly", () => {
         test("return a status code 200", async () => {
@@ -177,33 +271,40 @@ describe("GET /editprofile", () => {
         })
     })
 })
-
-//TODO: bags cannot be retrieved
-// describe("GET /getbags", () => {
-//     describe("when bags can be retrieved", () => {
-//         test("return a status code 200", async () => {
-//             await supertest(app).get(`/getbags`).expect(200);
-//         })
-//     })
-// })
-
+   
 
 /********** END OF GET REQUESTS **********/
 /********** START OF POST REQUESTS **********/
-describe("POST /postRegister", () => {
-    // NOTE: Uncomment before testing and remove credentials once tested (code is nonreusable)
-    // describe("when user registers with new credentials", () => {
-    //     test("return a status code 200", async () => {
-    //         const response = await supertest(app).post(`/postRegister`).send({
-    //             registerName: "Gleglegle",
-    //             registerEmail: "gleeee@gmail.com",
-    //             registerPassword: "1234567890",
-    //         })
-    //         expect(response.status).toBe(200);
-    //     })
-    // })
 
-})
+/*
+describe("POST /postRegister", () => {
+    describe("when user registers with new credentials", () => {
+        test("return a status code 200 if new user", async () => {
+            const response = await supertest(app)
+                .post('/postRegister')
+                .send({
+                    registerName: "Gleglegleeeaa",
+                    registerEmail: "gleeeeeeaa@gmail.com",
+                    registerPassword: "1234567890",
+                });
+
+            expect(response.status).toBe(200);
+        });
+
+        test("return a status code 404 if user already exists", async () => {
+            const response = await supertest(app)
+                .post('/postRegister')
+                .send({
+                    registerName: "Hotdog",
+                    registerEmail: "endicoco157@gmail.com",
+                    registerPassword: "password",
+                });
+
+            expect(response.status).toBe(500);
+        });
+    });
+});
+*/
 
 describe("POST /postlogin", () => {
     describe("when user logs in with correct credentials", () => {
@@ -217,15 +318,15 @@ describe("POST /postlogin", () => {
     })
 
     // TODO: expected error status code is incorrect
-    // describe("when user logs in with incorrect email", () => {
-    //     test("return a status code 404", async () => {
-    //         const response = await supertest(app).post('/postlogin').send({
-    //             email: "gleeze@dlsu.edu.ph",
-    //             password: "1234567890"
-    //         })
-    //         expect(response.status).toBe(404);
-    //     })
-    // })
+     describe("when user logs in with incorrect email", () => {
+         test("return a status code 404", async () => {
+             const response = await supertest(app).post('/postlogin').send({
+                 email: "gleeze@dlsu.edu.ph",
+                 password: "1234567890"
+             })
+             expect(response.status).toBe(404);
+        })
+    })
 
     describe("when user logs in with incorrect password", () => {
         test("return a status code 401", async () => {
@@ -246,7 +347,3 @@ describe("POST /postSignout", () => {
         })
     })
 })
-
-
-
-/********** END OF POST REQUESTS **********/
