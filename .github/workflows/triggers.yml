@@ -37,8 +37,6 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-        - name: Clear Cache
-          run: npm cache clean --force
         - name: Deploy to production
           uses: johnbeynon/render-deploy-action@v0.0.8
           with:
