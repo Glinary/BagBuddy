@@ -138,21 +138,42 @@ searchClose.addEventListener("click", function () {
   closeSearch();
 });
 
+// function toggleAddOption() {
+//   if (currentURL.includes("bag")) {
+//     if (addToggleFlag == 0) {
+//       addOpBag.style.display = "flex";
+//     } else {
+//       addOpBag.style.display = "none";
+//     }
+//   } else {
+//     if (addToggleFlag == 0) {
+//       addOpHome.style.display = "flex";
+//     } else {
+//       addOpHome.style.display = "none";
+//     }
+//   }
+// }
+
 function toggleAddOption() {
   if (currentURL.includes("bag")) {
+    // If current URL includes "bag"
+    addOpHome.style.display = "none"; // Hide "Add a bag" option
     if (addToggleFlag == 0) {
-      addOpBag.style.display = "flex";
+      addOpBag.style.display = "flex"; // Show "Add items" option
     } else {
-      addOpBag.style.display = "none";
+      addOpBag.style.display = "none"; // Hide "Add items" option
     }
   } else {
+    // If current URL does not include "bag"
+    addOpBag.style.display = "none"; // Hide "Add items" option
     if (addToggleFlag == 0) {
-      addOpHome.style.display = "flex";
+      addOpHome.style.display = "flex"; // Show "Add a bag" option
     } else {
-      addOpHome.style.display = "none";
+      addOpHome.style.display = "none"; // Hide "Add a bag" option
     }
   }
 }
+
 
 function closeSearch() {
   searchBar.style.display = "none";
