@@ -93,16 +93,12 @@ const controller = {
 
     try {
       const encryptedBagId = req.params.id;
-      console.log("encrypted bag ID: ", encryptedBagId);
-
       const userID = req.session.user.uID;
-      console.log("user ID:", userID);
 
       const bagID = decrypt(encryptedBagId, process.env.KEY);
       console.log("decrypted bag ID: ", bagID);
 
       const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
-
       const itemsToDisplay = bagToDisplay.bagItems;
 
       // itemsToDisplay.forEach(item => {
@@ -120,7 +116,6 @@ const controller = {
         await Promise.all(
           itemsToDisplay.map(async (element) => {
             const items = await Items.find({ _id: element }).lean().exec();
-            // console.log(items);
             itemList.push(...items);
           })
         );
@@ -161,7 +156,12 @@ const controller = {
       console.log("USER ID: ", userID);
 
       const user = await User.findOne({ _id: userID }).lean().exec();
-      const userBags = await Bags.find({ _id: { $in: user.bags } })
+      const userBags = await Bags.find({
+        $or: [
+          { _id: { $in: user.bags } }, // User is owner
+          { bagCollabs: userID }, // User is collaborator
+        ],
+      })
         .lean()
         .exec();
 
@@ -191,6 +191,7 @@ const controller = {
         css1: "/static/css/notificationPage.css",
         partialcss: "/static/css/notif.css",
         mainscript: "/static/js/home.js",
+        js1: "/static/js/notification.js",
         showBot: true,
         /*Sample list for testing bag view*/
         // notifs: [
@@ -269,15 +270,13 @@ const controller = {
 
       console.log("User's items ID:", bagUsersItemGallery);
 
+      // user item list
       let itemList = [];
 
-      //code when item pool contains only user item gallery
       try {
-        // Use map instead of forEach
         await Promise.all(
           bagUsersItemGallery.map(async (element) => {
             const items = await Items.find({ _id: element }).lean().exec();
-            // console.log(items);
             itemList.push(...items);
           })
         );
@@ -285,14 +284,13 @@ const controller = {
         console.log("adding items to itemList failed due to: ", error);
       }
 
+      // bag item list
       let bagItemList = [];
 
       try {
-        // Use map instead of forEach
         await Promise.all(
           bagItems.map(async (element) => {
             const items = await Items.find({ _id: element._id }).lean().exec();
-            // console.log(items);
             bagItemList.push(...items);
           })
         );
@@ -303,9 +301,6 @@ const controller = {
       // sort items so its sorted in item pool
       itemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
       bagItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
-
-      console.log("user item gallery: ", itemList);
-      console.log("bag gallery: ", bagItemList);
 
       res.render("addItem", {
         maincss: "/static/css/main.css",
@@ -338,17 +333,13 @@ const controller = {
       .exec();
 
     const userItems = userItemsPop.itemGallery;
-    console.log("populated: ", userItems);
 
     userItemList = [];
 
-    //code when item pool contains only user item gallery
     try {
-      // Use map instead of forEach
       await Promise.all(
         userItems.map(async (element) => {
           const items = await Items.find({ _id: element._id }).lean().exec();
-          // console.log(items);
           userItemList.push(...items);
         })
       );
@@ -358,8 +349,6 @@ const controller = {
 
     // Sort items by name
     userItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
-
-    console.log("user item gallery: ", userItemList);
 
     res.render("itemGallery", {
       maincss: "/static/css/main.css",
@@ -430,6 +419,30 @@ const controller = {
     });
   },
 
+  postBagCollabStatus: async function (req, res) {
+    const {bagID} = req.body;
+    try {
+      const bag = await Bags.findOne({ _id: bagID });
+
+      // Check if bag is found
+      if (!bag) {
+        return res.status(404).json({ error: 'Bag not found' });
+      }
+
+      // Check if bag item pool has more than one id
+      const collabsCount = bag.userItemsPool.length;
+
+      const response = {
+        bagID: bag._id,
+        hasMultipleCollabs: collabsCount > 1
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Failed to get bag collab status:', error);
+      res.status(500).json({ error: 'Failed to get bag collab status' });
+    }
+  },
   postSignout: async function (req, res) {
     console.log("------SIGN OUT------");
     req.session.destroy((err) => {
@@ -727,13 +740,13 @@ const controller = {
 
     const encBag = req.body.bag;
     // const bagToShare = decrypt(encBagToDelete, process.env.KEY);
-    const link = `localhost:3000/join/${encBag}`;
+    const link = `${encBag}`;
 
     // Create a link that gets copied to clipboard "localhost:3000/join/{encBag}"
     try {
       console.log("Link Generated:", link);
       // Optionally, you can send a response indicating success
-      res.status(200).json({ sharelink: link });
+      res.status(200).json({ sharelink: link, owner: req.session.user.uID });
     } catch (error) {
       console.error("Failed to copy link to clipboard:", error);
       // Optionally, you can send a response indicating failure
@@ -751,8 +764,6 @@ const controller = {
     const userID = req.session.user.uID;
 
     try {
-      // const user = await User.findOne({ _id: userID }).lean().exec();
-
       await User.findOneAndUpdate(
         { _id: userID },
         { $pull: { bags: bagToDelete } }
@@ -829,23 +840,39 @@ const controller = {
     const userID = req.session.user.uID;
 
     // Extract the bag ID from the link
-    const encrbagID = req.params.id;
+    const { link } = req.body;
+
+    if (!link) {
+      return res.status(403).json({ error: "Link cannot be empty" });
+    }
+
+    const encrbagID = link;
     const bagID = decrypt(encrbagID, process.env.KEY);
+    console.log("bagId: ", bagID);
+  
 
     try {
       // Find the bag document by its ID
       const bag = await Bags.findById(bagID);
+      const user = await User.findById(userID);
 
       // Check if the bag exists
       if (!bag) {
         return res.status(404).json({ error: "Bag not found" });
+      }
+      
+      // Check if the current user is the owner of the bag
+      if (user.bags.includes(bagID)) {
+        return res
+          .status(400)
+          .json({ error: "You are the owner of this bag!" });
       }
 
       // Check if the user already exists in the bagCollabs array
       if (bag.bagCollabs.includes(userID)) {
         return res
           .status(400)
-          .json({ error: "User already exists in bagCollabs" });
+          .json({ error: "You already joined this bag!" });
       }
 
       // Add the user ID to the bag's bagCollabs array
@@ -856,7 +883,7 @@ const controller = {
       await bag.save();
 
       // Optionally, you can send a response indicating success
-      res.redirect("/home");
+      res.status(200).json({ link: `/bag/${link}`});
     } catch (error) {
       console.error("Failed to add user to bagCollabs:", error);
       // Optionally, you can send a response indicating failure
@@ -869,17 +896,33 @@ const controller = {
 
     try {
       const bagToFindEnc = req.body.findbag;
-      console.log(bagToFindEnc);
       const bagToFind = decrypt(bagToFindEnc, process.env.KEY);
-      console.log(bagToFind);
-      const bagFound = await Bags.findOne({ _id: bagToFind }).lean().exec();
+      const bagFound = await Bags.findOne({ _id: bagToFind })
+        .populate(["userItemsPool"])
+        .exec();
 
       if (bagFound != null) {
         console.log("bag sched: ", bagFound.dateUsage);
-        console.log("Schedule sent to client");
-        bagToSend = bagFound.dateUsage;
+        console.log("Schedule and collaborators sent to client");
+        schedToSend = bagFound.dateUsage;
+        collabToSend = bagFound.userItemsPool;
+
+        const filteredCollab = collabToSend.filter(
+          (obj) => obj._id != req.session.user.uID
+        );
+
+        const user = collabToSend.filter(
+          (obj) => obj._id == req.session.user.uID
+        );
+
+        console.log("BAG COLLABS", collabToSend);
+        currentUser = user[0]
+        console.log("Current User: ", currentUser);
+
         res.status(200).json({
-          bagDate: bagToSend,
+          bagDate: schedToSend,
+          bagCollab: filteredCollab,
+          currentUser: currentUser
         });
       } else {
         res.status(404).send();
@@ -1122,36 +1165,26 @@ const controller = {
     }
   },
 
-  sendBagLink: async function (req, res) {
-    const { link } = req.body;
-
-    var url = 'https://' + link + '/'
-
-    // Print the link to the console
-    console.log("Link to redirect user:", url);
-
-    //TODO: redirect user to given bagLink
+  changeBagName: async function (req, res) {
+    const {name, bagID} = req.body;
     try {
-      let countSec = 5;
+      //Update the bag name
+      const updatedBag = await Bags.findOneAndUpdate(
+          { _id: bagID }, // Find the bag by ID
+          { $set: { bagName: name } }, // Set the new bag name
+          { new: true } // Return the updated document
+      );
 
-      const interval = setInterval(async () => {
-        console.log("Redirecting in", countSec, "seconds...");
-        countSec--;
-
-        if (countSec === 0) {
-          clearInterval(interval);
-
-          const response = await axios.get(url);
-
-          res.status(200).json({ message: "User redirected to bag" });
-        }
-      }, 1000);
-    } catch (error) {
-      console.error("Failed to redirect user:", error);
-      res.status(500).json({ error: "Failed to redirect user" });
-    }
-    
-  },
+      if (!updatedBag) {
+          return res.status(404).json({ error: 'Bag not found' });
+      }
+      // Send a success response
+      res.status(200).json({ message: 'Bag name updated successfully', updatedBag });
+  } catch (error) {
+      console.error('Failed to update bag name:', error);
+      res.status(500).json({ error: 'Failed to update bag name' });
+  }
+  }
 };
 
 function encrypt(objectId, key) {

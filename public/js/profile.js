@@ -39,3 +39,11 @@ async function signOut() {
         console.error("Failed to sign out.");
     }
 }
+
+function comingSoonCalendar() {
+  Swal.fire({
+    position: "center",
+    title: "Calendar is coming soon!",
+    showConfirmButton: true,
+  });
+}

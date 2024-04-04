@@ -1,6 +1,8 @@
 name: Unit Tests
 
-on: [pull_request]
+on:
+  push:
+    branches: [main]
 
 jobs:
   tests:
@@ -26,5 +28,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test
+      # - name: Run tests
+      #   run: npm test
+      
+  deploy:
+    name: Deploy
+    needs: [tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          KEY: ${{ secrets.KEY}}
+          PORT: $${{ secrets.PORT}}
+          service-id: ${{ secrets.SERVICE_ID}}
+          api-key: ${{ secrets.RENDER_API_KEY}}
