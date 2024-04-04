@@ -4,6 +4,26 @@
 // Button
 
 const logBtn = document.querySelector("#login-submit-btn");
+var emailInput = document.getElementById("email");
+
+function validateEmail() {
+  let regexEmail = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+
+  let isValidEmail = regexEmail.test(emailInput.value);
+  console.log(isValidEmail);
+
+
+  if (!isValidEmail) {
+    document.getElementById("error-message").innerText = "Please put a valid email";
+    document.getElementById("error-message").style.display = "block";
+  } else {
+    // hide error
+    document.getElementById("error-message").style.display = "none"; // Hide error message
+  }
+  return isValidEmail;
+}
+
+emailInput.addEventListener("keyup", validateEmail);
 
 logBtn.addEventListener("click", async function (e) {
   e.preventDefault();
@@ -14,15 +34,26 @@ logBtn.addEventListener("click", async function (e) {
 
   const password = document.getElementById("password").value;
 
-  const data = { email, password };
+  if (email == "" || password == "") {
+    // Display Error Message
+    document.getElementById("error-message").innerText = "Please fill in the boxes";
+  } else if (!validateEmail()) {
+    console.log("Form is invalid");
+    validateEmail();
+    return;
+  }  else {
 
-  // Convert the data object to JSON
+    const data = { email, password };
 
-  const json = JSON.stringify(data);
+    // Convert the data object to JSON
 
-  console.log(json);
+    const json = JSON.stringify(data);
 
-  login(json);
+    console.log(json);
+
+    login(json);
+
+  }
 });
 
 async function login(jsonData) {
