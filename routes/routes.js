@@ -14,8 +14,8 @@ router.get("/additem/:id", controller.getAddItem);
 router.get("/itemgallery/:id", controller.getItemGallery);
 router.get("/editbag/:id", controller.getBagFormEdit);
 
-router.get("/join/:id", controller.joinBag);
-router.post("/sendBagLink", controller.sendBagLink);
+router.post("/join", controller.joinBag);
+//router.post("/sendBagLink", controller.sendBagLink);
 router.post("/changeBagName", controller.changeBagName);
 router.post("/postBagCollabStatus", controller.postBagCollabStatus);
 

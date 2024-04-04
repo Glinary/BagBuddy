@@ -831,23 +831,39 @@ const controller = {
     const userID = req.session.user.uID;
 
     // Extract the bag ID from the link
-    const encrbagID = req.params.id;
+    const { link } = req.body;
+
+    if (!link) {
+      return res.status(403).json({ error: "Link cannot be empty" });
+    }
+
+    const encrbagID = link;
     const bagID = decrypt(encrbagID, process.env.KEY);
+    console.log("bagId: ", bagID);
+  
 
     try {
       // Find the bag document by its ID
       const bag = await Bags.findById(bagID);
+      const user = await User.findById(userID);
 
       // Check if the bag exists
       if (!bag) {
         return res.status(404).json({ error: "Bag not found" });
+      }
+      
+      // Check if the current user is the owner of the bag
+      if (user.bags.includes(bagID)) {
+        return res
+          .status(400)
+          .json({ error: "You are the owner of this bag!" });
       }
 
       // Check if the user already exists in the bagCollabs array
       if (bag.bagCollabs.includes(userID)) {
         return res
           .status(400)
-          .json({ error: "User already exists in bagCollabs" });
+          .json({ error: "You already joined this bag!" });
       }
 
       // Add the user ID to the bag's bagCollabs array
@@ -858,7 +874,7 @@ const controller = {
       await bag.save();
 
       // Optionally, you can send a response indicating success
-      res.redirect(`/home`);
+      res.status(200).json({ link: `/bag/${link}`});
     } catch (error) {
       console.error("Failed to add user to bagCollabs:", error);
       // Optionally, you can send a response indicating failure
