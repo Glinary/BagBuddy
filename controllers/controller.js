@@ -907,11 +907,18 @@ const controller = {
           (obj) => obj._id != req.session.user.uID
         );
 
+        const user = collabToSend.filter(
+          (obj) => obj._id == req.session.user.uID
+        );
+
         console.log("BAG COLLABS", collabToSend);
+        currentUser = user[0]
+        console.log("Current User: ", currentUser);
 
         res.status(200).json({
           bagDate: schedToSend,
           bagCollab: filteredCollab,
+          currentUser: currentUser
         });
       } else {
         res.status(404).send();
