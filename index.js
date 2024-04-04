@@ -1,8 +1,3 @@
-// TODO:
-// 1. Notifications
-// 2. Menu buttons
-// 3. Testing
-
 const express = require("express");
 const routes = require("./routes/routes.js");
 const exphbs = require("express-handlebars");
