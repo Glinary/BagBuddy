@@ -17,14 +17,14 @@ Invalid Password
 
 Inexistent user
     Open Browser in Login Page
-    Input Username and Password      ${INVALID_EMAIL}        ${VALID_PASSWORD}
+    Input Username and Password      ${INVALID_EMAIL}        ${INVALID_PASSWORD}
     Click Element        ${LOGIN_BUTTON}
     ${text}=        Retrieve Error Message      ${INVALID_LOGIN_MSSG}
-    Should Be Equal      ${text}      An error occurred     #Incorrect Credentials
+    Should Be Equal      ${text}      Incorrect email or password. Please try again.     #Incorrect Credentials
 
 Incomplete Login
     Open Browser in Login Page
-    Input Text           ${EMAIL_LOCATOR}        ${VALID_EMAIL}
+    Input Text           ${EMAIL_LOCATOR}        invalidtestemail@gmail
     Click Element        ${LOGIN_BUTTON}
     ${text}=        Retrieve Error Message      ${INVALID_LOGIN_MSSG}
-    Should Be Equal      ${text}      Incorrect email or password. Please try again.        #Missing Credentials
+    Should Be Equal      ${text}        Please fill in the boxes        #Missing Credentials
