@@ -40,5 +40,9 @@ jobs:
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
+          MONGODB_URL: ${{ secrets.MONGO_URL}}
+          LOCAL_MONGODB_URL: ${{ secrets.LOCAL_MONGODB_URL}}
+          KEY: ${{ secrets.KEY}}
+          PORT: $${{ secrets.PORT}}
           service-id: ${{ secrets.SERVICE_ID}}
           api-key: ${{ secrets.RENDER_API_KEY}}
