@@ -19,8 +19,7 @@ router.get("/itemgalleryprofile/", controller.getItemGalleryProfile);
 
 router.get("/editbag/:id", controller.getBagFormEdit);
 
-router.get("/join/:id", controller.joinBag);
-router.post("/sendBagLink", controller.sendBagLink);
+router.post("/join", controller.joinBag);
 router.post("/changeBagName", controller.changeBagName);
 router.post("/postBagCollabStatus", controller.postBagCollabStatus);
 
