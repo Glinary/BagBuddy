@@ -152,7 +152,12 @@ const controller = {
       console.log("USER ID: ", userID);
 
       const user = await User.findOne({ _id: userID }).lean().exec();
-      const userBags = await Bags.find({ _id: { $in: user.bags } })
+      const userBags = await Bags.find({
+        $or: [
+          { _id: { $in: user.bags } }, // User is owner
+          { bagCollabs: userID }, // User is collaborator
+        ],
+      })
         .lean()
         .exec();
 
@@ -1147,20 +1152,6 @@ const controller = {
     if (savedItems === itemLen) {
       res.status(200).send();
     }
-  },
-
-  sendBagLink: async function (req, res) {
-    const { link } = req.body;
-    
-    try {
-      const redirectUrl = '/join/' + link;
-      res.status(200).json({ redirectUrl });
-
-    } catch (error) {
-      console.error("Failed to redirect user:", error);
-      res.status(500).json({ error: "Failed to redirect user" });
-    }
-    
   },
 
   changeBagName: async function (req, res) {
