@@ -229,3 +229,13 @@ async function findBagDate() {
     });
   }
 }
+
+/*
+ *  -------------------------------------------------------------------- ITEM backend
+ */
+
+
+// Add and Subtract Item Quantity for each item in the bag
+const itemQtyVal = document.querySelectorAll(".quantVal-input");
+const itemQtyAdd = document.querySelectorAll(".quantAdd-btn");
+const itemQtySub = document.querySelectorAll(".quantSub-btn");

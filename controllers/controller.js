@@ -105,6 +105,10 @@ const controller = {
 
       const itemsToDisplay = bagToDisplay.bagItems;
 
+      // itemsToDisplay.forEach(item => {
+      //   console.log(`Item ID: ${item._id}, Quantity: ${item.quantity}`);
+      // });
+
       console.log("Bag to be displayed: ", bagToDisplay);
       console.log("items to display: ", itemsToDisplay);
 

@@ -1,0 +1,21 @@
+<section id="{{this._id}}" class="dItem-section" draggable="true">
+    <div class="dItem-wrapper center">
+        <div class="dItem-name center">{{this.itemName}}</div>
+        <div class="dItem-weight">{{this.itemWeight}} kg</div>
+        <div class="dItem-quantity center">
+            <div class="quant-item" id="dItem-quantSub">
+                <button class="quantSub-btn" id="quantSubBtn">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+            </div>
+            <div class="quant-item" id="dItem-quantVal">
+                <input type="number" class="quantVal-input" id="quantValInput" value={{this.quantity}} readonly>
+            </div>
+            <div class="quant-item" id="dItem-quantAdd">
+                <button class="quantAdd-btn" id="quantAddBtn" >
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
