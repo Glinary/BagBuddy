@@ -101,6 +101,17 @@ const controller = {
       const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
       const itemsToDisplay = bagToDisplay.bagItems;
 
+      // Check if the current user is the owner of the bag
+      // ownerID is the first user in the userItemsPool
+      const ownerID = bagToDisplay.userItemsPool[0];
+      const isBagOwner = ownerID.equals(userID);
+      
+      console.log("Is bag owner: ", isBagOwner);
+
+      // itemsToDisplay.forEach(item => {
+      //   console.log(`Item ID: ${item._id}, Quantity: ${item.quantity}`);
+      // });
+
       console.log("Bag to be displayed: ", bagToDisplay);
       console.log("items to display: ", itemsToDisplay);
 
@@ -134,6 +145,7 @@ const controller = {
         bag: bagToDisplay,
         items: itemList,
         user: userID,
+        isBagOwner: isBagOwner, // Pass the ownership status to the view
       });
     } catch (error) {
       res.render("errorpage", {
@@ -152,7 +164,12 @@ const controller = {
       console.log("USER ID: ", userID);
 
       const user = await User.findOne({ _id: userID }).lean().exec();
-      const userBags = await Bags.find({ _id: { $in: user.bags } })
+      const userBags = await Bags.find({
+        $or: [
+          { _id: { $in: user.bags } }, // User is owner
+          { bagCollabs: userID }, // User is collaborator
+        ],
+      })
         .lean()
         .exec();
 
@@ -353,6 +370,46 @@ const controller = {
     });
   },
 
+  getItemGalleryProfile: async function (req, res) {
+    console.log("----GET ITEM GALLERY PAGE----");
+    const userID = req.session.user.uID;
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    console.log("user item gallery look: ", user.itemGallery);
+
+    const userItemsPop = await User.findById(userID)
+      .populate("itemGallery")
+      .exec();
+
+    const userItems = userItemsPop.itemGallery;
+
+    userItemList = [];
+
+    try {
+      await Promise.all(
+        userItems.map(async (element) => {
+          const items = await Items.find({ _id: element._id }).lean().exec();
+          userItemList.push(...items);
+        })
+      );
+    } catch (error) {
+      console.log("listing users in bags for items failed due to: ", error);
+    }
+
+    // Sort items by name
+    userItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
+
+    res.render("itemGalleryProfile", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/itemGallery.css",
+      partialcss: "/static/css/item.css",
+      mainscript: "/static/js/home.js",
+      js1: "/static/js/add_galleryitem.js",
+      items: userItemList,
+      bag: req.params.id,
+      user: userID,
+    });
+  },
+
   getOnboarding: async function (req, res) {
     sessionChecker(req, res, () => {
       res.status(200).render("onboarding", {
@@ -434,6 +491,7 @@ const controller = {
       res.status(500).json({ error: 'Failed to get bag collab status' });
     }
   },
+
   postSignout: async function (req, res) {
     console.log("------SIGN OUT------");
     req.session.destroy((err) => {
@@ -611,11 +669,11 @@ const controller = {
       const logUser = await User.findOne({ email: email });
       console.log("READ ME");
       console.log(logUser);
-      const userID = logUser._id;
-      console.log("user ID: ", userID);
       console.log("Session ID: ", req.sessionID);
 
       if (logUser != null) {
+        const userID = logUser._id;
+        console.log("user ID: ", userID);
         const passStatus = await logUser.comparePW(password);
         if (passStatus) {
           console.log("user exists in database...");
@@ -831,23 +889,39 @@ const controller = {
     const userID = req.session.user.uID;
 
     // Extract the bag ID from the link
-    const encrbagID = req.params.id;
+    const { link } = req.body;
+
+    if (!link) {
+      return res.status(403).json({ error: "Link cannot be empty" });
+    }
+
+    const encrbagID = link;
     const bagID = decrypt(encrbagID, process.env.KEY);
+    console.log("bagId: ", bagID);
+  
 
     try {
       // Find the bag document by its ID
       const bag = await Bags.findById(bagID);
+      const user = await User.findById(userID);
 
       // Check if the bag exists
       if (!bag) {
         return res.status(404).json({ error: "Bag not found" });
+      }
+      
+      // Check if the current user is the owner of the bag
+      if (user.bags.includes(bagID)) {
+        return res
+          .status(400)
+          .json({ error: "You are the owner of this bag!" });
       }
 
       // Check if the user already exists in the bagCollabs array
       if (bag.bagCollabs.includes(userID)) {
         return res
           .status(400)
-          .json({ error: "User already exists in bagCollabs" });
+          .json({ error: "You already joined this bag!" });
       }
 
       // Add the user ID to the bag's bagCollabs array
@@ -858,7 +932,7 @@ const controller = {
       await bag.save();
 
       // Optionally, you can send a response indicating success
-      res.redirect(`/home`);
+      res.status(200).json({ link: `/bag/${link}`});
     } catch (error) {
       console.error("Failed to add user to bagCollabs:", error);
       // Optionally, you can send a response indicating failure
@@ -886,11 +960,18 @@ const controller = {
           (obj) => obj._id != req.session.user.uID
         );
 
+        const user = collabToSend.filter(
+          (obj) => obj._id == req.session.user.uID
+        );
+
         console.log("BAG COLLABS", collabToSend);
+        currentUser = user[0]
+        console.log("Current User: ", currentUser);
 
         res.status(200).json({
           bagDate: schedToSend,
           bagCollab: filteredCollab,
+          currentUser: currentUser
         });
       } else {
         res.status(404).send();
@@ -1131,20 +1212,6 @@ const controller = {
     if (savedItems === itemLen) {
       res.status(200).send();
     }
-  },
-
-  sendBagLink: async function (req, res) {
-    const { link } = req.body;
-    
-    try {
-      const redirectUrl = '/join/' + link;
-      res.status(200).json({ redirectUrl });
-
-    } catch (error) {
-      console.error("Failed to redirect user:", error);
-      res.status(500).json({ error: "Failed to redirect user" });
-    }
-    
   },
 
   changeBagName: async function (req, res) {

@@ -139,7 +139,7 @@ searchClose.addEventListener("click", function () {
 });
 
 function toggleAddOption() {
-  if (currentURL.includes("bag")) {
+  if (!currentURL.includes("home")) {
     if (addToggleFlag == 0) {
       addOpBag.style.display = "flex";
     } else {
@@ -153,6 +153,27 @@ function toggleAddOption() {
     }
   }
 }
+
+// function toggleAddOption() {
+//   if (currentURL.includes("bag")) {
+//     // If current URL includes "bag"
+//     addOpHome.style.display = "none"; // Hide "Add a bag" option
+//     if (addToggleFlag == 0) {
+//       addOpBag.style.display = "flex"; // Show "Add items" option
+//     } else {
+//       addOpBag.style.display = "none"; // Hide "Add items" option
+//     }
+//   } else {
+//     // If current URL does not include "bag"
+//     addOpBag.style.display = "none"; // Hide "Add items" option
+//     if (addToggleFlag == 0) {
+//       addOpHome.style.display = "flex"; // Show "Add a bag" option
+//     } else {
+//       addOpHome.style.display = "none"; // Hide "Add a bag" option
+//     }
+//   }
+// }
+
 
 function closeSearch() {
   searchBar.style.display = "none";
@@ -176,33 +197,43 @@ function enterShareLink() {
     preConfirm: async (link) => {
       console.log("Link: ", link);
       try {
-        const response = await fetch('/sendBagLink', {
+        const response = await fetch('/join', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ link })
         });
-        
+
+        const resData = await response.json();
+
         if (!response.ok) {
-          throw new Error('Failed to send data');
+          throw new Error(`${resData.error}`);
         }
-
-        if (response.status === 404) {
-          throw new Error('Bag not found');
-        }
-
-        return response.json(); // Return the response
+  
+        // Return an object containing resData and link
+        return resData 
       } catch (error) {
         Swal.showValidationMessage(
-          `Request failed: ${error}`
+          `${error}`
         );
       }
     }
   }).then((result) => {
-    // Redirect if response is successful
-    if (result.isConfirmed && result.value.redirectUrl) {
-      window.location.href = result.value.redirectUrl;
+
+    console.log(result); // Log the result object
+    if (result.isConfirmed) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Bag Joined",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+
+      setTimeout(function () {
+        window.location.href = result.value.link;
+      }, 2000);
     }
   });
 }
@@ -293,8 +324,7 @@ function editName(name, bagID) {
               window.location.href = `/home`;
             }, 1500);
           }
-
-          //window.location.href = `/home`;
+          
       } catch (error) {
           Swal.showValidationMessage(
           `Request failed: ${error}`

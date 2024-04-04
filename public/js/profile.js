@@ -13,7 +13,8 @@ document.getElementById("item-gallery-btn").addEventListener("click", function (
   event.preventDefault();
   console.log("Viewing item gallery...");
 
-  window.location.href = "/itemgallery/:id";
+  //TODO: :id is undefined
+  window.location.href = "/itemgalleryprofile/";
 });
 
 
