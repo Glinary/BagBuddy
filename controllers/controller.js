@@ -616,11 +616,11 @@ const controller = {
       const logUser = await User.findOne({ email: email });
       console.log("READ ME");
       console.log(logUser);
-      const userID = logUser._id;
-      console.log("user ID: ", userID);
       console.log("Session ID: ", req.sessionID);
 
       if (logUser != null) {
+        const userID = logUser._id;
+        console.log("user ID: ", userID);
         const passStatus = await logUser.comparePW(password);
         if (passStatus) {
           console.log("user exists in database...");

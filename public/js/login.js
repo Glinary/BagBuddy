@@ -83,6 +83,7 @@ async function login(jsonData) {
 
       // Display Error Message
       document.getElementById("error-message").innerText = errorMessage;
+      document.getElementById("error-message").style.display = "block";
 
       // Clear email and password fields
       document.getElementById("email").value = "";
