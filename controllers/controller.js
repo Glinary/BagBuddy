@@ -101,6 +101,17 @@ const controller = {
       const bagToDisplay = await Bags.findOne({ _id: bagID }).lean().exec();
       const itemsToDisplay = bagToDisplay.bagItems;
 
+      // Check if the current user is the owner of the bag
+      // ownerID is the first user in the userItemsPool
+      const ownerID = bagToDisplay.userItemsPool[0];
+      const isBagOwner = ownerID.equals(userID);
+      
+      console.log("Is bag owner: ", isBagOwner);
+
+      // itemsToDisplay.forEach(item => {
+      //   console.log(`Item ID: ${item._id}, Quantity: ${item.quantity}`);
+      // });
+
       console.log("Bag to be displayed: ", bagToDisplay);
       console.log("items to display: ", itemsToDisplay);
 
@@ -134,6 +145,7 @@ const controller = {
         bag: bagToDisplay,
         items: itemList,
         user: userID,
+        isBagOwner: isBagOwner, // Pass the ownership status to the view
       });
     } catch (error) {
       res.render("errorpage", {
@@ -479,6 +491,7 @@ const controller = {
       res.status(500).json({ error: 'Failed to get bag collab status' });
     }
   },
+
   postSignout: async function (req, res) {
     console.log("------SIGN OUT------");
     req.session.destroy((err) => {

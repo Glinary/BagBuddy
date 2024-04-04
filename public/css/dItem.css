@@ -1,3 +1,13 @@
+/* :root {
+  --mainfont: "Karla", sans-serif;
+  --font1: "Inter", sans-serif;
+  --menubar-bg: #d9d9d9;
+  --main-orange: #ec7324;
+  --main-blue: #048895;
+  --main-peach: #fbeae2;
+  --lightblue-bg: #87c1c2;
+} */
+
 .dItem-section {
   height: fit-content;
   width: fit-content;
@@ -30,5 +40,45 @@
   font-size: 0.75em;
   width: 100%;
   padding: 0.1rem 0.2rem;
-  color: #5f5f5f;
+}
+
+.quant-item button {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 5px;
+  background-color: #ec7324;
+  border-style: none;
+  font-size: 0.75em;
+  color: #b0d5d6;
+  cursor: pointer;
+  text-align: center;
+}
+
+.quant-item button:hover {
+  background-color: #048895;
+}
+
+.quant-item input {
+  height: 1rem;
+  width: 1.5rem;
+  border-radius: 5px;
+  border-style: none;
+  font-size: 0.75em;
+  text-align: center;
+
+  /* Disabled typing in the input */
+  pointer-events: none;
+}
+
+/********* Remove the arrows from the input number *********/
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
