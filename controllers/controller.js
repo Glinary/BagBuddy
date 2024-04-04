@@ -353,6 +353,46 @@ const controller = {
     });
   },
 
+  getItemGalleryProfile: async function (req, res) {
+    console.log("----GET ITEM GALLERY PAGE----");
+    const userID = req.session.user.uID;
+    const user = await User.findOne({ _id: userID }).lean().exec();
+    console.log("user item gallery look: ", user.itemGallery);
+
+    const userItemsPop = await User.findById(userID)
+      .populate("itemGallery")
+      .exec();
+
+    const userItems = userItemsPop.itemGallery;
+
+    userItemList = [];
+
+    try {
+      await Promise.all(
+        userItems.map(async (element) => {
+          const items = await Items.find({ _id: element._id }).lean().exec();
+          userItemList.push(...items);
+        })
+      );
+    } catch (error) {
+      console.log("listing users in bags for items failed due to: ", error);
+    }
+
+    // Sort items by name
+    userItemList.sort((a, b) => a.itemName.localeCompare(b.itemName));
+
+    res.render("itemGalleryProfile", {
+      maincss: "/static/css/main.css",
+      css1: "/static/css/itemGallery.css",
+      partialcss: "/static/css/item.css",
+      mainscript: "/static/js/home.js",
+      js1: "/static/js/add_galleryitem.js",
+      items: userItemList,
+      bag: req.params.id,
+      user: userID,
+    });
+  },
+
   getOnboarding: async function (req, res) {
     sessionChecker(req, res, () => {
       res.status(200).render("onboarding", {

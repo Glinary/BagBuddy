@@ -1,0 +1,22 @@
+<section id="itemGallery">
+    <div class="bck"><a href="/profile"><i class="fa-solid fa-arrow-left fa-xl" style="color: white;"></i></a></div>
+
+    <div class="confirm-bar center">
+         <input type="hidden" name="userbag" id="userbag" value={{bag}}>
+        <button class="confirm-btn" onclick="save_items()">Save changes</button>
+    </div>
+
+    <div class="itemGallery-wrapper white-wrapper">
+        <div class="gallery-titledesc-wrapper center">
+            <div class="white-wrap-title titledesc-item">Item Gallery</div>
+            <div class="white-wrap-desc titledesc-item">Think of it as a list of items you can add later to your chosen bag</div>
+        </div>
+        <div class="gallery-itemlist-wrapper">
+            <div class="gallery-add-item center" onclick="add_item()">+ add item to gallery</div>
+            <div class="newNode"></div>
+            {{#each items}}
+                {{>item this}}
+            {{/each}}
+        </div>
+    </div>
+</section>

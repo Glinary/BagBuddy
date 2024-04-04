@@ -160,7 +160,7 @@ describe("GET /register", () => {
 })
 
 
-//TODO: make test for GET /profile
+///TODO: make test for GET /profile
 // describe("GET /profile", () => {
 //     describe("when profile page loads properly", () => {
 //         test("return a status code 200", async () => {
