@@ -419,6 +419,7 @@ const controller = {
         showBot: false,
         showAddBtn: false,
         mainscript: "/static/js/onboarding.js",
+        image: "/static/images/bag.png",
       });
     });
   },
