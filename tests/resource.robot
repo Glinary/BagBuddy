@@ -22,10 +22,11 @@ ${LOGIN_BUTTON}                 id:login-submit-btn
 ${INVALID_LOGIN_MSSG}           id:error-message
 
 # REGISTER 
-${REG_NAME_LOCATOR}             id:register-name
-${REG_EMAIL_LOCATOR}            id:register-email
-${REG_PASSWORD_LOCATOR}         id:register-password
-${REG_BUTTON}                   id:register-submit-btn
+${REG_NAME_LOCATOR}                     id:register-name
+${REG_EMAIL_LOCATOR}                    id:register-email
+${REG_PASSWORD_LOCATOR}                 id:register-password
+${REG_CONFIRM_PASSWORD_LOCATOR}         id:register-confirm-password
+${REG_BUTTON}                           id:register-submit-btn
 
 # BAG
 ${ADD_MAIN_BUTTON}               id:add-main-btn
@@ -94,9 +95,10 @@ Open Browser in Register Page
     Click Link     /register 
 
 Input Register
-    [Arguments]    ${username}     ${email}    ${password}
+    [Arguments]    ${username}     ${email}    ${password}      ${confirm_password}
     Input Text      ${REG_NAME_LOCATOR}    ${username}
     Input Text      ${REG_EMAIL_LOCATOR}    ${email}
+    Input Text      ${REG_CONFIRM_PASSWORD_LOCATOR}     ${confirm_password}
     Input Text      ${REG_PASSWORD_LOCATOR}    ${password}
 
 Retrieve Error Message
